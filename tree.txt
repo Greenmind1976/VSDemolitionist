@@ -1,0 +1,35 @@
+.
+├── assets
+├── build-install.sh
+├── build.sh
+├── tree.txt
+├── VSDemolitionist
+│   ├── assets
+│   │   └── vsdemolitionist
+│   │       ├── entities
+│   │       │   └── bomb.json
+│   │       └── itemtypes
+│   │           └── bomb.json
+│   ├── bin
+│   │   └── Debug
+│   │       └── Mods
+│   │           └── mod
+│   ├── EntityBomb.cs
+│   ├── ItemBomb.cs
+│   ├── modinfo.json
+│   ├── obj
+│   │   └── Debug
+│   │       ├── ref
+│   │       ├── refint
+│   │       ├── VSDemolitionist.AssemblyInfo.cs
+│   │       ├── VSDemolitionist.AssemblyInfoInputs.cache
+│   │       ├── VSDemolitionist.csproj.AssemblyReference.cache
+│   │       └── VSDemolitionist.GeneratedMSBuildEditorConfig.editorconfig
+│   ├── Properties
+│   │   └── launchSettings.json
+│   ├── VSDemolitionist.code-workspace
+│   ├── VSDemolitionist.csproj
+│   └── VSDemolitionistModSystem.cs
+└── VSDemolitionist.sln
+
+16 directories, 17 files

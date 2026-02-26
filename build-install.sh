@@ -13,6 +13,20 @@ MOD_BUILD_DIR="VSDemolitionist/bin/Debug/Mods/mod"
 VS_MODS_DIR="/Applications/Vintage Story.app/Mods"
 
 #########################
+# Clean up old builds
+#########################
+rm -rf "VSDemolitionist/bin" "VSDemolitionist/obj"
+
+echo "Deleting installed mod dir: $VS_MODS_DIR/$MOD_ID"
+rm -rf "$VS_MODS_DIR/$MOD_ID"
+
+# Sanity check
+if [[ -e "$VS_MODS_DIR/$MOD_ID" ]]; then
+  echo "ERROR: Mod dir still exists: $VS_MODS_DIR/$MOD_ID"
+  exit 1
+fi
+
+#########################
 # Build solution
 #########################
 dotnet build

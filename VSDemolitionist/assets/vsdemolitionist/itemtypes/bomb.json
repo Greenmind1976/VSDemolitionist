@@ -1,0 +1,6 @@
+{
+  "code": "bomb",
+  "class": "ItemBomb",
+  "creativeinventory": { "general": ["*"] },
+  "maxstacksize": 16
+}
