@@ -1,5 +1,4 @@
 .
-├── assets
 ├── build-install.sh
 ├── build.sh
 ├── tree.txt
@@ -8,23 +7,21 @@
 │   │   └── vsdemolitionist
 │   │       ├── entities
 │   │       │   └── bomb.json
-│   │       └── itemtypes
-│   │           └── bomb.json
-│   ├── bin
-│   │   └── Debug
-│   │       └── Mods
-│   │           └── mod
+│   │       ├── itemtypes
+│   │       │   └── bomb.json
+│   │       ├── shapes
+│   │       │   └── block
+│   │       │       └── bomb.json
+│   │       └── textures
+│   │           └── item
+│   │               ├── dynamite-bronze.png
+│   │               ├── dynamite-copper.png
+│   │               ├── dynamite-iron.png
+│   │               ├── dynamite-steel.png
+│   │               └── dynamite-titanium.png
 │   ├── EntityBomb.cs
 │   ├── ItemBomb.cs
 │   ├── modinfo.json
-│   ├── obj
-│   │   └── Debug
-│   │       ├── ref
-│   │       ├── refint
-│   │       ├── VSDemolitionist.AssemblyInfo.cs
-│   │       ├── VSDemolitionist.AssemblyInfoInputs.cache
-│   │       ├── VSDemolitionist.csproj.AssemblyReference.cache
-│   │       └── VSDemolitionist.GeneratedMSBuildEditorConfig.editorconfig
 │   ├── Properties
 │   │   └── launchSettings.json
 │   ├── VSDemolitionist.code-workspace
@@ -32,4 +29,4 @@
 │   └── VSDemolitionistModSystem.cs
 └── VSDemolitionist.sln
 
-16 directories, 17 files
+11 directories, 19 files

@@ -31,21 +31,39 @@ public class ItemBomb : Item
         }
 
         Entity entity = sapi.World.ClassRegistry.CreateEntity(type);
+        if (entity == null)
+        {
+            sapi.World.Logger.Error("Failed to create bomb entity instance!");
+            return;
+        }
 
-        Vec3f view = byEntity.SidedPos.GetViewVector();
+        // -----------------------
+        // Get throw direction
+        // -----------------------
 
-        // Spawn clearly in front of the player (avoid spawning inside camera/player hitbox)
-        double startX = byEntity.ServerPos.X + view.X * 2.5;
-        double startY = byEntity.ServerPos.Y + byEntity.LocalEyePos.Y - 0.2;
-        double startZ = byEntity.ServerPos.Z + view.Z * 2.5;
+        Vec3f dir = byEntity.SidedPos.GetViewVector().Normalize();
+
+        // Spawn slightly in front of player at eye height
+        double startX = byEntity.ServerPos.X + dir.X * 0.5;
+        double startY = byEntity.ServerPos.Y + byEntity.LocalEyePos.Y;
+        double startZ = byEntity.ServerPos.Z + dir.Z * 0.5;
 
         entity.ServerPos.SetPos(startX, startY, startZ);
         entity.Pos.SetFrom(entity.ServerPos);
 
-        float strength = 2.5f;
+        // -----------------------
+        // Soft arc tuning
+        // -----------------------
 
-        entity.ServerPos.Motion.Set(view.X * strength, view.Y * strength, view.Z * strength);
-        entity.Pos.Motion.Set(view.X * strength, view.Y * strength, view.Z * strength);
+        double forwardStrength = 0.40;   // horizontal speed
+        double upwardBoost = 0.10;       // arc lift
+
+        double motionX = dir.X * forwardStrength;
+        double motionY = dir.Y * forwardStrength + upwardBoost;
+        double motionZ = dir.Z * forwardStrength;
+
+        entity.ServerPos.Motion.Set(motionX, motionY, motionZ);
+        entity.Pos.Motion.Set(motionX, motionY, motionZ);
 
         sapi.World.SpawnEntity(entity);
 

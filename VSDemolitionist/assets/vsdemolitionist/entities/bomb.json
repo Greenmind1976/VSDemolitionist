@@ -11,17 +11,15 @@
     }
   },
 
-  "hitboxSize": { "x": 0.4, "y": 0.4 },
-  "deadHitboxSize": { "x": 0.25, "y": 0.25 },
+  "hitboxSize": { "x": 0.7, "y": 0.15 },
+  "deadHitboxSize": { "x": 0.7, "y": 0.15 },
 
   "client": {
     "renderer": "Shape",
-    "shape": { "base": "game:block/stone/looseboulders/free1" },
-    "textures": {
-      "rock": { "base": "game:block/stone/rock/granite1" }
-    },
-    "size": 1,
+    "shape": { "base": "vsdemolitionist:item/dynamite" },
+    "size": 0.5,
     "behaviors": [
+      { "code": "passivephysics" },
       { "code": "interpolateposition" }
     ]
   },

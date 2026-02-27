@@ -2,8 +2,8 @@
   "code": "bomb",
   "class": "ItemBomb",
   "creativeinventory": { "general": ["*"] },
-  "maxstacksize": 16,
+  "maxstacksize": 64,
   "textures": {
-    "default": { "base": "vsdemolitionist:item/dynamite-copper" }
+    "default": { "base": "item/dynamite-copper" }
   }
 }
