@@ -5,28 +5,27 @@ namespace VSDemolitionist;
 
 public class VSDemolitionistModSystem : ModSystem
 {
-    private ICoreServerAPI sapi;
-
     public override void Start(ICoreAPI api)
     {
         base.Start(api);
 
         api.RegisterItemClass("ItemBomb", typeof(ItemBomb));
+
+        // THIS is the correct one
+        api.RegisterEntity("EntityBomb", typeof(EntityBomb));
     }
 
     public override void StartServerSide(ICoreServerAPI api)
     {
-        sapi = api;
-
         api.Event.OnEntitySpawn += entity =>
         {
             if (entity?.Code?.Path != "bomb") return;
 
-            sapi.Event.RegisterCallback(dt =>
+            api.Event.RegisterCallback(dt =>
             {
                 if (!entity.Alive) return;
 
-                sapi.World.CreateExplosion(
+                api.World.CreateExplosion(
                     entity.Pos.AsBlockPos,
                     EnumBlastType.EntityBlast,
                     4f,

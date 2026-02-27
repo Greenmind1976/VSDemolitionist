@@ -1,6 +1,6 @@
 {
   "code": "bomb",
-  "class": "EntityThrownStone",
+  "class": "EntityBomb",
   "tags": ["inanimate", "projectile"],
 
   "attributes": {
@@ -11,29 +11,19 @@
     }
   },
 
-  "hitboxSize": { "x": 0.4, "y": 0.2 },
-  "deadHitboxSize": { "x": 0.25, "y": 0.125 },
+  "hitboxSize": { "x": 0.4, "y": 0.4 },
+  "deadHitboxSize": { "x": 0.25, "y": 0.25 },
 
   "client": {
-    "renderer": "Shape",
-    "shape": { "base": "game:shapes/block/basic/cube" },
-    "textures": {
-      "all": { "base": "game:block/stone/granite" }
-    },
-    "size": 0.3,
-    "behaviors": [
-      { "code": "passivephysics" },
-      { "code": "interpolateposition" }
-    ]
+    "renderer": "Cube",
+    "size": 0.5,
+    "behaviors": []
   },
 
   "server": {
     "behaviors": [
       { "code": "passivephysics" },
-      { "code": "despawn", "minSeconds": 30 },
-      { "code": "entitystatetags" }
+      { "code": "despawn", "minSeconds": 30 }
     ]
-  },
-
-  "sounds": {}
+  }
 }
