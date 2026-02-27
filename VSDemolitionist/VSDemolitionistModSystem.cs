@@ -10,8 +10,6 @@ public class VSDemolitionistModSystem : ModSystem
         base.Start(api);
 
         api.RegisterItemClass("ItemBomb", typeof(ItemBomb));
-
-        // THIS is the correct one
         api.RegisterEntity("EntityBomb", typeof(EntityBomb));
     }
 
@@ -33,7 +31,6 @@ public class VSDemolitionistModSystem : ModSystem
                 );
 
                 entity.Die();
-
             }, 1500);
         };
     }

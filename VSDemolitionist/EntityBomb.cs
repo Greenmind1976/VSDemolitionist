@@ -9,6 +9,7 @@ public class EntityBomb : Entity
     {
         base.Initialize(properties, api, chunkindex3d);
 
+        // Keep this log while debugging
         api.Logger.Notification("EntityBomb initialized on " + api.Side);
     }
 }

@@ -23,10 +23,7 @@ public class ItemBomb : Item
 
         ICoreServerAPI sapi = (ICoreServerAPI)byEntity.World.Api;
 
-        EntityProperties type = sapi.World.GetEntityType(
-            new AssetLocation("vsdemolitionist:bomb")
-        );
-
+        EntityProperties type = sapi.World.GetEntityType(new AssetLocation("vsdemolitionist:bomb"));
         if (type == null)
         {
             sapi.World.Logger.Error("Bomb entity not found!");
@@ -37,32 +34,19 @@ public class ItemBomb : Item
 
         Vec3f view = byEntity.SidedPos.GetViewVector();
 
-        double startX = byEntity.ServerPos.X + view.X * 1.5;
-        double startY = byEntity.ServerPos.Y + byEntity.LocalEyePos.Y - 0.1;
-        double startZ = byEntity.ServerPos.Z + view.Z * 1.5;
+        // Spawn clearly in front of the player (avoid spawning inside camera/player hitbox)
+        double startX = byEntity.ServerPos.X + view.X * 2.5;
+        double startY = byEntity.ServerPos.Y + byEntity.LocalEyePos.Y - 0.2;
+        double startZ = byEntity.ServerPos.Z + view.Z * 2.5;
 
-        // Set server position
         entity.ServerPos.SetPos(startX, startY, startZ);
-
-        // Sync client position
         entity.Pos.SetFrom(entity.ServerPos);
 
-        float strength = 1.5f;
+        float strength = 2.5f;
 
-        // Set motion on BOTH
-        entity.ServerPos.Motion.Set(
-            view.X * strength,
-            view.Y * strength,
-            view.Z * strength
-        );
+        entity.ServerPos.Motion.Set(view.X * strength, view.Y * strength, view.Z * strength);
+        entity.Pos.Motion.Set(view.X * strength, view.Y * strength, view.Z * strength);
 
-        entity.Pos.Motion.Set(
-            view.X * strength,
-            view.Y * strength,
-            view.Z * strength
-        );
-
-        // Spawn entity
         sapi.World.SpawnEntity(entity);
 
         slot.TakeOut(1);

@@ -15,9 +15,15 @@
   "deadHitboxSize": { "x": 0.25, "y": 0.25 },
 
   "client": {
-    "renderer": "Cube",
-    "size": 0.5,
-    "behaviors": []
+    "renderer": "Shape",
+    "shape": { "base": "game:block/stone/looseboulders/free1" },
+    "textures": {
+      "rock": { "base": "game:block/stone/rock/granite1" }
+    },
+    "size": 1,
+    "behaviors": [
+      { "code": "interpolateposition" }
+    ]
   },
 
   "server": {
