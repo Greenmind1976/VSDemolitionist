@@ -1,92 +1,71 @@
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Client;
+using Vintagestory.API.MathTools;
 
 namespace VSDemolitionist;
 
 public class EntityBomb : Entity
 {
-    private bool hasImpactedGround = false;
-    private double prevMotionX;
-    private double prevMotionZ;
+    private ILoadedSound? fuseSound;
 
-    private double rollDistance = 0;
-    private const double maxRollDistance = 3.0; // 2–3 blocks
+    private bool soundStarted = false;
+    private long firstClientTickMs = -1;
+
+    private const float FuseVolume = 1.0f;
+    private const float FuseRange = 48f;
 
     public override void OnGameTick(float dt)
     {
         base.OnGameTick(dt);
 
-        // -----------------------
-        // Airborne spin
-        // -----------------------
-        if (!this.OnGround)
+        if (World.Side != EnumAppSide.Client) return;
+
+        // Mark the first time we ever tick on the client
+        if (firstClientTickMs < 0)
         {
-            this.ServerPos.Yaw += 720f * dt;
-            return;
+            firstClientTickMs = World.ElapsedMilliseconds;
         }
 
-        // -----------------------
-        // First ground contact
-        // -----------------------
-        if (this.OnGround && !hasImpactedGround)
+        // Start fuse sound once, on first tick
+        if (!soundStarted)
         {
-            hasImpactedGround = true;
+            soundStarted = true;
 
-            // Small bounce
-            this.ServerPos.Motion.Y *= -0.15;
-
-            if (System.Math.Abs(this.ServerPos.Motion.Y) < 0.05)
+            var capi = Api as ICoreClientAPI;
+            if (capi != null)
             {
-                this.ServerPos.Motion.Y = 0;
+                fuseSound = capi.World.LoadSound(new SoundParams()
+                {
+                    Location = new AssetLocation("vsdemolitionist", "sounds/fuse"),
+                    ShouldLoop = true,
+                    DisposeOnFinish = false,
+                    RelativePosition = false,
+                    Range = FuseRange,
+                    Volume = FuseVolume,
+                    Position = Pos.XYZ.ToVec3f()
+                });
+
+                fuseSound?.Start();
             }
         }
 
-        // -----------------------
-        // Detect wall impact
-        // -----------------------
-        bool hitWallX = System.Math.Abs(prevMotionX) > 0.05 && System.Math.Abs(this.ServerPos.Motion.X) < 0.01;
-        bool hitWallZ = System.Math.Abs(prevMotionZ) > 0.05 && System.Math.Abs(this.ServerPos.Motion.Z) < 0.01;
-
-        if (hitWallX || hitWallZ)
+        // Follow bomb
+        if (fuseSound != null)
         {
-            // Stop completely if we hit something solid
-            this.ServerPos.Motion.X = 0;
-            this.ServerPos.Motion.Z = 0;
-            return;
+            fuseSound.SetPosition(Pos.XYZ.ToVec3f());
+        }
+    }
+
+    public override void OnEntityDespawn(EntityDespawnData despawn)
+    {
+        if (World.Side == EnumAppSide.Client && fuseSound != null)
+        {
+            fuseSound.Stop();
+            fuseSound.Dispose();
+            fuseSound = null;
         }
 
-        // -----------------------
-        // Track roll distance
-        // -----------------------
-        double horizontalSpeed = System.Math.Sqrt(
-            this.ServerPos.Motion.X * this.ServerPos.Motion.X +
-            this.ServerPos.Motion.Z * this.ServerPos.Motion.Z
-        );
-
-        rollDistance += horizontalSpeed * dt;
-
-        // Fake rolling spin
-        if (horizontalSpeed > 0.01)
-        {
-            this.ServerPos.Yaw += 360f * dt;
-        }
-
-        // Stop if rolled too far
-        if (rollDistance >= maxRollDistance)
-        {
-            this.ServerPos.Motion.X = 0;
-            this.ServerPos.Motion.Z = 0;
-            return;
-        }
-
-        // Mild friction while rolling
-        double friction = 1.0 - (2.0 * dt);
-        if (friction < 0) friction = 0;
-
-        this.ServerPos.Motion.X *= friction;
-        this.ServerPos.Motion.Z *= friction;
-
-        prevMotionX = this.ServerPos.Motion.X;
-        prevMotionZ = this.ServerPos.Motion.Z;
+        base.OnEntityDespawn(despawn);
     }
 }
