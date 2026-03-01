@@ -18,12 +18,22 @@ public class EntityBomb : Entity
 
     private ILoadedSound? fuseSound;
     private bool soundStarted = false;
+    private bool throwSoundPlayedClient = false;
+    private bool airborneClient = false;
+    private bool impactPlayedClient = false;
+    private bool airborneServer = false;
+    private bool impactPlayedServer = false;
 
     public void StartFuse()
     {
+        StartFuseWithRemainingSeconds(FuseSeconds);
+    }
+
+    public void StartFuseWithRemainingSeconds(float remainingSeconds)
+    {
         if (World.Side != EnumAppSide.Server) return;
 
-        long endMs = World.ElapsedMilliseconds + (long)(FuseSeconds * 1000);
+        long endMs = World.ElapsedMilliseconds + (long)(Math.Max(0f, remainingSeconds) * 1000);
 
         WatchedAttributes.SetBool(AttrLit, true);
         WatchedAttributes.SetLong(AttrFuseEndMs, endMs);
@@ -64,7 +74,6 @@ public void Release(EntityAgent holder)
     private void TeleportToHolder(EntityAgent holder)
     {
         Vec3f dir = holder.SidedPos.GetViewVector().Normalize();
-
         double forwardOffset = 0.25;
         double verticalOffset = holder.LocalEyePos.Y - 0.45;
 
@@ -97,6 +106,28 @@ public void Release(EntityAgent holder)
         // SERVER: explode when fuse ends
         if (World.Side == EnumAppSide.Server && WatchedAttributes.GetBool(AttrLit))
         {
+            if (!impactPlayedServer && holderId == -1)
+            {
+                double speedSqServer = ServerPos.Motion.X * ServerPos.Motion.X + ServerPos.Motion.Y * ServerPos.Motion.Y + ServerPos.Motion.Z * ServerPos.Motion.Z;
+
+                if (!airborneServer && speedSqServer > 0.02 * 0.02)
+                {
+                    airborneServer = true;
+                }
+                else if (airborneServer && speedSqServer < 0.004 * 0.004)
+                {
+                    impactPlayedServer = true;
+                    World.PlaySoundAt(
+                        new AssetLocation("survival:arrow-impact"),
+                        ServerPos.X, ServerPos.Y, ServerPos.Z,
+                        null,
+                        false,
+                        24f,
+                        1.0f
+                    );
+                }
+            }
+
             long fuseEnd = WatchedAttributes.GetLong(AttrFuseEndMs, 0);
             if (fuseEnd > 0 && World.ElapsedMilliseconds >= fuseEnd)
             {
@@ -123,7 +154,7 @@ public void Release(EntityAgent holder)
                     DisposeOnFinish = false,
                     RelativePosition = false,
                     Range = 8f,
-                    Volume = 2.0f,
+                    Volume = 1.0f,
                     Position = Pos.XYZ.ToVec3f()
                 });
 
@@ -146,6 +177,29 @@ public void Release(EntityAgent holder)
                 volume = Math.Max(minVolume, volume);
 
                 fuseSound.SetVolume(volume);
+            }
+
+            double speedSqClient = Pos.Motion.X * Pos.Motion.X + Pos.Motion.Y * Pos.Motion.Y + Pos.Motion.Z * Pos.Motion.Z;
+
+            // CLIENT: obvious throw cue on first airborne tick after release.
+            if (!throwSoundPlayedClient && holderId == -1 && speedSqClient > 0.03 * 0.03)
+            {
+                throwSoundPlayedClient = true;
+                PlayClientOneShot(capi, "survival:held/torch-equip", Pos.XYZ.ToVec3f(), 1.2f);
+            }
+
+            // CLIENT: play one-shot impact when a thrown bomb first contacts a surface.
+            if (!impactPlayedClient && holderId == -1)
+            {
+                if (!airborneClient && speedSqClient > 0.02 * 0.02)
+                {
+                    airborneClient = true;
+                }
+                else if (airborneClient && speedSqClient < 0.004 * 0.004)
+                {
+                    impactPlayedClient = true;
+                    PlayClientOneShot(capi, "survival:arrow-impact", Pos.XYZ.ToVec3f(), 0.95f);
+                }
             }
         }
     }
@@ -188,5 +242,21 @@ public void Release(EntityAgent holder)
         }
 
         base.OnEntityDespawn(despawn);
+    }
+
+    private static void PlayClientOneShot(ICoreClientAPI capi, string soundPath, Vec3f atPos, float volume)
+    {
+        ILoadedSound? oneshot = capi.World.LoadSound(new SoundParams()
+        {
+            Location = new AssetLocation(soundPath),
+            ShouldLoop = false,
+            DisposeOnFinish = true,
+            RelativePosition = false,
+            Position = atPos,
+            Range = 24f,
+            Volume = volume
+        });
+
+        oneshot?.Start();
     }
 }

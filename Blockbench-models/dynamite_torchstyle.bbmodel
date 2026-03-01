@@ -1,0 +1,39 @@
+{
+  "meta": {"format_version": "5.0", "model_format": "free", "box_uv": false},
+  "name": "dynamite_torchstyle",
+  "model_identifier": "",
+  "visible_box": [1, 1, 1],
+  "resolution": {"width": 16, "height": 16},
+  "elements": [
+    {"name":"core","box_uv":false,"from":[6.5,6.6,1.2],"to":[9.5,9.4,14.8],"autouv":0,"color":0,"origin":[8,8,8],"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000001"},
+
+    {"name":"facet_top","box_uv":false,"from":[6.95,9.4,1.2],"to":[9.05,10.05,14.8],"autouv":0,"color":1,"origin":[8,8,8],"rotationX":1.5,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000002"},
+    {"name":"facet_bottom","box_uv":false,"from":[6.95,5.95,1.2],"to":[9.05,6.6,14.8],"autouv":0,"color":2,"origin":[8,8,8],"rotationX":-1.2,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000003"},
+    {"name":"facet_left","box_uv":false,"from":[5.9,6.95,1.2],"to":[6.5,9.05,14.8],"autouv":0,"color":3,"origin":[8,8,8],"rotationY":1.2,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000004"},
+    {"name":"facet_right","box_uv":false,"from":[9.5,6.95,1.2],"to":[10.1,9.05,14.8],"autouv":0,"color":4,"origin":[8,8,8],"rotationY":-1.4,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000005"},
+
+    {"name":"facet_tl","box_uv":false,"from":[6.3,8.95,1.2],"to":[6.95,9.6,14.8],"autouv":0,"color":5,"origin":[8,8,8],"rotationZ":2.3,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000006"},
+    {"name":"facet_tr","box_uv":false,"from":[9.05,8.95,1.2],"to":[9.7,9.6,14.8],"autouv":0,"color":6,"origin":[8,8,8],"rotationZ":-2.1,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000007"},
+    {"name":"facet_bl","box_uv":false,"from":[6.3,6.4,1.2],"to":[6.95,7.05,14.8],"autouv":0,"color":7,"origin":[8,8,8],"rotationZ":-1.8,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000008"},
+    {"name":"facet_br","box_uv":false,"from":[9.05,6.4,1.2],"to":[9.7,7.05,14.8],"autouv":0,"color":0,"origin":[8,8,8],"rotationZ":1.7,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000009"},
+
+    {"name":"paper_ring_back","box_uv":false,"from":[6.0,6.1,0.5],"to":[10.0,9.9,1.4],"autouv":0,"color":1,"origin":[8,8,1.0],"rotationZ":3.0,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000010"},
+    {"name":"paper_ring_front","box_uv":false,"from":[6.1,6.0,14.6],"to":[10.1,9.8,15.5],"autouv":0,"color":2,"origin":[8,8,15.0],"rotationZ":-2.5,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000011"},
+
+    {"name":"end_cap_back","box_uv":false,"from":[6.5,6.5,-0.2],"to":[9.5,9.5,0.5],"autouv":0,"color":3,"origin":[8,8,0.2],"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000012"},
+    {"name":"end_cap_front","box_uv":false,"from":[6.5,6.5,15.5],"to":[9.5,9.5,16.2],"autouv":0,"color":4,"origin":[8,8,15.8],"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000013"},
+
+    {"name":"fuse_0","box_uv":false,"from":[7.8,7.7,16.2],"to":[8.4,8.3,16.9],"autouv":0,"color":5,"origin":[8,8,16.2],"rotationX":-4.0,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000014"},
+    {"name":"fuse_1","box_uv":false,"from":[7.2,8.1,16.9],"to":[7.8,8.7,17.6],"autouv":0,"color":6,"origin":[7.2,8.1,16.9],"rotationZ":6.0,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000015"},
+    {"name":"fuse_2","box_uv":false,"from":[6.6,8.5,17.6],"to":[7.2,9.1,18.3],"autouv":0,"color":7,"origin":[6.6,8.5,17.6],"rotationZ":-5.0,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000016"},
+    {"name":"fuse_tip","box_uv":false,"from":[6.1,8.4,18.2],"to":[6.6,8.9,18.8],"autouv":0,"color":0,"origin":[6.1,8.4,18.2],"rotationX":7.0,"faces":{"north":{"uv":[0,0,1,1]},"east":{"uv":[0,0,1,1]},"south":{"uv":[0,0,1,1]},"west":{"uv":[0,0,1,1]},"up":{"uv":[0,0,1,1]},"down":{"uv":[0,0,1,1]}},"type":"cube","uuid":"a1000000-0000-4000-8000-000000000017"}
+  ],
+  "groups": [],
+  "outliner": [
+    "a1000000-0000-4000-8000-000000000001","a1000000-0000-4000-8000-000000000002","a1000000-0000-4000-8000-000000000003","a1000000-0000-4000-8000-000000000004","a1000000-0000-4000-8000-000000000005","a1000000-0000-4000-8000-000000000006","a1000000-0000-4000-8000-000000000007","a1000000-0000-4000-8000-000000000008","a1000000-0000-4000-8000-000000000009","a1000000-0000-4000-8000-000000000010","a1000000-0000-4000-8000-000000000011","a1000000-0000-4000-8000-000000000012","a1000000-0000-4000-8000-000000000013","a1000000-0000-4000-8000-000000000014","a1000000-0000-4000-8000-000000000015","a1000000-0000-4000-8000-000000000016","a1000000-0000-4000-8000-000000000017"
+  ],
+  "textures": [
+    {"name":"dynamite-copper.png","relative_path":"../VSDemolitionist/assets/vsdemolitionist/textures/item/dynamite-copper.png","folder":"item","namespace":"vsdemolitionist","id":"1","group":"","width":16,"height":16,"uv_width":16,"uv_height":16,"particle":false,"use_as_default":false},
+    {"name":"fuse-texture.png","relative_path":"../VSDemolitionist/assets/vsdemolitionist/textures/item/fuse-texture.png","folder":"item","namespace":"vsdemolitionist","id":"2","group":"","width":16,"height":16,"uv_width":16,"uv_height":16,"particle":false,"use_as_default":false}
+  ]
+}
