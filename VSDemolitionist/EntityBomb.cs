@@ -18,7 +18,6 @@ public class EntityBomb : Entity
 
     private ILoadedSound? fuseSound;
     private bool soundStarted = false;
-    private bool throwSoundPlayedClient = false;
     private bool airborneClient = false;
     private bool impactPlayedClient = false;
     private bool airborneServer = false;
@@ -180,13 +179,6 @@ public void Release(EntityAgent holder)
             }
 
             double speedSqClient = Pos.Motion.X * Pos.Motion.X + Pos.Motion.Y * Pos.Motion.Y + Pos.Motion.Z * Pos.Motion.Z;
-
-            // CLIENT: obvious throw cue on first airborne tick after release.
-            if (!throwSoundPlayedClient && holderId == -1 && speedSqClient > 0.03 * 0.03)
-            {
-                throwSoundPlayedClient = true;
-                PlayClientOneShot(capi, "survival:held/torch-equip", Pos.XYZ.ToVec3f(), 1.2f);
-            }
 
             // CLIENT: play one-shot impact when a thrown bomb first contacts a surface.
             if (!impactPlayedClient && holderId == -1)

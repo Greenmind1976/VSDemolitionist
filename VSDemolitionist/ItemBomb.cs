@@ -12,9 +12,9 @@ public class ItemBomb : Item
     private const float LightTime = 1.0f;
     private const float FuseSeconds = 4.0f;
     private const float MaxHoldSeconds = LightTime + FuseSeconds;
-    private const float HeldFuseStartVolume = 0.6f;
+    private const float HeldFuseStartVolume = 1.2f;
     private const string AttrFuseLitMs = "vsd_fuseLitMs";
-    private static readonly AssetLocation ThrowSound = new("survival:held/torch-equip");
+    private static readonly AssetLocation ThrowSound = new("vsdemolitionist", "sounds/bomb-toss");
 
     private ILoadedSound? heldFuseSound;
     private bool heldFusePlaying;
@@ -133,7 +133,6 @@ public class ItemBomb : Item
             else
             {
                 StopHeldFuseSoundDelayed(capi, 1200);
-                PlayClientOneShot(capi, "survival:held/torch-equip", true, 1.2f);
             }
         }
 
@@ -273,7 +272,7 @@ public class ItemBomb : Item
                     null,
                     false,
                     24f,
-                    1.2f
+                    0.8f
                 );
             }
         }
