@@ -3,7 +3,13 @@
   "class": "ItemBomb",
   "creativeinventory": { "general": ["*"] },
   "maxstacksize": 64,
+
   "textures": {
     "default": { "base": "item/dynamite-copper" }
+  },
+
+  "client": {
+    "renderer": "helditem",
+    "shape": { "base": "vsdemolitionist:item/dynamite" }
   }
 }

@@ -1,15 +1,26 @@
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.API.Client;
 
 namespace VSDemolitionist;
 
 public class ItemBomb : Item
 {
     private const float LightTime = 1.0f;
-    private ILoadedSound? fuseSound;
+    private const string AttrEntityId = "vsd_entityId";
+
+    private bool IsIgnitionItem(ItemSlot slot)
+    {
+        if (slot?.Itemstack == null) return false;
+
+        string path = slot.Itemstack.Collectible.Code?.Path ?? "";
+
+        if (path.Contains("torch")) return true;
+        if (path.Contains("lantern")) return true;
+        if (path.Contains("lamp")) return true;
+
+        return false;
+    }
 
     public override void OnHeldInteractStart(
         ItemSlot slot,
@@ -21,13 +32,15 @@ public class ItemBomb : Item
     {
         if (!firstEvent) return;
 
-        handling = EnumHandHandling.PreventDefault;
-
-        if (byEntity.RightHandItemSlot != slot) return;
-
         ItemSlot offhand = byEntity.LeftHandItemSlot;
-        if (offhand?.Itemstack == null) return;
-        if (offhand.Itemstack.Collectible.Code.Path != "torch") return;
+
+        if (!IsIgnitionItem(offhand))
+        {
+            handling = EnumHandHandling.NotHandled;
+            return;
+        }
+
+        handling = EnumHandHandling.PreventDefault;
     }
 
     public override bool OnHeldInteractStep(
@@ -37,38 +50,54 @@ public class ItemBomb : Item
         BlockSelection blockSel,
         EntitySelection entitySel)
     {
-        if (byEntity.World.Side != EnumAppSide.Client)
+        if (slot?.Itemstack == null) return true;
+
+        ItemSlot offhand = byEntity.LeftHandItemSlot;
+        if (!IsIgnitionItem(offhand))
             return true;
 
-        // Start sound once fuse is lit
-        if (secondsUsed >= LightTime && fuseSound == null)
+        long id = slot.Itemstack.Attributes.GetLong(AttrEntityId, 0);
+
+        if (id != 0)
         {
-            ICoreClientAPI capi = (ICoreClientAPI)byEntity.World.Api;
-
-            fuseSound = capi.World.LoadSound(new SoundParams()
+            if (byEntity.World.Side == EnumAppSide.Server)
             {
-                Location = new AssetLocation("vsdemolitionist", "sounds/fuse"),
-                ShouldLoop = true,
-                DisposeOnFinish = true,
-                Range = 32f,
-                Volume = 1f,
-                Position = new Vec3f(
-                    (float)byEntity.Pos.X,
-                    (float)byEntity.Pos.Y,
-                    (float)byEntity.Pos.Z
-                )
-            });
+                Entity e = byEntity.World.GetEntityById(id);
+                if (e is EntityBomb bomb)
+                {
+                    bomb.SetHeldBy(byEntity);
+                }
+            }
 
-            fuseSound?.Start();
+            return true;
         }
 
-        if (fuseSound != null)
+        if (secondsUsed >= LightTime && byEntity.World.Side == EnumAppSide.Server)
         {
-            fuseSound.SetPosition(new Vec3f(
-                (float)byEntity.Pos.X,
-                (float)byEntity.Pos.Y,
-                (float)byEntity.Pos.Z
-            ));
+            ICoreServerAPI sapi = (ICoreServerAPI)byEntity.World.Api;
+
+            EntityProperties type = sapi.World.GetEntityType(new AssetLocation("vsdemolitionist:bomb"));
+            if (type == null) return true;
+
+            Entity entity = sapi.World.ClassRegistry.CreateEntity(type);
+            if (entity == null) return true;
+
+            entity.ServerPos.SetPos(byEntity.ServerPos.X, byEntity.ServerPos.Y, byEntity.ServerPos.Z);
+            entity.ServerPos.Motion.Set(0, 0, 0);
+
+            entity.Pos.SetPos(byEntity.Pos.X, byEntity.Pos.Y, byEntity.Pos.Z);
+            entity.Pos.Motion.Set(0, 0, 0);
+
+            sapi.World.SpawnEntity(entity);
+
+            if (entity is EntityBomb bomb)
+            {
+                bomb.StartFuse();
+                bomb.SetHeldBy(byEntity);
+            }
+
+            slot.Itemstack.Attributes.SetLong(AttrEntityId, entity.EntityId);
+            slot.MarkDirty();
         }
 
         return true;
@@ -81,45 +110,21 @@ public class ItemBomb : Item
         BlockSelection blockSel,
         EntitySelection entitySel)
     {
-        if (byEntity.World.Side == EnumAppSide.Client)
-        {
-            fuseSound?.Stop();
-            fuseSound = null;
-        }
+        if (slot?.Itemstack == null) return;
 
-        if (secondsUsed < LightTime) return;
+        long id = slot.Itemstack.Attributes.GetLong(AttrEntityId, 0);
+        if (id == 0) return;
+
         if (byEntity.World.Side != EnumAppSide.Server) return;
 
-        ICoreServerAPI sapi = (ICoreServerAPI)byEntity.World.Api;
-
-        EntityProperties type = sapi.World.GetEntityType(new AssetLocation("vsdemolitionist:bomb"));
-        if (type == null) return;
-
-        Entity entity = sapi.World.ClassRegistry.CreateEntity(type);
-        if (entity == null) return;
-
-        Vec3f dir = byEntity.SidedPos.GetViewVector().Normalize();
-
-        double startX = byEntity.ServerPos.X + dir.X * 0.5;
-        double startY = byEntity.ServerPos.Y + byEntity.LocalEyePos.Y;
-        double startZ = byEntity.ServerPos.Z + dir.Z * 0.5;
-
-        entity.ServerPos.SetPos(startX, startY, startZ);
-        entity.Pos.SetFrom(entity.ServerPos);
-
-        double forwardStrength = 0.40;
-        double upwardBoost = 0.10;
-
-        double motionX = dir.X * forwardStrength;
-        double motionY = dir.Y * forwardStrength + upwardBoost;
-        double motionZ = dir.Z * forwardStrength;
-
-        entity.ServerPos.Motion.Set(motionX, motionY, motionZ);
-        entity.Pos.Motion.Set(motionX, motionY, motionZ);
-
-        sapi.World.SpawnEntity(entity);
+        Entity e = byEntity.World.GetEntityById(id);
+        if (e is EntityBomb bomb)
+        {
+            bomb.Release(byEntity);
+        }
 
         slot.TakeOut(1);
         slot.MarkDirty();
+        slot.Itemstack.Attributes.RemoveAttribute(AttrEntityId);
     }
 }

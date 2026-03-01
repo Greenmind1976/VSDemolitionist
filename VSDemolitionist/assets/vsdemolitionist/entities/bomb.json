@@ -4,7 +4,7 @@
   "tags": ["inanimate", "projectile"],
 
   "attributes": {
-    "isProjectile": true,
+    "isProjectile": false,
     "physics": {
       "groundDragFactor": 1,
       "airDragFactor": 0.25
