@@ -149,7 +149,7 @@ public void Release(EntityAgent holder)
 
                 fuseSound = capi.World.LoadSound(new SoundParams()
                 {
-                    Location = new AssetLocation("vsdemolitionist", "sounds/fuse"),
+                    Location = new AssetLocation("vsdemolitionist", "sounds/bomb-toss"),
                     ShouldLoop = true,
                     DisposeOnFinish = false,
                     RelativePosition = false,
