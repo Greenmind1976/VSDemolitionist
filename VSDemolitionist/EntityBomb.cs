@@ -22,6 +22,7 @@ public class EntityBomb : Entity
     private bool impactPlayedClient = false;
     private bool airborneServer = false;
     private bool impactPlayedServer = false;
+    private float sparkAccum;
 
     public void StartFuse()
     {
@@ -136,13 +137,13 @@ public void Release(EntityAgent holder)
             }
         }
 
-        // CLIENT: handle fuse sound
+        // CLIENT: handle thrown fuse sound/visuals/impacts
         if (World.Side == EnumAppSide.Client && WatchedAttributes.GetBool(AttrLit))
         {
             ICoreClientAPI? capi = Api as ICoreClientAPI;
             if (capi == null) return;
 
-            if (!soundStarted)
+            if (holderId == -1 && !soundStarted)
             {
                 soundStarted = true;
 
@@ -152,30 +153,23 @@ public void Release(EntityAgent holder)
                     ShouldLoop = true,
                     DisposeOnFinish = false,
                     RelativePosition = false,
-                    Range = 24f,
-                    Volume = 1.0f,
+                    Range = 32f,
+                    Volume = 1.8f,
                     Position = Pos.XYZ.ToVec3f()
                 });
 
                 fuseSound?.Start();
             }
 
-            if (fuseSound != null && capi.World.Player?.Entity != null)
+            if (holderId == -1 && fuseSound != null)
             {
-                // ✅ THIS WAS MISSING
                 fuseSound.SetPosition(Pos.XYZ.ToVec3f());
+                fuseSound.SetVolume(1.8f);
+            }
 
-                double distance = Pos.DistanceTo(capi.World.Player.Entity.Pos.XYZ);
-
-                float maxDistance = 24f;
-                float minVolume = 0.05f;
-
-                float t = (float)Math.Min(distance / maxDistance, 1f);
-
-                float volume = 1f - (t * t * t);
-                volume = Math.Max(minVolume, volume);
-
-                fuseSound.SetVolume(volume);
+            if (holderId == -1)
+            {
+                SpawnFuseSparks(capi, dt);
             }
 
             double speedSqClient = Pos.Motion.X * Pos.Motion.X + Pos.Motion.Y * Pos.Motion.Y + Pos.Motion.Z * Pos.Motion.Z;
@@ -231,6 +225,7 @@ public void Release(EntityAgent holder)
             fuseSound?.Stop();
             fuseSound?.Dispose();
             fuseSound = null;
+            soundStarted = false;
         }
 
         base.OnEntityDespawn(despawn);
@@ -250,5 +245,28 @@ public void Release(EntityAgent holder)
         });
 
         oneshot?.Start();
+    }
+
+    private void SpawnFuseSparks(ICoreClientAPI capi, float dt)
+    {
+        sparkAccum += dt;
+        if (sparkAccum < 0.03f) return;
+        sparkAccum = 0f;
+
+        Vec3d fusePos = Pos.XYZ.AddCopy(Math.Sin(Pos.Yaw) * 0.22, 0.03, -Math.Cos(Pos.Yaw) * 0.22);
+
+        capi.World.SpawnParticles(
+            1.4f,
+            unchecked((int)0xFFFFB347),
+            fusePos.AddCopy(-0.015, -0.01, -0.015),
+            fusePos.AddCopy(0.015, 0.01, 0.015),
+            new Vec3f(-0.02f, 0.02f, -0.02f),
+            new Vec3f(0.02f, 0.12f, 0.02f),
+            0.16f,
+            0f,
+            0.06f,
+            EnumParticleModel.Quad,
+            null
+        );
     }
 }

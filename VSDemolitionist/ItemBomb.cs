@@ -12,7 +12,7 @@ public class ItemBomb : Item
     private const float LightTime = 1.0f;
     private const float FuseSeconds = 4.0f;
     private const float MaxHoldSeconds = LightTime + FuseSeconds;
-    private const float HeldFuseStartVolume = 1.2f;
+    private const float HeldFuseStartVolume = 2.0f;
     private const string AttrFuseLitMs = "vsd_fuseLitMs";
     private static readonly AssetLocation ThrowSound = new("vsdemolitionist", "sounds/bomb-toss");
 
