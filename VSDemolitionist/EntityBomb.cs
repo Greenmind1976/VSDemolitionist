@@ -149,11 +149,11 @@ public void Release(EntityAgent holder)
 
                 fuseSound = capi.World.LoadSound(new SoundParams()
                 {
-                    Location = new AssetLocation("vsdemolitionist", "sounds/bomb-toss"),
+                    Location = new AssetLocation("vsdemolitionist", "sounds/fuse"),
                     ShouldLoop = true,
                     DisposeOnFinish = false,
                     RelativePosition = false,
-                    Range = 8f,
+                    Range = 24f,
                     Volume = 1.0f,
                     Position = Pos.XYZ.ToVec3f()
                 });
@@ -168,7 +168,7 @@ public void Release(EntityAgent holder)
 
                 double distance = Pos.DistanceTo(capi.World.Player.Entity.Pos.XYZ);
 
-                float maxDistance = 12f;
+                float maxDistance = 24f;
                 float minVolume = 0.05f;
 
                 float t = (float)Math.Min(distance / maxDistance, 1f);
