@@ -22,6 +22,7 @@ public class EntityBomb : Entity
     private bool impactPlayedClient = false;
     private bool airborneServer = false;
     private bool impactPlayedServer = false;
+    private float sparkAccum;
     private float smokeAccum;
 
     public void StartFuse()
@@ -249,8 +250,11 @@ public void Release(EntityAgent holder)
 
     private void SpawnFuseSparks(ICoreClientAPI capi, float dt)
     {
+        sparkAccum += dt;
         smokeAccum += dt;
-        if (smokeAccum < 0.03f) return;
+        bool spawnSparks = sparkAccum >= 0.02f;
+        bool spawnSmoke = smokeAccum >= 0.03f;
+        if (!spawnSparks && !spawnSmoke) return;
 
         // Fuse tip anchor derived from model element "cube":
         // center = [6.5, 2.5, -1.5], rotationOrigin = [8, 0, 8].
@@ -263,20 +267,42 @@ public void Release(EntityAgent holder)
         Vec3d rotatedOffset = RotateLocalOffset(localFuseOffset, Pos.Yaw, Pos.Pitch, Pos.Roll);
         Vec3d fusePos = Pos.XYZ.AddCopy(rotatedOffset.X, rotatedOffset.Y, rotatedOffset.Z);
 
-        smokeAccum = 0f;
-        capi.World.SpawnParticles(
-            2.2f,
-            unchecked((int)0xEE666666),
-            fusePos.AddCopy(-0.005, -0.005, -0.005),
-            fusePos.AddCopy(0.005, 0.005, 0.005),
-            new Vec3f(-0.015f, 0.04f, -0.015f),
-            new Vec3f(0.015f, 0.11f, 0.015f),
-            0.7f,
-            -0.01f,
-            0.14f,
-            EnumParticleModel.Quad,
-            null
-        );
+        if (spawnSparks)
+        {
+            sparkAccum = 0f;
+            Vec3d sparkPos = fusePos.AddCopy(0, 0.03125, 0);
+            capi.World.SpawnParticles(
+                1.4f,
+                unchecked((int)0xFFFFB347),
+                sparkPos.AddCopy(-0.004, -0.004, -0.004),
+                sparkPos.AddCopy(0.004, 0.004, 0.004),
+                new Vec3f(-0.03f, 0.02f, -0.03f),
+                new Vec3f(0.03f, 0.14f, 0.03f),
+                0.18f,
+                0f,
+                0.06f,
+                EnumParticleModel.Quad,
+                null
+            );
+        }
+
+        if (spawnSmoke)
+        {
+            smokeAccum = 0f;
+            capi.World.SpawnParticles(
+                2.2f,
+                unchecked((int)0xEE666666),
+                fusePos.AddCopy(-0.005, -0.005, -0.005),
+                fusePos.AddCopy(0.005, 0.005, 0.005),
+                new Vec3f(-0.015f, 0.04f, -0.015f),
+                new Vec3f(0.015f, 0.11f, 0.015f),
+                0.7f,
+                -0.01f,
+                0.14f,
+                EnumParticleModel.Quad,
+                null
+            );
+        }
     }
 
     private static Vec3d RotateLocalOffset(Vec3d local, float yaw, float pitch, float roll)
