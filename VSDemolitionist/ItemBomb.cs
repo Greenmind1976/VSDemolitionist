@@ -10,9 +10,9 @@ namespace VSDemolitionist;
 public class ItemBomb : Item
 {
     private const float LightTime = 1.0f;
-    private const float FuseSeconds = 4.0f;
-    private const float MaxHoldSeconds = LightTime + FuseSeconds;
-    private const float HeldFuseStartVolume = 2.0f;
+    private const float DefaultFuseSeconds = 4.0f;
+    private const float DefaultHeldFuseVolume = 2.0f;
+    private const string BombAttrRoot = "bomb";
     private const string AttrFuseLitMs = "vsd_fuseLitMs";
     private static readonly AssetLocation ThrowSound = new("vsdemolitionist", "sounds/bomb-toss");
 
@@ -34,6 +34,22 @@ public class ItemBomb : Item
         return false;
     }
 
+    private float GetBombFloat(ItemStack? stack, string key, float defaultValue)
+    {
+        return stack?.Collectible?.Attributes?[BombAttrRoot]?[key].AsFloat(defaultValue) ?? defaultValue;
+    }
+
+    private string GetBombString(ItemStack? stack, string key, string defaultValue)
+    {
+        return stack?.Collectible?.Attributes?[BombAttrRoot]?[key].AsString(defaultValue) ?? defaultValue;
+    }
+
+    private static AssetLocation ResolveModAsset(string code)
+    {
+        if (code.Contains(":")) return new AssetLocation(code);
+        return new AssetLocation("vsdemolitionist", code);
+    }
+
     public override void OnBeforeRender(ICoreClientAPI capi, ItemStack itemstack, EnumItemRenderTarget target, ref ItemRenderInfo renderinfo)
     {
         base.OnBeforeRender(capi, itemstack, target, ref renderinfo);
@@ -43,7 +59,8 @@ public class ItemBomb : Item
             return;
         }
 
-        Item? iconItem = capi.World.GetItem(new AssetLocation("vsdemolitionist", "bombicon"));
+        string iconCode = GetBombString(itemstack, "iconItemCode", "bombicon");
+        Item? iconItem = capi.World.GetItem(new AssetLocation("vsdemolitionist", iconCode));
         if (iconItem == null)
         {
             return;
@@ -97,6 +114,10 @@ public class ItemBomb : Item
             return false;
         }
 
+        float fuseSeconds = GetBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
+        float maxHoldSeconds = LightTime + fuseSeconds;
+        float heldFuseVolume = GetBombFloat(slot.Itemstack, "heldFuseVolume", DefaultHeldFuseVolume);
+
         if (secondsUsed >= LightTime)
         {
             if (byEntity.World.Side == EnumAppSide.Server)
@@ -111,12 +132,12 @@ public class ItemBomb : Item
 
             if (byEntity.World.Side == EnumAppSide.Client)
             {
-                StartHeldFuseSound(byEntity.World.Api as ICoreClientAPI);
+                StartHeldFuseSound(byEntity.World.Api as ICoreClientAPI, heldFuseVolume);
             }
         }
 
         // Auto-force release/throw when fuse has fully elapsed while still holding right click.
-        if (secondsUsed >= MaxHoldSeconds)
+        if (secondsUsed >= maxHoldSeconds)
         {
             if (byEntity.World.Side == EnumAppSide.Client)
             {
@@ -143,7 +164,8 @@ public class ItemBomb : Item
         EntitySelection entitySel)
     {
         if (slot?.Itemstack == null) return;
-        bool timedOut = secondsUsed >= MaxHoldSeconds;
+        float fuseSeconds = GetBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
+        bool timedOut = secondsUsed >= (LightTime + fuseSeconds);
 
         if (byEntity.World.Side == EnumAppSide.Client)
         {
@@ -189,9 +211,15 @@ public class ItemBomb : Item
         return true;
     }
 
-    private void StartHeldFuseSound(ICoreClientAPI? capi)
+    private void StartHeldFuseSound(ICoreClientAPI? capi, float volume)
     {
-        if (heldFusePlaying || capi == null) return;
+        if (capi == null) return;
+
+        if (heldFusePlaying)
+        {
+            heldFuseSound?.SetVolume(volume);
+            return;
+        }
 
         heldFuseSound = capi.World.LoadSound(new SoundParams()
         {
@@ -201,7 +229,7 @@ public class ItemBomb : Item
             RelativePosition = true,
             Position = new Vec3f(0, 0, 0),
             Range = 8f,
-            Volume = HeldFuseStartVolume
+            Volume = volume
         });
 
         heldFuseSound?.Start();
@@ -261,11 +289,13 @@ public class ItemBomb : Item
         slot.Itemstack.Attributes.RemoveAttribute(AttrFuseLitMs);
         if (litMs == 0) return;
 
+        float fuseSeconds = GetBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
         double elapsed = Math.Max(0, (byEntity.World.ElapsedMilliseconds - litMs) / 1000.0);
-        float remainingFuse = (float)Math.Max(0, FuseSeconds - elapsed);
+        float remainingFuse = (float)Math.Max(0, fuseSeconds - elapsed);
 
         ICoreServerAPI sapi = (ICoreServerAPI)byEntity.World.Api;
-        EntityProperties type = sapi.World.GetEntityType(new AssetLocation("vsdemolitionist:bomb"));
+        string entityCode = GetBombString(slot.Itemstack, "entityCode", "bomb");
+        EntityProperties type = sapi.World.GetEntityType(ResolveModAsset(entityCode));
         if (type == null) return;
 
         Entity entity = sapi.World.ClassRegistry.CreateEntity(type);
@@ -285,6 +315,7 @@ public class ItemBomb : Item
 
         if (entity is EntityBomb bomb)
         {
+            bomb.ApplyConfigFromItemstack(slot.Itemstack);
             bomb.StartFuseWithRemainingSeconds(remainingFuse);
             if (allowThrow && remainingFuse > 0.001f)
             {

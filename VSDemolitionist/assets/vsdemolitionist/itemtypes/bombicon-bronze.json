@@ -1,0 +1,6 @@
+{
+  "code": "bombicon-bronze",
+  "maxstacksize": 64,
+  "texture": { "base": "item/dynamite-bronze" },
+  "creativeinventory": {}
+}

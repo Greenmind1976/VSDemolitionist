@@ -14,7 +14,7 @@
 		"fuse-texture.png": [16, 16]
 	},
 	"textures": {
-		"dynamite-stick.png": "block/dynamite-shape-cap-copper",
+		"dynamite-stick.png": "block/dynamite-shape-cap-bronze",
 		"fuse-texture.png": "item/fuse-texture"
 	},
 	"elements": [

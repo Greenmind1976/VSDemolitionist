@@ -1,13 +1,13 @@
 {
-  "code": "bomb",
+  "code": "bomb-bronze",
   "class": "ItemBomb",
   "creativeinventory": { "general": ["*"] },
   "maxstacksize": 64,
   "attributes": {
     "bomb": {
-      "tier": "copper",
-      "entityCode": "bomb-copper",
-      "iconItemCode": "bombicon-copper",
+      "tier": "bronze",
+      "entityCode": "bomb-bronze",
+      "iconItemCode": "bombicon-bronze",
       "fuseSeconds": 4.0,
       "heldFuseVolume": 2.0,
       "thrownFuseVolume": 1.8,
@@ -23,10 +23,10 @@
       "blastPowerLoss": 0.0
     }
   },
-  "shape": { "base": "vsdemolitionist:item/dynamite-copper" },
+  "shape": { "base": "vsdemolitionist:item/dynamite-bronze" },
 
   "textures": {
-    "default": { "base": "item/dynamite-copper" }
+    "default": { "base": "item/dynamite-bronze" }
   },
 
   "guiTransform": {

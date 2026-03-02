@@ -9,10 +9,28 @@ namespace VSDemolitionist;
 
 public class EntityBomb : Entity
 {
-    private const float FuseSeconds = 4f;
+    private const float DefaultFuseSeconds = 4f;
+    private const float DefaultThrowForwardStrength = 0.40f;
+    private const float DefaultThrowUpwardBoost = 0.10f;
+    private const float DefaultThrownFuseVolume = 1.8f;
+    private const float DefaultBlastRadius = 4f;
+    private const float DefaultBlastDropoff = 1f;
+    private const float DefaultBlastPowerLoss = 0f;
+    private const string BombAttrRoot = "bomb";
 
     private const string AttrLit = "vsd_lit";
     private const string AttrFuseEndMs = "vsd_fuseEndMs";
+    private const string AttrFuseSeconds = "vsd_fuseSeconds";
+    private const string AttrThrowForwardStrength = "vsd_throwForwardStrength";
+    private const string AttrThrowUpwardBoost = "vsd_throwUpwardBoost";
+    private const string AttrThrownFuseVolume = "vsd_thrownFuseVolume";
+    private const string AttrRockBlastRadius = "vsd_rockBlastRadius";
+    private const string AttrOreBlastRadius = "vsd_oreBlastRadius";
+    private const string AttrEntityBlastRadius = "vsd_entityBlastRadius";
+    private const string AttrBlastDropoff = "vsd_blastDropoff";
+    private const string AttrBlastPowerLoss = "vsd_blastPowerLoss";
+    private const string AttrOreDestroyChance = "vsd_oreDestroyChance";
+    private const string AttrCrystalDestroyChance = "vsd_crystalDestroyChance";
 
     private long holderId = -1;
 
@@ -25,9 +43,59 @@ public class EntityBomb : Entity
     private float sparkAccum;
     private float smokeAccum;
 
+    private float GetConfigFloat(string key, float defaultValue)
+    {
+        return WatchedAttributes.GetFloat(key, defaultValue);
+    }
+
+    private static float GetBombFloat(ItemStack? stack, string key, float defaultValue)
+    {
+        return stack?.Collectible?.Attributes?[BombAttrRoot]?[key].AsFloat(defaultValue) ?? defaultValue;
+    }
+
+    private static float Clamp01(float value)
+    {
+        if (value < 0f) return 0f;
+        if (value > 1f) return 1f;
+        return value;
+    }
+
+    private static bool IsOreBlock(Block block)
+    {
+        string path = block?.Code?.Path ?? "";
+        if (path.Length == 0) return false;
+        return path.Contains("ore");
+    }
+
+    private static bool IsCrystalBlock(Block block)
+    {
+        string path = block?.Code?.Path ?? "";
+        if (path.Length == 0) return false;
+        return path.Contains("crystal") || path.Contains("quartz");
+    }
+
+    public void ApplyConfigFromItemstack(ItemStack? stack)
+    {
+        if (World.Side != EnumAppSide.Server || stack == null) return;
+
+        float blastRadius = GetBombFloat(stack, "blastRadius", DefaultBlastRadius);
+
+        WatchedAttributes.SetFloat(AttrFuseSeconds, GetBombFloat(stack, "fuseSeconds", DefaultFuseSeconds));
+        WatchedAttributes.SetFloat(AttrThrowForwardStrength, GetBombFloat(stack, "throwForwardStrength", DefaultThrowForwardStrength));
+        WatchedAttributes.SetFloat(AttrThrowUpwardBoost, GetBombFloat(stack, "throwUpwardBoost", DefaultThrowUpwardBoost));
+        WatchedAttributes.SetFloat(AttrThrownFuseVolume, GetBombFloat(stack, "thrownFuseVolume", DefaultThrownFuseVolume));
+        WatchedAttributes.SetFloat(AttrRockBlastRadius, GetBombFloat(stack, "rockBlastRadius", blastRadius));
+        WatchedAttributes.SetFloat(AttrOreBlastRadius, GetBombFloat(stack, "oreBlastRadius", blastRadius));
+        WatchedAttributes.SetFloat(AttrEntityBlastRadius, GetBombFloat(stack, "entityBlastRadius", blastRadius));
+        WatchedAttributes.SetFloat(AttrBlastDropoff, GetBombFloat(stack, "blastDropoff", DefaultBlastDropoff));
+        WatchedAttributes.SetFloat(AttrBlastPowerLoss, GetBombFloat(stack, "blastPowerLoss", DefaultBlastPowerLoss));
+        WatchedAttributes.SetFloat(AttrOreDestroyChance, Clamp01(GetBombFloat(stack, "oreDestroyChance", 1f)));
+        WatchedAttributes.SetFloat(AttrCrystalDestroyChance, Clamp01(GetBombFloat(stack, "crystalDestroyChance", 1f)));
+    }
+
     public void StartFuse()
     {
-        StartFuseWithRemainingSeconds(FuseSeconds);
+        StartFuseWithRemainingSeconds(GetConfigFloat(AttrFuseSeconds, DefaultFuseSeconds));
     }
 
     public void StartFuseWithRemainingSeconds(float remainingSeconds)
@@ -52,8 +120,8 @@ public void Release(EntityAgent holder)
 
     Vec3f dir = holder.SidedPos.GetViewVector().Normalize();
 
-    double forwardStrength = 0.40;
-    double upwardBoost = 0.10;
+    double forwardStrength = GetConfigFloat(AttrThrowForwardStrength, DefaultThrowForwardStrength);
+    double upwardBoost = GetConfigFloat(AttrThrowUpwardBoost, DefaultThrowUpwardBoost);
 
     // Apply rotation so model faces forward consistently
     ServerPos.Yaw = holder.SidedPos.Yaw;
@@ -155,7 +223,7 @@ public void Release(EntityAgent holder)
                     DisposeOnFinish = false,
                     RelativePosition = false,
                     Range = 32f,
-                    Volume = 1.8f,
+                    Volume = GetConfigFloat(AttrThrownFuseVolume, DefaultThrownFuseVolume),
                     Position = Pos.XYZ.ToVec3f()
                 });
 
@@ -165,7 +233,7 @@ public void Release(EntityAgent holder)
             if (holderId == -1 && fuseSound != null)
             {
                 fuseSound.SetPosition(Pos.XYZ.ToVec3f());
-                fuseSound.SetVolume(1.8f);
+                fuseSound.SetVolume(GetConfigFloat(AttrThrownFuseVolume, DefaultThrownFuseVolume));
             }
 
             double speedSqClient = Pos.Motion.X * Pos.Motion.X + Pos.Motion.Y * Pos.Motion.Y + Pos.Motion.Z * Pos.Motion.Z;
@@ -197,26 +265,67 @@ public void Release(EntityAgent holder)
 
         ICoreServerAPI sapi = (ICoreServerAPI)World.Api;
 
-        EnumBlastType[] blastTypes =
-        {
-            EnumBlastType.RockBlast,
-            EnumBlastType.OreBlast,
-            EnumBlastType.EntityBlast
-        };
+        float rockRadius = GetConfigFloat(AttrRockBlastRadius, DefaultBlastRadius);
+        float oreRadius = GetConfigFloat(AttrOreBlastRadius, DefaultBlastRadius);
+        float entityRadius = GetConfigFloat(AttrEntityBlastRadius, DefaultBlastRadius);
+        float dropoff = GetConfigFloat(AttrBlastDropoff, DefaultBlastDropoff);
+        float powerLoss = GetConfigFloat(AttrBlastPowerLoss, DefaultBlastPowerLoss);
 
-        foreach (EnumBlastType blastType in blastTypes)
+        if (rockRadius > 0f)
         {
-            sapi.World.CreateExplosion(
-                Pos.AsBlockPos,
-                blastType,
-                4f,
-                1f,
-                0f,
-                "explosion"
+            sapi.World.CreateExplosion(Pos.AsBlockPos, EnumBlastType.RockBlast, rockRadius, dropoff, powerLoss, "explosion");
+        }
+
+        if (oreRadius > 0f)
+        {
+            ProcessOreAndCrystalDestruction(
+                oreRadius,
+                Clamp01(GetConfigFloat(AttrOreDestroyChance, 1f)),
+                Clamp01(GetConfigFloat(AttrCrystalDestroyChance, 1f))
             );
         }
 
+        if (entityRadius > 0f)
+        {
+            sapi.World.CreateExplosion(Pos.AsBlockPos, EnumBlastType.EntityBlast, entityRadius, dropoff, powerLoss, "explosion");
+        }
+
         Die(EnumDespawnReason.Removed);
+    }
+
+    private void ProcessOreAndCrystalDestruction(float radius, float oreDestroyChance, float crystalDestroyChance)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        BlockPos center = Pos.AsBlockPos;
+        int r = (int)Math.Ceiling(radius);
+        double radiusSq = radius * radius;
+
+        BlockPos tmp = center.Copy();
+
+        for (int dx = -r; dx <= r; dx++)
+        {
+            for (int dy = -r; dy <= r; dy++)
+            {
+                for (int dz = -r; dz <= r; dz++)
+                {
+                    double distSq = dx * dx + dy * dy + dz * dz;
+                    if (distSq > radiusSq) continue;
+
+                    tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
+                    Block block = blockAccessor.GetBlock(tmp);
+                    if (block == null || block.BlockId == 0) continue;
+
+                    bool isCrystal = IsCrystalBlock(block);
+                    bool isOre = !isCrystal && IsOreBlock(block);
+                    if (!isOre && !isCrystal) continue;
+
+                    float chance = isCrystal ? crystalDestroyChance : oreDestroyChance;
+                    if (World.Rand.NextDouble() > chance) continue;
+
+                    blockAccessor.SetBlock(0, tmp);
+                }
+            }
+        }
     }
 
     public override void OnEntityDespawn(EntityDespawnData despawn)
