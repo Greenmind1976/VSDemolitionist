@@ -19,6 +19,7 @@ public class ItemBomb : Item
     private ILoadedSound? heldFuseSound;
     private bool heldFusePlaying;
     private int heldFusePlaybackId;
+    private ItemSlot? guiIconSlot;
 
     private bool IsIgnitionItem(ItemSlot slot)
     {
@@ -31,6 +32,28 @@ public class ItemBomb : Item
         if (path.Contains("lamp")) return true;
 
         return false;
+    }
+
+    public override void OnBeforeRender(ICoreClientAPI capi, ItemStack itemstack, EnumItemRenderTarget target, ref ItemRenderInfo renderinfo)
+    {
+        base.OnBeforeRender(capi, itemstack, target, ref renderinfo);
+
+        if (target != EnumItemRenderTarget.Gui)
+        {
+            return;
+        }
+
+        Item? iconItem = capi.World.GetItem(new AssetLocation("vsdemolitionist", "bombicon"));
+        if (iconItem == null)
+        {
+            return;
+        }
+
+        guiIconSlot ??= new DummySlot();
+        guiIconSlot.Itemstack = new ItemStack(iconItem, 1);
+
+        ItemRenderInfo iconRender = capi.Render.GetItemStackRenderInfo(guiIconSlot, target, 0);
+        renderinfo = iconRender;
     }
 
     public override void OnHeldInteractStart(
