@@ -159,7 +159,6 @@ public void Release(EntityAgent holder)
 
     public override void OnGameTick(float dt)
     {
-        World.Logger.Warning("[VSD] EntityBomb tick running");
         base.OnGameTick(dt);
 
         // SERVER: stay attached while held
@@ -200,7 +199,6 @@ public void Release(EntityAgent holder)
             long fuseEnd = WatchedAttributes.GetLong(AttrFuseEndMs, 0);
             if (fuseEnd > 0 && World.ElapsedMilliseconds >= fuseEnd)
             {
-                World.Logger.Warning("[VSD] Explode() called at " + World.ElapsedMilliseconds);
                 Explode();
                 return;
             }

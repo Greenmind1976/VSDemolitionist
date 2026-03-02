@@ -17,7 +17,7 @@
   "client": {
     "renderer": "Shape",
     "shape": { "base": "vsdemolitionist:item/dynamite-bronze" },
-    "size": 0.5,
+    "size": 0.42,
     "behaviors": [
       { "code": "passivephysics" },
       { "code": "interpolateposition" }

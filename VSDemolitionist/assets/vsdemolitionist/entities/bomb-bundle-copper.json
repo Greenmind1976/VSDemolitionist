@@ -1,5 +1,5 @@
 {
-  "code": "bomb-titanium",
+  "code": "bomb-bundle-copper",
   "class": "EntityBomb",
   "tags": ["inanimate", "projectile"],
 
@@ -16,8 +16,8 @@
 
   "client": {
     "renderer": "Shape",
-    "shape": { "base": "vsdemolitionist:item/dynamite-titanium" },
-    "size": 0.42,
+    "shape": { "base": "vsdemolitionist:item/dynamite-bundle-copper" },
+    "size": 0.5,
     "behaviors": [
       { "code": "passivephysics" },
       { "code": "interpolateposition" }
