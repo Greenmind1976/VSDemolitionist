@@ -25,5 +25,21 @@
   "item-vsdemolitionist-dynamite-bronze": "Bronze Dynamite",
   "item-vsdemolitionist-dynamite-iron": "Iron Dynamite",
   "item-vsdemolitionist-dynamite-steel": "Steel Dynamite",
-  "item-vsdemolitionist-dynamite-titanium": "Titanium Dynamite"
+  "item-vsdemolitionist-dynamite-titanium": "Titanium Dynamite",
+  "item-vsdemolitionist-bomb-bundle-bronze": "Bronze Bundle Dynamite",
+  "item-vsdemolitionist-item-bomb-bundle-bronze": "Bronze Bundle Dynamite",
+  "item-bomb-bundle-bronze": "Bronze Bundle Dynamite",
+  "item-vsdemolitionist-dynamite-bundle-bronze": "Bronze Bundle Dynamite",
+  "item-vsdemolitionist-bomb-bundle-iron": "Iron Bundle Dynamite",
+  "item-vsdemolitionist-item-bomb-bundle-iron": "Iron Bundle Dynamite",
+  "item-bomb-bundle-iron": "Iron Bundle Dynamite",
+  "item-vsdemolitionist-dynamite-bundle-iron": "Iron Bundle Dynamite",
+  "item-vsdemolitionist-bomb-bundle-steel": "Steel Bundle Dynamite",
+  "item-vsdemolitionist-item-bomb-bundle-steel": "Steel Bundle Dynamite",
+  "item-bomb-bundle-steel": "Steel Bundle Dynamite",
+  "item-vsdemolitionist-dynamite-bundle-steel": "Steel Bundle Dynamite",
+  "item-vsdemolitionist-bomb-bundle-titanium": "Titanium Bundle Dynamite",
+  "item-vsdemolitionist-item-bomb-bundle-titanium": "Titanium Bundle Dynamite",
+  "item-bomb-bundle-titanium": "Titanium Bundle Dynamite",
+  "item-vsdemolitionist-dynamite-bundle-titanium": "Titanium Bundle Dynamite"
 }

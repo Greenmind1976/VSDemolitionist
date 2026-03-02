@@ -1,0 +1,8 @@
+{
+  "code": "bombicon-bundle-steel",
+  "maxstacksize": 64,
+  "texture": {
+    "base": "item/dynamite-bundle-steel-icon"
+  },
+  "creativeinventory": {}
+}

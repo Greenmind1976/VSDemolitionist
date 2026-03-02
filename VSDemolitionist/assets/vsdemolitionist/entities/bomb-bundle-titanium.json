@@ -1,0 +1,49 @@
+{
+  "code": "bomb-bundle-titanium",
+  "class": "EntityBomb",
+  "tags": [
+    "inanimate",
+    "projectile"
+  ],
+  "attributes": {
+    "isProjectile": false,
+    "physics": {
+      "groundDragFactor": 1,
+      "airDragFactor": 0.25
+    }
+  },
+  "hitboxSize": {
+    "x": 0.7,
+    "y": 0.15
+  },
+  "deadHitboxSize": {
+    "x": 0.7,
+    "y": 0.15
+  },
+  "client": {
+    "renderer": "Shape",
+    "shape": {
+      "base": "vsdemolitionist:item/dynamite-bundle-titanium"
+    },
+    "size": 0.5,
+    "behaviors": [
+      {
+        "code": "passivephysics"
+      },
+      {
+        "code": "interpolateposition"
+      }
+    ]
+  },
+  "server": {
+    "behaviors": [
+      {
+        "code": "passivephysics"
+      },
+      {
+        "code": "despawn",
+        "minSeconds": 30
+      }
+    ]
+  }
+}
