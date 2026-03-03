@@ -26,7 +26,7 @@
   "shape": { "base": "vsdemolitionist:item/dynamite-steel" },
 
   "textures": {
-    "default": { "base": "item/dynamite-steel" }
+    "default": { "base": "item/dynamite-steel-icon" }
   },
 
   "guiTransform": {

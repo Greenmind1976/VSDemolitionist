@@ -20,6 +20,7 @@ public class EntityBomb : Entity
 
     private const string AttrLit = "vsd_lit";
     private const string AttrFuseEndMs = "vsd_fuseEndMs";
+    private const string AttrFuseRemainingSeconds = "vsd_fuseRemainingSeconds";
     private const string AttrFuseSeconds = "vsd_fuseSeconds";
     private const string AttrThrowForwardStrength = "vsd_throwForwardStrength";
     private const string AttrThrowUpwardBoost = "vsd_throwUpwardBoost";
@@ -102,9 +103,12 @@ public class EntityBomb : Entity
     {
         if (World.Side != EnumAppSide.Server) return;
 
-        long endMs = World.ElapsedMilliseconds + (long)(Math.Max(0f, remainingSeconds) * 1000);
+        float clampedRemaining = Math.Max(0f, remainingSeconds);
+        long endMs = World.ElapsedMilliseconds + (long)(clampedRemaining * 1000);
 
         WatchedAttributes.SetBool(AttrLit, true);
+        WatchedAttributes.SetFloat(AttrFuseRemainingSeconds, clampedRemaining);
+        // Kept for compatibility with existing entities from older saves.
         WatchedAttributes.SetLong(AttrFuseEndMs, endMs);
     }
 
@@ -196,8 +200,27 @@ public void Release(EntityAgent holder)
                 }
             }
 
-            long fuseEnd = WatchedAttributes.GetLong(AttrFuseEndMs, 0);
-            if (fuseEnd > 0 && World.ElapsedMilliseconds >= fuseEnd)
+            // Persist-safe fuse countdown:
+            // - primary source is remaining seconds in watched attrs
+            // - fallback migrates once from legacy fuseEndMs
+            float remainingFuse = WatchedAttributes.GetFloat(AttrFuseRemainingSeconds, -1f);
+            if (remainingFuse < 0f)
+            {
+                long fuseEnd = WatchedAttributes.GetLong(AttrFuseEndMs, 0);
+                if (fuseEnd > 0)
+                {
+                    remainingFuse = (float)Math.Max(0, (fuseEnd - World.ElapsedMilliseconds) / 1000.0);
+                }
+                else
+                {
+                    remainingFuse = GetConfigFloat(AttrFuseSeconds, DefaultFuseSeconds);
+                }
+            }
+
+            remainingFuse = Math.Max(0f, remainingFuse - dt);
+            WatchedAttributes.SetFloat(AttrFuseRemainingSeconds, remainingFuse);
+
+            if (remainingFuse <= 0f)
             {
                 Explode();
                 return;
@@ -205,12 +228,13 @@ public void Release(EntityAgent holder)
         }
 
         // CLIENT: handle thrown fuse sound/visuals/impacts
-        if (World.Side == EnumAppSide.Client && WatchedAttributes.GetBool(AttrLit))
+        if (World.Side == EnumAppSide.Client)
         {
             ICoreClientAPI? capi = Api as ICoreClientAPI;
             if (capi == null) return;
+            bool isLit = WatchedAttributes.GetBool(AttrLit);
 
-            if (holderId == -1 && !soundStarted)
+            if (isLit && holderId == -1 && !soundStarted)
             {
                 soundStarted = true;
 
@@ -228,21 +252,29 @@ public void Release(EntityAgent holder)
                 fuseSound?.Start();
             }
 
-            if (holderId == -1 && fuseSound != null)
+            if (isLit && holderId == -1 && fuseSound != null)
             {
                 fuseSound.SetPosition(Pos.XYZ.ToVec3f());
                 fuseSound.SetVolume(GetConfigFloat(AttrThrownFuseVolume, DefaultThrownFuseVolume));
             }
+            else if (fuseSound != null)
+            {
+                // Defensive cleanup to avoid lingering loop if state changes while entity remains loaded.
+                fuseSound.Stop();
+                fuseSound.Dispose();
+                fuseSound = null;
+                soundStarted = false;
+            }
 
             double speedSqClient = Pos.Motion.X * Pos.Motion.X + Pos.Motion.Y * Pos.Motion.Y + Pos.Motion.Z * Pos.Motion.Z;
 
-            if (holderId == -1)
+            if (isLit && holderId == -1)
             {
                 SpawnFuseSparks(capi, dt);
             }
 
             // CLIENT: play one-shot impact when a thrown bomb first contacts a surface.
-            if (!impactPlayedClient && holderId == -1)
+            if (isLit && !impactPlayedClient && holderId == -1)
             {
                 if (!airborneClient && speedSqClient > 0.02 * 0.02)
                 {

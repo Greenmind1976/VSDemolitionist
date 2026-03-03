@@ -32,7 +32,7 @@
   },
   "textures": {
     "default": {
-      "base": "item/dynamite-titanium"
+      "base": "item/dynamite-titanium-icon"
     }
   },
   "guiTransform": {

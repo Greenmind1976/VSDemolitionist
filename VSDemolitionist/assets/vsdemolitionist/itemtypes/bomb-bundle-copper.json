@@ -26,7 +26,7 @@
   "shape": { "base": "vsdemolitionist:item/dynamite-bundle-copper" },
 
   "textures": {
-    "default": { "base": "item/dynamite-copper" }
+    "default": { "base": "item/dynamite-copper-icon" }
   },
 
   "guiTransform": {
