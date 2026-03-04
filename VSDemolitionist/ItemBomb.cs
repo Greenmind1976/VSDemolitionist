@@ -316,6 +316,7 @@ public class ItemBomb : Item
         if (entity is EntityBomb bomb)
         {
             bomb.ApplyConfigFromItemstack(slot.Itemstack);
+            bomb.SetThrower(byEntity);
             bomb.StartFuseWithRemainingSeconds(remainingFuse);
             if (allowThrow && remainingFuse > 0.001f)
             {

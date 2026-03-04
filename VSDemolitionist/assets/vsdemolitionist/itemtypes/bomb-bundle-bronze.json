@@ -17,14 +17,17 @@
       "thrownFuseVolume": 1.8,
       "throwForwardStrength": 0.4,
       "throwUpwardBoost": 0.1,
-      "blastRadius": 10.0,
-      "rockBlastRadius": 10.0,
-      "oreBlastRadius": 10.0,
-      "entityBlastRadius": 10.0,
-      "oreDestroyChance": 1.0,
-      "crystalDestroyChance": 1.0,
-      "blastDropoff": 1.0,
-      "blastPowerLoss": 0.0
+      "blastType": "ore",
+      "blastShape": "disc",
+      "blastVerticalRadius": 1.5,
+      "blastRadius": 7.5,
+      "rockBlastRadius": 7.5,
+      "oreBlastRadius": 7.5,
+      "entityBlastRadius": 6.5,
+      "oreDestroyChance": 0.5,
+      "crystalDestroyChance": 0.8,
+      "blastDropoff": 0.95,
+      "blastPowerLoss": 0.1
     }
   },
   "shape": {

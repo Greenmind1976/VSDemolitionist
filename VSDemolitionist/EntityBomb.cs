@@ -4,11 +4,65 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Client;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.API.Config;
+using System.Collections.Generic;
 
 namespace VSDemolitionist;
 
 public class EntityBomb : Entity
 {
+    private readonly struct ResourceDestructionStats
+    {
+        public readonly int OreTotal;
+        public readonly int OreDestroyed;
+        public readonly int OrePreserved;
+        public readonly int CrystalTotal;
+        public readonly int CrystalDestroyed;
+        public readonly int CrystalPreserved;
+
+        public ResourceDestructionStats(
+            int oreTotal,
+            int oreDestroyed,
+            int orePreserved,
+            int crystalTotal,
+            int crystalDestroyed,
+            int crystalPreserved)
+        {
+            OreTotal = oreTotal;
+            OreDestroyed = oreDestroyed;
+            OrePreserved = orePreserved;
+            CrystalTotal = crystalTotal;
+            CrystalDestroyed = crystalDestroyed;
+            CrystalPreserved = crystalPreserved;
+        }
+    }
+
+    private readonly struct TrackedSolidBlock
+    {
+        public readonly BlockPos Pos;
+        public readonly int BlockId;
+
+        public TrackedSolidBlock(BlockPos pos, int blockId)
+        {
+            Pos = pos;
+            BlockId = blockId;
+        }
+    }
+
+    private readonly struct TrackedResourceBlock
+    {
+        public readonly BlockPos Pos;
+        public readonly int BlockId;
+        public readonly bool IsCrystal;
+
+        public TrackedResourceBlock(BlockPos pos, int blockId, bool isCrystal)
+        {
+            Pos = pos;
+            BlockId = blockId;
+            IsCrystal = isCrystal;
+        }
+    }
+
     private const float DefaultFuseSeconds = 4f;
     private const float DefaultThrowForwardStrength = 0.40f;
     private const float DefaultThrowUpwardBoost = 0.10f;
@@ -16,6 +70,8 @@ public class EntityBomb : Entity
     private const float DefaultBlastRadius = 4f;
     private const float DefaultBlastDropoff = 1f;
     private const float DefaultBlastPowerLoss = 0f;
+    private const string DefaultBlastShape = "sphere";
+    private const int MaxManualBlockChanges = 10000;
     private const string BombAttrRoot = "bomb";
 
     private const string AttrLit = "vsd_lit";
@@ -30,8 +86,15 @@ public class EntityBomb : Entity
     private const string AttrEntityBlastRadius = "vsd_entityBlastRadius";
     private const string AttrBlastDropoff = "vsd_blastDropoff";
     private const string AttrBlastPowerLoss = "vsd_blastPowerLoss";
+    private const string AttrBlastShape = "vsd_blastShape";
+    private const string AttrBlastVerticalRadius = "vsd_blastVerticalRadius";
+    private const string AttrBlockBlastType = "vsd_blockBlastType";
+    private const string AttrBombTier = "vsd_bombTier";
     private const string AttrOreDestroyChance = "vsd_oreDestroyChance";
     private const string AttrCrystalDestroyChance = "vsd_crystalDestroyChance";
+    private const string AttrThrowerPlayerUid = "vsd_throwerPlayerUid";
+
+    private static readonly HashSet<string> DebugBlastReportUids = new();
 
     private long holderId = -1;
 
@@ -54,11 +117,25 @@ public class EntityBomb : Entity
         return stack?.Collectible?.Attributes?[BombAttrRoot]?[key].AsFloat(defaultValue) ?? defaultValue;
     }
 
+    private static string GetBombString(ItemStack? stack, string key, string defaultValue)
+    {
+        return stack?.Collectible?.Attributes?[BombAttrRoot]?[key].AsString(defaultValue) ?? defaultValue;
+    }
+
     private static float Clamp01(float value)
     {
         if (value < 0f) return 0f;
         if (value > 1f) return 1f;
         return value;
+    }
+
+    private static EnumBlastType ParseBlockBlastType(string blastType)
+    {
+        return blastType?.Trim().ToLowerInvariant() switch
+        {
+            "ore" or "oreblast" => EnumBlastType.OreBlast,
+            _ => EnumBlastType.RockBlast
+        };
     }
 
     private static bool IsOreBlock(Block block)
@@ -90,8 +167,12 @@ public class EntityBomb : Entity
         WatchedAttributes.SetFloat(AttrEntityBlastRadius, GetBombFloat(stack, "entityBlastRadius", blastRadius));
         WatchedAttributes.SetFloat(AttrBlastDropoff, GetBombFloat(stack, "blastDropoff", DefaultBlastDropoff));
         WatchedAttributes.SetFloat(AttrBlastPowerLoss, GetBombFloat(stack, "blastPowerLoss", DefaultBlastPowerLoss));
+        WatchedAttributes.SetString(AttrBlastShape, GetBombString(stack, "blastShape", DefaultBlastShape));
+        WatchedAttributes.SetFloat(AttrBlastVerticalRadius, GetBombFloat(stack, "blastVerticalRadius", blastRadius));
         WatchedAttributes.SetFloat(AttrOreDestroyChance, Clamp01(GetBombFloat(stack, "oreDestroyChance", 1f)));
         WatchedAttributes.SetFloat(AttrCrystalDestroyChance, Clamp01(GetBombFloat(stack, "crystalDestroyChance", 1f)));
+        WatchedAttributes.SetInt(AttrBlockBlastType, (int)ParseBlockBlastType(GetBombString(stack, "blastType", "rock")));
+        WatchedAttributes.SetString(AttrBombTier, GetBombString(stack, "tier", stack.Collectible?.Code?.Path ?? "unknown"));
     }
 
     public void StartFuse()
@@ -116,6 +197,15 @@ public class EntityBomb : Entity
     {
         holderId = holder.EntityId;
         TeleportToHolder(holder);
+    }
+
+    public void SetThrower(EntityAgent thrower)
+    {
+        if (World.Side != EnumAppSide.Server) return;
+        if (thrower is EntityPlayer player)
+        {
+            WatchedAttributes.SetString(AttrThrowerPlayerUid, player.PlayerUID);
+        }
     }
 
 public void Release(EntityAgent holder)
@@ -298,37 +388,88 @@ public void Release(EntityAgent holder)
         float rockRadius = GetConfigFloat(AttrRockBlastRadius, DefaultBlastRadius);
         float oreRadius = GetConfigFloat(AttrOreBlastRadius, DefaultBlastRadius);
         float entityRadius = GetConfigFloat(AttrEntityBlastRadius, DefaultBlastRadius);
-        float dropoff = GetConfigFloat(AttrBlastDropoff, DefaultBlastDropoff);
         float powerLoss = GetConfigFloat(AttrBlastPowerLoss, DefaultBlastPowerLoss);
-
-        if (rockRadius > 0f)
+        float verticalRadius = Math.Max(0.1f, GetConfigFloat(AttrBlastVerticalRadius, rockRadius));
+        string blastShape = WatchedAttributes.GetString(AttrBlastShape, DefaultBlastShape)?.Trim().ToLowerInvariant() ?? DefaultBlastShape;
+        bool isDiscBlast = blastShape == "disc" || blastShape == "flat";
+        EnumBlastType blockBlastType = (EnumBlastType)WatchedAttributes.GetInt(AttrBlockBlastType, (int)EnumBlastType.RockBlast);
+        string ignitedByPlayerUid = WatchedAttributes.GetString(AttrThrowerPlayerUid);
+        IServerPlayer? throwerPlayer = null;
+        if (!string.IsNullOrWhiteSpace(ignitedByPlayerUid))
         {
-            sapi.World.CreateExplosion(Pos.AsBlockPos, EnumBlastType.RockBlast, rockRadius, dropoff, powerLoss, "explosion");
+            throwerPlayer = sapi.World.PlayerByUid(ignitedByPlayerUid) as IServerPlayer;
+        }
+        bool debugEnabled = throwerPlayer != null && IsDebugBlastReportEnabled(throwerPlayer.PlayerUID);
+        List<TrackedSolidBlock>? preSnapshot = null;
+        if (debugEnabled)
+        {
+            preSnapshot = isDiscBlast
+                ? CaptureSolidBlocksEllipsoid(rockRadius, verticalRadius)
+                : CaptureSolidBlocksSphere(rockRadius);
         }
 
+        List<TrackedResourceBlock>? trackedResources = null;
         if (oreRadius > 0f)
         {
-            ProcessOreAndCrystalDestruction(
-                oreRadius,
+            trackedResources = isDiscBlast
+                ? CollectResourceBlocksEllipsoid(oreRadius, verticalRadius)
+                : CollectResourceBlocksSphere(oreRadius);
+        }
+
+        if (isDiscBlast && rockRadius > 0f)
+        {
+            ClearNonResourceBlocksEllipsoid(rockRadius, verticalRadius);
+
+            // Keep one explosion event for damage/sound, but no spherical terrain crater.
+            sapi.World.CreateExplosion(
+                Pos.AsBlockPos,
+                EnumBlastType.EntityBlast,
+                0,
+                entityRadius,
+                powerLoss,
+                string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
+            );
+        }
+        else if (rockRadius > 0f)
+        {
+            sapi.World.CreateExplosion(
+                Pos.AsBlockPos,
+                blockBlastType,
+                rockRadius,
+                entityRadius,
+                powerLoss,
+                string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
+            );
+        }
+
+        ResourceDestructionStats? stats = null;
+        if (trackedResources != null && trackedResources.Count > 0)
+        {
+            stats = ApplyResourceDestruction(
+                trackedResources,
+                throwerPlayer,
                 Clamp01(GetConfigFloat(AttrOreDestroyChance, 1f)),
                 Clamp01(GetConfigFloat(AttrCrystalDestroyChance, 1f))
             );
         }
 
-        if (entityRadius > 0f)
+        if (throwerPlayer != null && debugEnabled)
         {
-            sapi.World.CreateExplosion(Pos.AsBlockPos, EnumBlastType.EntityBlast, entityRadius, dropoff, powerLoss, "explosion");
+            int destroyedBlocks = preSnapshot == null ? -1 : CountDestroyedBlocks(preSnapshot);
+            SendBlastReport(throwerPlayer, blockBlastType, rockRadius, oreRadius, entityRadius, stats, destroyedBlocks);
+            LogBlastReport(throwerPlayer, blockBlastType, rockRadius, oreRadius, entityRadius, stats, destroyedBlocks);
         }
 
         Die(EnumDespawnReason.Removed);
     }
 
-    private void ProcessOreAndCrystalDestruction(float radius, float oreDestroyChance, float crystalDestroyChance)
+    private List<TrackedResourceBlock> CollectResourceBlocksSphere(float radius)
     {
         IBlockAccessor blockAccessor = World.BlockAccessor;
         BlockPos center = Pos.AsBlockPos;
         int r = (int)Math.Ceiling(radius);
         double radiusSq = radius * radius;
+        List<TrackedResourceBlock> tracked = new();
 
         BlockPos tmp = center.Copy();
 
@@ -349,12 +490,276 @@ public void Release(EntityAgent holder)
                     bool isOre = !isCrystal && IsOreBlock(block);
                     if (!isOre && !isCrystal) continue;
 
-                    float chance = isCrystal ? crystalDestroyChance : oreDestroyChance;
-                    if (World.Rand.NextDouble() > chance) continue;
-
-                    blockAccessor.SetBlock(0, tmp);
+                    tracked.Add(new TrackedResourceBlock(tmp.Copy(), block.BlockId, isCrystal));
                 }
             }
+        }
+
+        return tracked;
+    }
+
+    private List<TrackedResourceBlock> CollectResourceBlocksEllipsoid(float horizontalRadius, float verticalRadius)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        BlockPos center = Pos.AsBlockPos;
+        int hr = (int)Math.Ceiling(horizontalRadius);
+        int vr = (int)Math.Ceiling(verticalRadius);
+        List<TrackedResourceBlock> tracked = new();
+        BlockPos tmp = center.Copy();
+
+        double invHSq = 1.0 / Math.Max(0.0001, horizontalRadius * horizontalRadius);
+        double invVSq = 1.0 / Math.Max(0.0001, verticalRadius * verticalRadius);
+
+        for (int dx = -hr; dx <= hr; dx++)
+        {
+            for (int dy = -vr; dy <= vr; dy++)
+            {
+                for (int dz = -hr; dz <= hr; dz++)
+                {
+                    double norm = (dx * dx + dz * dz) * invHSq + (dy * dy) * invVSq;
+                    if (norm > 1.0) continue;
+
+                    tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
+                    Block block = blockAccessor.GetBlock(tmp);
+                    if (block == null || block.BlockId == 0) continue;
+
+                    bool isCrystal = IsCrystalBlock(block);
+                    bool isOre = !isCrystal && IsOreBlock(block);
+                    if (!isOre && !isCrystal) continue;
+
+                    tracked.Add(new TrackedResourceBlock(tmp.Copy(), block.BlockId, isCrystal));
+                }
+            }
+        }
+
+        return tracked;
+    }
+
+    private void ClearNonResourceBlocksEllipsoid(float horizontalRadius, float verticalRadius)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        BlockPos center = Pos.AsBlockPos;
+        int hr = (int)Math.Ceiling(horizontalRadius);
+        int vr = (int)Math.Ceiling(verticalRadius);
+        BlockPos tmp = center.Copy();
+        int cleared = 0;
+
+        double invHSq = 1.0 / Math.Max(0.0001, horizontalRadius * horizontalRadius);
+        double invVSq = 1.0 / Math.Max(0.0001, verticalRadius * verticalRadius);
+
+        for (int dx = -hr; dx <= hr; dx++)
+        {
+            for (int dy = -vr; dy <= vr; dy++)
+            {
+                for (int dz = -hr; dz <= hr; dz++)
+                {
+                    if (cleared >= MaxManualBlockChanges) return;
+
+                    double norm = (dx * dx + dz * dz) * invHSq + (dy * dy) * invVSq;
+                    if (norm > 1.0) continue;
+
+                    tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
+                    Block block = blockAccessor.GetBlock(tmp);
+                    if (block == null || block.BlockId == 0) continue;
+                    if (IsOreBlock(block) || IsCrystalBlock(block)) continue;
+
+                    blockAccessor.SetBlock(0, tmp);
+                    cleared++;
+                }
+            }
+        }
+    }
+
+    private ResourceDestructionStats ApplyResourceDestruction(List<TrackedResourceBlock> trackedResources, IPlayer? byPlayer, float oreDestroyChance, float crystalDestroyChance)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        int oreTotal = 0;
+        int oreDestroyed = 0;
+        int orePreserved = 0;
+        int crystalTotal = 0;
+        int crystalDestroyed = 0;
+        int crystalPreserved = 0;
+
+        foreach (TrackedResourceBlock tracked in trackedResources)
+        {
+            if (tracked.IsCrystal) crystalTotal++;
+            else oreTotal++;
+
+            float chance = tracked.IsCrystal ? crystalDestroyChance : oreDestroyChance;
+            bool shouldDestroy = World.Rand.NextDouble() <= chance;
+            if (shouldDestroy)
+            {
+                // Vaporize: remove block with no drops.
+                blockAccessor.SetBlock(0, tracked.Pos);
+                if (tracked.IsCrystal) crystalDestroyed++;
+                else oreDestroyed++;
+            }
+            else
+            {
+                // Preserve with drops: ensure original ore/crystal exists, then break it normally.
+                Block current = blockAccessor.GetBlock(tracked.Pos);
+                if (current == null || current.BlockId != tracked.BlockId)
+                {
+                    blockAccessor.SetBlock(tracked.BlockId, tracked.Pos);
+                }
+
+                blockAccessor.BreakBlock(tracked.Pos, byPlayer);
+                if (tracked.IsCrystal) crystalPreserved++;
+                else orePreserved++;
+            }
+        }
+
+        return new ResourceDestructionStats(
+            oreTotal,
+            oreDestroyed,
+            orePreserved,
+            crystalTotal,
+            crystalDestroyed,
+            crystalPreserved
+        );
+    }
+
+    private void SendBlastReport(
+        IServerPlayer byPlayer,
+        EnumBlastType blockBlastType,
+        float rockRadius,
+        float oreRadius,
+        float entityRadius,
+        ResourceDestructionStats? stats,
+        int destroyedBlocks)
+    {
+        ResourceDestructionStats s = stats ?? new ResourceDestructionStats(0, 0, 0, 0, 0, 0);
+        float orePct = s.OreTotal > 0 ? (100f * s.OreDestroyed / s.OreTotal) : 0f;
+        float crystalPct = s.CrystalTotal > 0 ? (100f * s.CrystalDestroyed / s.CrystalTotal) : 0f;
+        string bombTier = WatchedAttributes.GetString(AttrBombTier, "unknown");
+        string destroyedStr = destroyedBlocks >= 0 ? destroyedBlocks.ToString() : "?";
+        string msg = $"[VSD] {bombTier} blast={blockBlastType} blocksDestroyed={destroyedStr} rock={rockRadius:0.0} ore={oreRadius:0.0} entity={entityRadius:0.0} | " +
+                     $"Ore total={s.OreTotal} destroyed={s.OreDestroyed} ({orePct:0.#}%) preserved={s.OrePreserved} | " +
+                     $"Crystal total={s.CrystalTotal} destroyed={s.CrystalDestroyed} ({crystalPct:0.#}%) preserved={s.CrystalPreserved}";
+
+        byPlayer.SendMessage(GlobalConstants.GeneralChatGroup, msg, EnumChatType.Notification);
+    }
+
+    private void LogBlastReport(
+        IServerPlayer byPlayer,
+        EnumBlastType blockBlastType,
+        float rockRadius,
+        float oreRadius,
+        float entityRadius,
+        ResourceDestructionStats? stats,
+        int destroyedBlocks)
+    {
+        ResourceDestructionStats s = stats ?? new ResourceDestructionStats(0, 0, 0, 0, 0, 0);
+        float orePct = s.OreTotal > 0 ? (100f * s.OreDestroyed / s.OreTotal) : 0f;
+        float crystalPct = s.CrystalTotal > 0 ? (100f * s.CrystalDestroyed / s.CrystalTotal) : 0f;
+        string bombTier = WatchedAttributes.GetString(AttrBombTier, "unknown");
+        string destroyedStr = destroyedBlocks >= 0 ? destroyedBlocks.ToString() : "?";
+        string msg = $"[VSD-DEBUG] player={byPlayer.PlayerName} uid={byPlayer.PlayerUID} bomb={bombTier} blast={blockBlastType} " +
+                     $"blocksDestroyed={destroyedStr} rock={rockRadius:0.0} ore={oreRadius:0.0} entity={entityRadius:0.0} " +
+                     $"oreDestroyed={s.OreDestroyed}/{s.OreTotal} ({orePct:0.#}%) crystalDestroyed={s.CrystalDestroyed}/{s.CrystalTotal} ({crystalPct:0.#}%)";
+
+        World.Api?.Logger?.Notification(msg);
+    }
+
+    public static bool IsDebugBlastReportEnabled(string playerUid)
+    {
+        if (string.IsNullOrWhiteSpace(playerUid)) return false;
+        lock (DebugBlastReportUids)
+        {
+            return DebugBlastReportUids.Contains(playerUid);
+        }
+    }
+
+    private List<TrackedSolidBlock> CaptureSolidBlocksSphere(float radius)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        BlockPos center = Pos.AsBlockPos;
+        int r = (int)Math.Ceiling(radius);
+        double radiusSq = radius * radius;
+        List<TrackedSolidBlock> tracked = new();
+        BlockPos tmp = center.Copy();
+
+        for (int dx = -r; dx <= r; dx++)
+        {
+            for (int dy = -r; dy <= r; dy++)
+            {
+                for (int dz = -r; dz <= r; dz++)
+                {
+                    if (tracked.Count >= MaxManualBlockChanges) return tracked;
+
+                    double distSq = dx * dx + dy * dy + dz * dz;
+                    if (distSq > radiusSq) continue;
+
+                    tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
+                    Block block = blockAccessor.GetBlock(tmp);
+                    if (block == null || block.BlockId == 0) continue;
+                    tracked.Add(new TrackedSolidBlock(tmp.Copy(), block.BlockId));
+                }
+            }
+        }
+
+        return tracked;
+    }
+
+    private List<TrackedSolidBlock> CaptureSolidBlocksEllipsoid(float horizontalRadius, float verticalRadius)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        BlockPos center = Pos.AsBlockPos;
+        int hr = (int)Math.Ceiling(horizontalRadius);
+        int vr = (int)Math.Ceiling(verticalRadius);
+        List<TrackedSolidBlock> tracked = new();
+        BlockPos tmp = center.Copy();
+
+        double invHSq = 1.0 / Math.Max(0.0001, horizontalRadius * horizontalRadius);
+        double invVSq = 1.0 / Math.Max(0.0001, verticalRadius * verticalRadius);
+
+        for (int dx = -hr; dx <= hr; dx++)
+        {
+            for (int dy = -vr; dy <= vr; dy++)
+            {
+                for (int dz = -hr; dz <= hr; dz++)
+                {
+                    if (tracked.Count >= MaxManualBlockChanges) return tracked;
+
+                    double norm = (dx * dx + dz * dz) * invHSq + (dy * dy) * invVSq;
+                    if (norm > 1.0) continue;
+
+                    tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
+                    Block block = blockAccessor.GetBlock(tmp);
+                    if (block == null || block.BlockId == 0) continue;
+                    tracked.Add(new TrackedSolidBlock(tmp.Copy(), block.BlockId));
+                }
+            }
+        }
+
+        return tracked;
+    }
+
+    private int CountDestroyedBlocks(List<TrackedSolidBlock> preSnapshot)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        int destroyed = 0;
+
+        foreach (TrackedSolidBlock tracked in preSnapshot)
+        {
+            Block block = blockAccessor.GetBlock(tracked.Pos);
+            if (block == null || block.BlockId == 0)
+            {
+                destroyed++;
+            }
+        }
+
+        return destroyed;
+    }
+
+    public static bool SetDebugBlastReportEnabled(string playerUid, bool enabled)
+    {
+        if (string.IsNullOrWhiteSpace(playerUid)) return false;
+        lock (DebugBlastReportUids)
+        {
+            if (enabled) DebugBlastReportUids.Add(playerUid);
+            else DebugBlastReportUids.Remove(playerUid);
+            return enabled;
         }
     }
 
@@ -391,8 +796,10 @@ public void Release(EntityAgent holder)
     {
         sparkAccum += dt;
         smokeAccum += dt;
-        bool spawnSparks = sparkAccum >= 0.02f;
-        bool spawnSmoke = smokeAccum >= 0.03f;
+        // Keep fuse visuals lightweight to avoid overloading client render pipeline,
+        // especially when multiple particle-heavy mods are active.
+        bool spawnSparks = sparkAccum >= 0.06f;
+        bool spawnSmoke = smokeAccum >= 0.11f;
         if (!spawnSparks && !spawnSmoke) return;
 
         // Fuse tip anchor derived from model element "cube":
@@ -411,15 +818,15 @@ public void Release(EntityAgent holder)
             sparkAccum = 0f;
             Vec3d sparkPos = fusePos.AddCopy(0, 0.03125, 0);
             capi.World.SpawnParticles(
-                1.4f,
+                0.35f,
                 unchecked((int)0xFFFFB347),
                 sparkPos.AddCopy(-0.004, -0.004, -0.004),
                 sparkPos.AddCopy(0.004, 0.004, 0.004),
                 new Vec3f(-0.03f, 0.02f, -0.03f),
                 new Vec3f(0.03f, 0.14f, 0.03f),
-                0.18f,
+                0.12f,
                 0f,
-                0.06f,
+                0.03f,
                 EnumParticleModel.Quad,
                 null
             );
@@ -429,15 +836,15 @@ public void Release(EntityAgent holder)
         {
             smokeAccum = 0f;
             capi.World.SpawnParticles(
-                2.2f,
+                0.45f,
                 unchecked((int)0xEE666666),
                 fusePos.AddCopy(-0.005, -0.005, -0.005),
                 fusePos.AddCopy(0.005, 0.005, 0.005),
                 new Vec3f(-0.015f, 0.04f, -0.015f),
                 new Vec3f(0.015f, 0.11f, 0.015f),
-                0.7f,
+                0.36f,
                 -0.01f,
-                0.14f,
+                0.05f,
                 EnumParticleModel.Quad,
                 null
             );

@@ -1,7 +1,11 @@
 {
   "code": "bomb-bundle-copper",
   "class": "ItemBomb",
-  "creativeinventory": { "general": ["*"] },
+  "creativeinventory": {
+    "general": [
+      "*"
+    ]
+  },
   "maxstacksize": 64,
   "attributes": {
     "bomb": {
@@ -11,40 +15,81 @@
       "fuseSeconds": 4.0,
       "heldFuseVolume": 3.2,
       "thrownFuseVolume": 1.8,
-      "throwForwardStrength": 0.40,
-      "throwUpwardBoost": 0.10,
-      "blastRadius": 10.0,
-      "rockBlastRadius": 10.0,
-      "oreBlastRadius": 10.0,
-      "entityBlastRadius": 10.0,
-      "oreDestroyChance": 1.0,
+      "throwForwardStrength": 0.4,
+      "throwUpwardBoost": 0.1,
+      "blastType": "ore",
+      "blastShape": "disc",
+      "blastVerticalRadius": 1.5,
+      "blastRadius": 7.0,
+      "rockBlastRadius": 7.0,
+      "oreBlastRadius": 7.0,
+      "entityBlastRadius": 6.0,
+      "oreDestroyChance": 0.6,
       "crystalDestroyChance": 1.0,
       "blastDropoff": 1.0,
-      "blastPowerLoss": 0.0
+      "blastPowerLoss": 0.08
     }
   },
-  "shape": { "base": "vsdemolitionist:item/dynamite-bundle-copper" },
-
-  "textures": {
-    "default": { "base": "item/dynamite-copper-icon" }
+  "shape": {
+    "base": "vsdemolitionist:item/dynamite-bundle-copper"
   },
-
+  "textures": {
+    "default": {
+      "base": "item/dynamite-copper-icon"
+    }
+  },
   "guiTransform": {
-    "translation": { "x": 0.02, "y": -0.24, "z": 0 },
-    "rotation": { "x": 4, "y": 136, "z": -52 },
-    "origin": { "x": 0.56, "y": 0.42, "z": 0.5 },
+    "translation": {
+      "x": 0.02,
+      "y": -0.24,
+      "z": 0
+    },
+    "rotation": {
+      "x": 4,
+      "y": 136,
+      "z": -52
+    },
+    "origin": {
+      "x": 0.56,
+      "y": 0.42,
+      "z": 0.5
+    },
     "scale": 1.7
   },
   "fpHandTransform": {
-    "translation": { "x": 0.1, "y": -0.02, "z": 0.04 },
-    "rotation": { "x": 94, "y": 90, "z": -34 },
-    "origin": { "x": 0.5, "y": 0.5, "z": 0.5 },
+    "translation": {
+      "x": 0.1,
+      "y": -0.02,
+      "z": 0.04
+    },
+    "rotation": {
+      "x": 94,
+      "y": 90,
+      "z": -34
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.5,
+      "z": 0.5
+    },
     "scale": 1.18
   },
   "tpHandTransform": {
-    "translation": { "x": -1.45, "y": 0.15, "z": -1.05 },
-    "rotation": { "x": 2, "y": -16, "z": 16 },
-    "origin": { "x": 0.5, "y": 0, "z": 0.5 },
+    "translation": {
+      "x": -1.45,
+      "y": 0.15,
+      "z": -1.05
+    },
+    "rotation": {
+      "x": 2,
+      "y": -16,
+      "z": 16
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
     "scale": 0.5
   }
 }
