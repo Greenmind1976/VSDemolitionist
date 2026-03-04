@@ -10,7 +10,7 @@
   "attributes": {
     "bomb": {
       "tier": "sticky-steel",
-      "entityCode": "bomb-steel",
+      "entityCode": "bomb-sticky-steel",
       "iconItemCode": "bombicon-sticky-steel",
       "isSticky": true,
       "lightTime": 1.25,
@@ -31,7 +31,7 @@
     }
   },
   "shape": {
-    "base": "vsdemolitionist:item/dynamite-steel"
+    "base": "vsdemolitionist:item/dynamite-steel-sticky"
   },
   "textures": {
     "default": {

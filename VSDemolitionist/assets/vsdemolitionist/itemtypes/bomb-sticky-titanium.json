@@ -10,7 +10,7 @@
   "attributes": {
     "bomb": {
       "tier": "sticky-titanium",
-      "entityCode": "bomb-titanium",
+      "entityCode": "bomb-sticky-titanium",
       "iconItemCode": "bombicon-sticky-titanium",
       "isSticky": true,
       "lightTime": 1.25,
@@ -31,7 +31,7 @@
     }
   },
   "shape": {
-    "base": "vsdemolitionist:item/dynamite-titanium"
+    "base": "vsdemolitionist:item/dynamite-titanium-sticky"
   },
   "textures": {
     "default": {

@@ -10,7 +10,7 @@
   "attributes": {
     "bomb": {
       "tier": "sticky-copper",
-      "entityCode": "bomb-copper",
+      "entityCode": "bomb-sticky-copper",
       "iconItemCode": "bombicon-sticky-copper",
       "isSticky": true,
       "fuseSeconds": 4.0,
@@ -30,7 +30,7 @@
     }
   },
   "shape": {
-    "base": "vsdemolitionist:item/dynamite-copper"
+    "base": "vsdemolitionist:item/dynamite-copper-sticky"
   },
   "textures": {
     "default": {

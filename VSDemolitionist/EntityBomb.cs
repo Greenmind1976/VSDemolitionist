@@ -73,7 +73,7 @@ public class EntityBomb : Entity
     private const string DefaultBlastShape = "sphere";
     private const int MaxManualBlockChanges = 10000;
     private const string BombAttrRoot = "bomb";
-    private const string StaticStickyEntityCode = "bombstuck";
+    private const string DefaultStaticStickyEntityCode = "bombstuck";
 
     private const string AttrLit = "vsd_lit";
     private const string AttrFuseEndMs = "vsd_fuseEndMs";
@@ -286,7 +286,8 @@ public void Release(EntityAgent holder)
 
     private bool IsStaticStickyEntity()
     {
-        return Properties?.Code?.Path == StaticStickyEntityCode;
+        string path = Properties?.Code?.Path ?? "";
+        return path == DefaultStaticStickyEntityCode || path.StartsWith("bombstuck-");
     }
 
     private void CopyFuseAndConfigTo(EntityBomb other)
@@ -318,7 +319,14 @@ public void Release(EntityAgent holder)
         if (World.Side != EnumAppSide.Server) return false;
         if (IsStaticStickyEntity()) return false;
 
-        EntityProperties staticType = World.GetEntityType(new AssetLocation("vsdemolitionist", StaticStickyEntityCode));
+        string currentCode = Properties?.Code?.Path ?? "";
+        string staticCode = DefaultStaticStickyEntityCode;
+        if (currentCode.StartsWith("bomb-sticky-"))
+        {
+            staticCode = "bombstuck-sticky-" + currentCode["bomb-sticky-".Length..];
+        }
+
+        EntityProperties staticType = World.GetEntityType(new AssetLocation("vsdemolitionist", staticCode));
         if (staticType == null) return false;
 
         Entity entity = World.ClassRegistry.CreateEntity(staticType);
