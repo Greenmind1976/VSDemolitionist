@@ -44,6 +44,11 @@ public class ItemBomb : Item
         return stack?.Collectible?.Attributes?[BombAttrRoot]?[key].AsString(defaultValue) ?? defaultValue;
     }
 
+    private bool GetBombBool(ItemStack? stack, string key, bool defaultValue)
+    {
+        return stack?.Collectible?.Attributes?[BombAttrRoot]?[key].AsBool(defaultValue) ?? defaultValue;
+    }
+
     private static AssetLocation ResolveModAsset(string code)
     {
         if (code.Contains(":")) return new AssetLocation(code);
@@ -147,7 +152,7 @@ public class ItemBomb : Item
 
             if (byEntity.World.Side == EnumAppSide.Server)
             {
-                SpawnBombFromLitState(slot, byEntity, allowThrow: false);
+                SpawnBombFromLitState(slot, byEntity, allowThrow: false, targetBlockSel: null);
             }
 
             return false;
@@ -183,7 +188,7 @@ public class ItemBomb : Item
 
         if (byEntity.World.Side == EnumAppSide.Server)
         {
-            SpawnBombFromLitState(slot, byEntity, allowThrow: !timedOut);
+            SpawnBombFromLitState(slot, byEntity, allowThrow: !timedOut, targetBlockSel: blockSel);
         }
     }
 
@@ -283,7 +288,7 @@ public class ItemBomb : Item
         oneshot?.Start();
     }
 
-    private void SpawnBombFromLitState(ItemSlot slot, EntityAgent byEntity, bool allowThrow)
+    private void SpawnBombFromLitState(ItemSlot slot, EntityAgent byEntity, bool allowThrow, BlockSelection? targetBlockSel)
     {
         long litMs = slot.Itemstack.Attributes.GetLong(AttrFuseLitMs, 0);
         slot.Itemstack.Attributes.RemoveAttribute(AttrFuseLitMs);
@@ -315,12 +320,18 @@ public class ItemBomb : Item
 
         if (entity is EntityBomb bomb)
         {
+            bool isSticky = GetBombBool(slot.Itemstack, "isSticky", false);
             bomb.ApplyConfigFromItemstack(slot.Itemstack);
             bomb.SetThrower(byEntity);
             bomb.StartFuseWithRemainingSeconds(remainingFuse);
             if (allowThrow && remainingFuse > 0.001f)
             {
                 bomb.Release(byEntity);
+                if (isSticky && targetBlockSel?.Position != null)
+                {
+                    bomb.SetPreferredAttach(targetBlockSel.Position, targetBlockSel.Face);
+                }
+
                 byEntity.World.PlaySoundAt(
                     ThrowSound,
                     spawnX, spawnY, spawnZ,

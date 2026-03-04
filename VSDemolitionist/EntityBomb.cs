@@ -73,6 +73,7 @@ public class EntityBomb : Entity
     private const string DefaultBlastShape = "sphere";
     private const int MaxManualBlockChanges = 10000;
     private const string BombAttrRoot = "bomb";
+    private const string StaticStickyEntityCode = "bombstuck";
 
     private const string AttrLit = "vsd_lit";
     private const string AttrFuseEndMs = "vsd_fuseEndMs";
@@ -90,6 +91,7 @@ public class EntityBomb : Entity
     private const string AttrBlastVerticalRadius = "vsd_blastVerticalRadius";
     private const string AttrBlockBlastType = "vsd_blockBlastType";
     private const string AttrBombTier = "vsd_bombTier";
+    private const string AttrIsSticky = "vsd_isSticky";
     private const string AttrOreDestroyChance = "vsd_oreDestroyChance";
     private const string AttrCrystalDestroyChance = "vsd_crystalDestroyChance";
     private const string AttrThrowerPlayerUid = "vsd_throwerPlayerUid";
@@ -106,10 +108,27 @@ public class EntityBomb : Entity
     private bool impactPlayedServer = false;
     private float sparkAccum;
     private float smokeAccum;
+    private double lastMotionX;
+    private double lastMotionY;
+    private double lastMotionZ;
+    private bool attachedToBlock;
+    private bool attachedToEntity;
+    private readonly BlockPos attachedBlockPos = new(0);
+    private BlockFacing attachedFace = BlockFacing.UP;
+    private long attachedEntityId = -1;
+    private Vec3d attachedEntityOffset = new();
+    private bool hasPreferredAttach;
+    private readonly BlockPos preferredAttachPos = new(0);
+    private BlockFacing preferredAttachFace = BlockFacing.UP;
 
     private float GetConfigFloat(string key, float defaultValue)
     {
         return WatchedAttributes.GetFloat(key, defaultValue);
+    }
+
+    private bool GetConfigBool(string key, bool defaultValue)
+    {
+        return WatchedAttributes.GetBool(key, defaultValue);
     }
 
     private static float GetBombFloat(ItemStack? stack, string key, float defaultValue)
@@ -173,6 +192,7 @@ public class EntityBomb : Entity
         WatchedAttributes.SetFloat(AttrCrystalDestroyChance, Clamp01(GetBombFloat(stack, "crystalDestroyChance", 1f)));
         WatchedAttributes.SetInt(AttrBlockBlastType, (int)ParseBlockBlastType(GetBombString(stack, "blastType", "rock")));
         WatchedAttributes.SetString(AttrBombTier, GetBombString(stack, "tier", stack.Collectible?.Code?.Path ?? "unknown"));
+        WatchedAttributes.SetBool(AttrIsSticky, stack.Collectible?.Attributes?[BombAttrRoot]?["isSticky"].AsBool(false) ?? false);
     }
 
     public void StartFuse()
@@ -211,6 +231,10 @@ public class EntityBomb : Entity
 public void Release(EntityAgent holder)
 {
     holderId = -1;
+    attachedToBlock = false;
+    attachedToEntity = false;
+    attachedEntityId = -1;
+    hasPreferredAttach = false;
 
     Vec3f dir = holder.SidedPos.GetViewVector().Normalize();
 
@@ -234,6 +258,90 @@ public void Release(EntityAgent holder)
     );
 }
 
+    public void SetPreferredAttach(BlockPos pos, BlockFacing face)
+    {
+        if (pos == null) return;
+        hasPreferredAttach = true;
+        preferredAttachPos.Set(pos);
+        preferredAttachFace = face ?? BlockFacing.UP;
+    }
+
+    public void AttachToBlock(BlockPos pos, BlockFacing face)
+    {
+        if (World.Side != EnumAppSide.Server) return;
+
+        attachedToEntity = false;
+        attachedEntityId = -1;
+        attachedToBlock = true;
+        attachedBlockPos.Set(pos);
+        attachedFace = face ?? BlockFacing.UP;
+        hasPreferredAttach = false;
+        ServerPos.Motion.Set(0, 0, 0);
+        Pos.Motion.Set(0, 0, 0);
+        lastMotionX = 0;
+        lastMotionY = 0;
+        lastMotionZ = 0;
+        SnapToAttachedFace();
+    }
+
+    private bool IsStaticStickyEntity()
+    {
+        return Properties?.Code?.Path == StaticStickyEntityCode;
+    }
+
+    private void CopyFuseAndConfigTo(EntityBomb other)
+    {
+        other.WatchedAttributes.SetBool(AttrLit, WatchedAttributes.GetBool(AttrLit));
+        other.WatchedAttributes.SetFloat(AttrFuseRemainingSeconds, WatchedAttributes.GetFloat(AttrFuseRemainingSeconds, GetConfigFloat(AttrFuseSeconds, DefaultFuseSeconds)));
+        other.WatchedAttributes.SetLong(AttrFuseEndMs, WatchedAttributes.GetLong(AttrFuseEndMs, 0));
+        other.WatchedAttributes.SetFloat(AttrFuseSeconds, GetConfigFloat(AttrFuseSeconds, DefaultFuseSeconds));
+        other.WatchedAttributes.SetFloat(AttrThrowForwardStrength, GetConfigFloat(AttrThrowForwardStrength, DefaultThrowForwardStrength));
+        other.WatchedAttributes.SetFloat(AttrThrowUpwardBoost, GetConfigFloat(AttrThrowUpwardBoost, DefaultThrowUpwardBoost));
+        other.WatchedAttributes.SetFloat(AttrThrownFuseVolume, GetConfigFloat(AttrThrownFuseVolume, DefaultThrownFuseVolume));
+        other.WatchedAttributes.SetFloat(AttrRockBlastRadius, GetConfigFloat(AttrRockBlastRadius, DefaultBlastRadius));
+        other.WatchedAttributes.SetFloat(AttrOreBlastRadius, GetConfigFloat(AttrOreBlastRadius, DefaultBlastRadius));
+        other.WatchedAttributes.SetFloat(AttrEntityBlastRadius, GetConfigFloat(AttrEntityBlastRadius, DefaultBlastRadius));
+        other.WatchedAttributes.SetFloat(AttrBlastDropoff, GetConfigFloat(AttrBlastDropoff, DefaultBlastDropoff));
+        other.WatchedAttributes.SetFloat(AttrBlastPowerLoss, GetConfigFloat(AttrBlastPowerLoss, DefaultBlastPowerLoss));
+        other.WatchedAttributes.SetString(AttrBlastShape, WatchedAttributes.GetString(AttrBlastShape, DefaultBlastShape));
+        other.WatchedAttributes.SetFloat(AttrBlastVerticalRadius, GetConfigFloat(AttrBlastVerticalRadius, DefaultBlastRadius));
+        other.WatchedAttributes.SetInt(AttrBlockBlastType, WatchedAttributes.GetInt(AttrBlockBlastType, (int)EnumBlastType.RockBlast));
+        other.WatchedAttributes.SetString(AttrBombTier, WatchedAttributes.GetString(AttrBombTier, "unknown"));
+        other.WatchedAttributes.SetBool(AttrIsSticky, GetConfigBool(AttrIsSticky, false));
+        other.WatchedAttributes.SetFloat(AttrOreDestroyChance, GetConfigFloat(AttrOreDestroyChance, 1f));
+        other.WatchedAttributes.SetFloat(AttrCrystalDestroyChance, GetConfigFloat(AttrCrystalDestroyChance, 1f));
+        other.WatchedAttributes.SetString(AttrThrowerPlayerUid, WatchedAttributes.GetString(AttrThrowerPlayerUid));
+    }
+
+    private bool TrySwitchToStaticSticky(BlockPos pos, BlockFacing face)
+    {
+        if (World.Side != EnumAppSide.Server) return false;
+        if (IsStaticStickyEntity()) return false;
+
+        EntityProperties staticType = World.GetEntityType(new AssetLocation("vsdemolitionist", StaticStickyEntityCode));
+        if (staticType == null) return false;
+
+        Entity entity = World.ClassRegistry.CreateEntity(staticType);
+        if (entity is not EntityBomb stuckBomb) return false;
+
+        stuckBomb.ServerPos.SetPos(ServerPos.X, ServerPos.Y, ServerPos.Z);
+        stuckBomb.ServerPos.Motion.Set(0, 0, 0);
+        stuckBomb.Pos.SetPos(Pos.X, Pos.Y, Pos.Z);
+        stuckBomb.Pos.Motion.Set(0, 0, 0);
+        stuckBomb.ServerPos.Yaw = ServerPos.Yaw;
+        stuckBomb.Pos.Yaw = Pos.Yaw;
+        stuckBomb.ServerPos.Pitch = ServerPos.Pitch;
+        stuckBomb.Pos.Pitch = Pos.Pitch;
+
+        CopyFuseAndConfigTo(stuckBomb);
+
+        World.SpawnEntity(stuckBomb);
+
+        stuckBomb.AttachToBlock(pos, face);
+        Die(EnumDespawnReason.Removed);
+        return true;
+    }
+
     private void TeleportToHolder(EntityAgent holder)
     {
         Vec3f dir = holder.SidedPos.GetViewVector().Normalize();
@@ -253,6 +361,13 @@ public void Release(EntityAgent holder)
 
     public override void OnGameTick(float dt)
     {
+        // If already attached, zero out velocity before physics update to reduce micro-bounce/pulsing.
+        if (attachedToBlock)
+        {
+            ServerPos.Motion.Set(0, 0, 0);
+            Pos.Motion.Set(0, 0, 0);
+        }
+        
         base.OnGameTick(dt);
 
         // SERVER: stay attached while held
@@ -263,6 +378,35 @@ public void Release(EntityAgent holder)
             {
                 TeleportToHolder(holder);
             }
+        }
+
+        if (World.Side == EnumAppSide.Server)
+        {
+            if (holderId == -1 && GetConfigBool(AttrIsSticky, false) && WatchedAttributes.GetBool(AttrLit))
+            {
+                if (attachedToEntity)
+                {
+                    if (!UpdateAttachedToEntity()) attachedToEntity = false;
+                }
+
+                if (attachedToBlock)
+                {
+                    if (!UpdateAttachedToBlock())
+                    {
+                        attachedToBlock = false;
+                    }
+                }
+            }
+
+            lastMotionX = ServerPos.Motion.X;
+            lastMotionY = ServerPos.Motion.Y;
+            lastMotionZ = ServerPos.Motion.Z;
+        }
+
+        // Final lock pass after tick to prevent interpolation drift while attached.
+        if (attachedToBlock)
+        {
+            SnapToAttachedFace();
         }
 
         // SERVER: explode when fuse ends
@@ -379,6 +523,44 @@ public void Release(EntityAgent holder)
         }
     }
 
+    public override void OnCollided()
+    {
+        base.OnCollided();
+
+        if (World.Side != EnumAppSide.Server) return;
+        if (holderId != -1) return;
+        if (!WatchedAttributes.GetBool(AttrLit)) return;
+        if (!GetConfigBool(AttrIsSticky, false)) return;
+        if (attachedToBlock || attachedToEntity) return;
+
+        // Hard-stop bounce on first sticky contact.
+        ServerPos.Motion.Set(0, 0, 0);
+        Pos.Motion.Set(0, 0, 0);
+        lastMotionX = 0;
+        lastMotionY = 0;
+        lastMotionZ = 0;
+
+        if (hasPreferredAttach)
+        {
+            Block targetBlock = World.BlockAccessor.GetBlock(preferredAttachPos);
+            if (targetBlock != null && targetBlock.BlockId != 0 && targetBlock.Replaceable < 6000)
+            {
+                if (!TrySwitchToStaticSticky(preferredAttachPos, preferredAttachFace))
+                {
+                    AttachToBlock(preferredAttachPos, preferredAttachFace);
+                }
+                return;
+            }
+
+            hasPreferredAttach = false;
+        }
+
+        if (!TryAttachToEntity())
+        {
+            AttachToSurface();
+        }
+    }
+
     private void Explode()
     {
         if (World.Side != EnumAppSide.Server) return;
@@ -461,6 +643,153 @@ public void Release(EntityAgent holder)
         }
 
         Die(EnumDespawnReason.Removed);
+    }
+
+    private bool TryAttachToEntity()
+    {
+        if (attachedToEntity || attachedToBlock) return false;
+
+        Entity? candidate = World.GetNearestEntity(Pos.XYZ, 0.65f, 0.65f, (entity) =>
+        {
+            if (entity == null) return false;
+            if (entity.EntityId == EntityId) return false;
+            if (entity.EntityId == holderId) return false;
+            if (entity is EntityBomb) return false;
+            return true;
+        });
+
+        if (candidate == null) return false;
+
+        attachedToEntity = true;
+        attachedEntityId = candidate.EntityId;
+        attachedEntityOffset.Set(
+            Pos.X - candidate.Pos.X,
+            Pos.Y - candidate.Pos.Y,
+            Pos.Z - candidate.Pos.Z
+        );
+        SnapToEntity(candidate);
+        return true;
+    }
+
+    private bool UpdateAttachedToEntity()
+    {
+        Entity? entity = World.GetEntityById(attachedEntityId);
+        if (entity == null) return false;
+
+        SnapToEntity(entity);
+        return true;
+    }
+
+    private void SnapToEntity(Entity entity)
+    {
+        double x = entity.Pos.X + attachedEntityOffset.X;
+        double y = entity.Pos.Y + attachedEntityOffset.Y;
+        double z = entity.Pos.Z + attachedEntityOffset.Z;
+        ServerPos.SetPos(x, y, z);
+        Pos.SetPos(x, y, z);
+        ServerPos.Motion.Set(0, 0, 0);
+        Pos.Motion.Set(0, 0, 0);
+    }
+
+    private bool UpdateAttachedToBlock()
+    {
+        Block block = World.BlockAccessor.GetBlock(attachedBlockPos);
+        if (block == null || block.BlockId == 0 || block.Replaceable >= 6000)
+        {
+            return false;
+        }
+
+        SnapToAttachedFace();
+        return true;
+    }
+
+    private void AttachToSurface()
+    {
+        BlockPos? bestPos = null;
+        double bestDistSq = double.MaxValue;
+        BlockPos center = Pos.AsBlockPos;
+
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                for (int dz = -1; dz <= 1; dz++)
+                {
+                    BlockPos pos = new(center.X + dx, center.Y + dy, center.Z + dz);
+                    Block block = World.BlockAccessor.GetBlock(pos);
+                    if (block == null || block.BlockId == 0 || block.Replaceable >= 6000) continue;
+
+                    double cx = pos.X + 0.5;
+                    double cy = pos.Y + 0.5;
+                    double cz = pos.Z + 0.5;
+                    double distSq = (Pos.X - cx) * (Pos.X - cx) + (Pos.Y - cy) * (Pos.Y - cy) + (Pos.Z - cz) * (Pos.Z - cz);
+                    if (distSq < bestDistSq)
+                    {
+                        bestDistSq = distSq;
+                        bestPos = pos;
+                    }
+                }
+            }
+        }
+
+        if (bestPos == null) return;
+
+        attachedBlockPos.Set(bestPos.X, bestPos.Y, bestPos.Z);
+        attachedFace = EstimateImpactFace(attachedBlockPos);
+        if (!TrySwitchToStaticSticky(attachedBlockPos, attachedFace))
+        {
+            attachedToBlock = true;
+            SnapToAttachedFace();
+        }
+    }
+
+    private BlockFacing EstimateImpactFace(BlockPos blockPos)
+    {
+        double dx = Pos.X - (blockPos.X + 0.5);
+        double dy = Pos.Y - (blockPos.Y + 0.5);
+        double dz = Pos.Z - (blockPos.Z + 0.5);
+
+        if (Math.Abs(lastMotionX) + Math.Abs(lastMotionY) + Math.Abs(lastMotionZ) > 0.0001)
+        {
+            dx = -lastMotionX;
+            dy = -lastMotionY;
+            dz = -lastMotionZ;
+        }
+
+        double ax = Math.Abs(dx);
+        double ay = Math.Abs(dy);
+        double az = Math.Abs(dz);
+
+        if (ax >= ay && ax >= az) return dx >= 0 ? BlockFacing.EAST : BlockFacing.WEST;
+        if (ay >= ax && ay >= az) return dy >= 0 ? BlockFacing.UP : BlockFacing.DOWN;
+        return dz >= 0 ? BlockFacing.SOUTH : BlockFacing.NORTH;
+    }
+
+    private void SnapToAttachedFace()
+    {
+        Vec3i n = attachedFace.Normali;
+        // Place almost on the touched face so it looks mounted instead of hovering.
+        const double offset = 0.60;
+        double x = attachedBlockPos.X + 0.5 + n.X * offset;
+        double y = attachedBlockPos.Y + 0.5 + n.Y * offset;
+        double z = attachedBlockPos.Z + 0.5 + n.Z * offset;
+
+        ServerPos.SetPos(x, y, z);
+        Pos.SetPos(x, y, z);
+        ServerPos.Motion.Set(0, 0, 0);
+        Pos.Motion.Set(0, 0, 0);
+
+        // Keep the stick orientation stable while attached so the base doesn't face out randomly.
+        float yaw = ServerPos.Yaw;
+        if (attachedFace == BlockFacing.NORTH) yaw = 0f;
+        else if (attachedFace == BlockFacing.SOUTH) yaw = GameMath.PI;
+        else if (attachedFace == BlockFacing.WEST) yaw = GameMath.PIHALF;
+        else if (attachedFace == BlockFacing.EAST) yaw = -GameMath.PIHALF;
+
+        ServerPos.Yaw = yaw;
+        Pos.Yaw = yaw;
+        ServerPos.Pitch = 0f;
+        Pos.Pitch = 0f;
     }
 
     private List<TrackedResourceBlock> CollectResourceBlocksSphere(float radius)
