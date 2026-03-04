@@ -1,5 +1,5 @@
 {
-  "code": "bomb-sticky-copper",
+  "code": "bomb-sticky-titanium",
   "class": "ItemBomb",
   "creativeinventory": {
     "general": [
@@ -9,32 +9,33 @@
   "maxstacksize": 64,
   "attributes": {
     "bomb": {
-      "tier": "sticky-copper",
-      "entityCode": "bomb-copper",
-      "iconItemCode": "bombicon-sticky-copper",
+      "tier": "sticky-titanium",
+      "entityCode": "bomb-titanium",
+      "iconItemCode": "bombicon-sticky-titanium",
       "isSticky": true,
+      "lightTime": 1.25,
       "fuseSeconds": 4.0,
       "heldFuseVolume": 3.2,
       "thrownFuseVolume": 1.8,
-      "throwForwardStrength": 0.4,
-      "throwUpwardBoost": 0.1,
+      "throwForwardStrength": 0.73125,
+      "throwUpwardBoost": 0.08,
       "blastType": "rock",
-      "blastRadius": 4.0,
-      "rockBlastRadius": 4.0,
-      "oreBlastRadius": 4.0,
-      "entityBlastRadius": 3.4,
-      "oreDestroyChance": 0.5,
-      "crystalDestroyChance": 0.8,
-      "blastDropoff": 1.0,
-      "blastPowerLoss": 0.05
+      "blastRadius": 5.5,
+      "rockBlastRadius": 5.5,
+      "oreBlastRadius": 5.5,
+      "entityBlastRadius": 4.7,
+      "oreDestroyChance": 0.05,
+      "crystalDestroyChance": 0.1,
+      "blastDropoff": 0.85,
+      "blastPowerLoss": 0.12
     }
   },
   "shape": {
-    "base": "vsdemolitionist:item/dynamite-copper"
+    "base": "vsdemolitionist:item/dynamite-titanium"
   },
   "textures": {
     "default": {
-      "base": "item/dynamite-copper-sticky-icon"
+      "base": "item/dynamite-titanium-sticky-icon"
     }
   },
   "guiTransform": {

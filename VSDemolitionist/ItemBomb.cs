@@ -120,10 +120,11 @@ public class ItemBomb : Item
         }
 
         float fuseSeconds = GetBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
-        float maxHoldSeconds = LightTime + fuseSeconds;
+        float lightTime = GetBombFloat(slot.Itemstack, "lightTime", LightTime);
+        float maxHoldSeconds = lightTime + fuseSeconds;
         float heldFuseVolume = GetBombFloat(slot.Itemstack, "heldFuseVolume", DefaultHeldFuseVolume);
 
-        if (secondsUsed >= LightTime)
+        if (secondsUsed >= lightTime)
         {
             if (byEntity.World.Side == EnumAppSide.Server)
             {
@@ -170,7 +171,8 @@ public class ItemBomb : Item
     {
         if (slot?.Itemstack == null) return;
         float fuseSeconds = GetBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
-        bool timedOut = secondsUsed >= (LightTime + fuseSeconds);
+        float lightTime = GetBombFloat(slot.Itemstack, "lightTime", LightTime);
+        bool timedOut = secondsUsed >= (lightTime + fuseSeconds);
 
         if (byEntity.World.Side == EnumAppSide.Client)
         {

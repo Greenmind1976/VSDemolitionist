@@ -1,0 +1,6 @@
+{
+  "code": "bombicon-sticky-titanium",
+  "maxstacksize": 64,
+  "texture": { "base": "item/dynamite-titanium-sticky-icon" },
+  "creativeinventory": {}
+}
