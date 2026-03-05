@@ -1,0 +1,35 @@
+[
+  {
+    "op": "add",
+    "file": "game:recipes/grid/firewood.json",
+    "path": "/0/ingredients/L/returnedStack",
+    "value": { "type": "item", "code": "vsdemolitionist:bark", "quantity": 1 }
+  },
+  {
+    "op": "add",
+    "file": "game:recipes/grid/firewood.json",
+    "path": "/2/ingredients/L/returnedStack",
+    "value": { "type": "item", "code": "vsdemolitionist:bark", "quantity": 1 }
+  },
+  {
+    "op": "add",
+    "file": "game:recipes/grid/firewood.json",
+    "path": "/3/ingredients/L/returnedStack",
+    "value": { "type": "item", "code": "vsdemolitionist:bark", "quantity": 1 }
+  },
+  {
+    "op": "replace",
+    "file": "game:recipes/grid/firewood.json",
+    "path": "/0/ingredients/L/allowedVariants",
+    "value": [
+      "placed-birch-ud",
+      "placed-oak-ud",
+      "placed-maple-ud",
+      "placed-spruce-ud",
+      "placed-redwood-ud",
+      "placed-larch-ud",
+      "placed-baldcypress-ud",
+      "placed-walnut-ud"
+    ]
+  }
+]

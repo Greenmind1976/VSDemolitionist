@@ -1,0 +1,15 @@
+{
+  "ingredientPattern": "A\tL",
+  "ingredients": {
+    "A": { "type": "item", "code": "game:axe-*", "isTool": true },
+    "L": {
+      "type": "block",
+      "code": "game:log-placed-pine-ud",
+      "returnedStack": { "type": "item", "code": "vsdemolitionist:resinbark", "quantity": 1 }
+    }
+  },
+  "width": 1,
+  "height": 2,
+  "name": "Pine Firewood + Resin Bark",
+  "output": { "type": "item", "code": "game:firewood", "quantity": 4 }
+}
