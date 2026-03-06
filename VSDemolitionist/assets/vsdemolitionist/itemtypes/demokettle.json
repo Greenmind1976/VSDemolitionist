@@ -1,0 +1,32 @@
+{
+  "code": "demokettle",
+  "class": "ItemDemokettle",
+  "maxstacksize": 1,
+  "creativeinventory": {
+    "general": ["*"]
+  },
+  "texture": {
+    "base": "item/kettle-icon"
+  },
+  "shape": {
+    "base": "vsdemolitionist:item/demokettle"
+  },
+  "guiTransform": {
+    "translation": { "x": 0.03, "y": -0.09, "z": 0.0 },
+    "rotation": { "x": 160, "y": -28, "z": -6 },
+    "origin": { "x": 0.5, "y": 0.2, "z": 0.5 },
+    "scale": 1.56
+  },
+  "fpHandTransform": {
+    "translation": { "x": 0.1, "y": -0.05, "z": 0.08 },
+    "rotation": { "x": 15, "y": 130, "z": -10 },
+    "origin": { "x": 0.5, "y": 0.2, "z": 0.5 },
+    "scale": 0.95
+  },
+  "tpHandTransform": {
+    "translation": { "x": -1.35, "y": 0.05, "z": -1.0 },
+    "rotation": { "x": 0, "y": -8, "z": 8 },
+    "origin": { "x": 0.5, "y": 0.0, "z": 0.5 },
+    "scale": 0.35
+  }
+}

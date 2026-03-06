@@ -1,0 +1,13 @@
+{
+  "code": "thick-tar",
+  "class": "Item",
+  "texture": {
+    "base": "item/tarportion"
+  },
+  "maxstacksize": 999,
+  "creativeinventory": {
+    "general": [
+      "*"
+    ]
+  }
+}

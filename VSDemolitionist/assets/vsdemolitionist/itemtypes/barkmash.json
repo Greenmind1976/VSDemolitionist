@@ -1,0 +1,11 @@
+{
+  "code": "barkmash",
+  "maxstacksize": 64,
+  "texture": { "base": "item/barkmash" },
+  "creativeinventory": { "general": ["*"], "items": ["*"] },
+  "materialDensity": 650,
+  "combustibleProps": {
+    "burnTemperature": 580,
+    "burnDuration": 8
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "code": "thicktar-from-resinbarkmash-4slot-1",
+  "perishableProps": {
+    "freshHours": {
+      "avg": 1
+    },
+    "transitionHours": {
+      "avg": 1
+    },
+    "transitionRatio": 1,
+    "transitionedStack": {
+      "type": "item",
+      "code": "game:rot"
+    }
+  },
+  "shape": {
+    "base": "game:block/food/meal/liquid"
+  },
+  "ingredients": [
+    {
+      "code": "resinmash1",
+      "validStacks": [
+        {
+          "type": "item",
+          "code": "vsdemolitionist:resinbarkmash"
+        }
+      ],
+      "minQuantity": 1,
+      "maxQuantity": 1
+    },
+    {
+      "code": "resinmash2",
+      "validStacks": [
+        {
+          "type": "item",
+          "code": "vsdemolitionist:resinbarkmash"
+        }
+      ],
+      "minQuantity": 1,
+      "maxQuantity": 1
+    },
+    {
+      "code": "resinmash3",
+      "validStacks": [
+        {
+          "type": "item",
+          "code": "vsdemolitionist:resinbarkmash"
+        }
+      ],
+      "minQuantity": 1,
+      "maxQuantity": 1
+    },
+    {
+      "code": "resinmash4",
+      "validStacks": [
+        {
+          "type": "item",
+          "code": "vsdemolitionist:resinbarkmash"
+        }
+      ],
+      "minQuantity": 1,
+      "maxQuantity": 1
+    }
+  ],
+  "cooksInto": {
+    "type": "Item",
+    "code": "vsdemolitionist:thick-tar",
+    "quantity": 4
+  }
+}

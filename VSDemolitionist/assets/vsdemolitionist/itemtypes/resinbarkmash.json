@@ -1,0 +1,11 @@
+{
+  "code": "resinbarkmash",
+  "maxstacksize": 64,
+  "texture": { "base": "item/resinbarkmash" },
+  "creativeinventory": { "general": ["*"], "items": ["*"] },
+  "materialDensity": 680,
+  "combustibleProps": {
+    "burnTemperature": 600,
+    "burnDuration": 9
+  }
+}
