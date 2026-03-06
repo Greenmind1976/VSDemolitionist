@@ -12,10 +12,10 @@
     "base": "vsdemolitionist:item/demokettle"
   },
   "guiTransform": {
-    "translation": { "x": 0.03, "y": -0.09, "z": 0.0 },
-    "rotation": { "x": 160, "y": -28, "z": -6 },
-    "origin": { "x": 0.5, "y": 0.2, "z": 0.5 },
-    "scale": 1.56
+    "translation": { "x": 2.2, "y": 1.0, "z": 0.0 },
+    "rotation": { "x": 152, "y": -45, "z": 0 },
+    "origin": { "x": 0.5, "y": 0.3, "z": 0.5 },
+    "scale": 1.75
   },
   "fpHandTransform": {
     "translation": { "x": 0.1, "y": -0.05, "z": 0.08 },

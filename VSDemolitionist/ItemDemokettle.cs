@@ -1,30 +1,12 @@
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
-using Vintagestory.API.Client;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Util;
 
 namespace VSDemolitionist;
 
 public class ItemDemokettle : Item
 {
     private static readonly AssetLocation KettleBlockCode = new("vsdemolitionist", "demokettle");
-    private const string IconItemCode = "demokettleicon";
-    private ItemSlot? guiIconSlot;
-
-    public override void OnBeforeRender(ICoreClientAPI capi, ItemStack itemstack, EnumItemRenderTarget target, ref ItemRenderInfo renderinfo)
-    {
-        base.OnBeforeRender(capi, itemstack, target, ref renderinfo);
-
-        if (target != EnumItemRenderTarget.Gui) return;
-
-        Item? iconItem = capi.World.GetItem(new AssetLocation("vsdemolitionist", IconItemCode));
-        if (iconItem == null) return;
-
-        guiIconSlot ??= new DummySlot();
-        guiIconSlot.Itemstack = new ItemStack(iconItem, 1);
-        renderinfo = capi.Render.GetItemStackRenderInfo(guiIconSlot, target, 0);
-    }
 
     public override void OnHeldInteractStart(
         ItemSlot slot,
@@ -40,13 +22,7 @@ public class ItemDemokettle : Item
             return;
         }
 
-        // Place like other ground-placed utility items: sneak + right click.
-        if (!byEntity.Controls.Sneak)
-        {
-            handling = EnumHandHandling.NotHandled;
-            return;
-        }
-
+        // Place on right click when targeting the top face of a solid block.
         handling = EnumHandHandling.PreventDefault;
 
         if (byEntity.World.Side != EnumAppSide.Server)

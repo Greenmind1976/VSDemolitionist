@@ -28,5 +28,11 @@
     "place": "game:block/wood",
     "break": "game:block/wood",
     "hit": "game:block/wood"
+  },
+  "guiTransform": {
+    "translation": { "x": 2.2, "y": 1.0, "z": 0.0 },
+    "rotation": { "x": 152, "y": -45, "z": 0 },
+    "origin": { "x": 0.5, "y": 0.3, "z": 0.5 },
+    "scale": 1.75
   }
 }
