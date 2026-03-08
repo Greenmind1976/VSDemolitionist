@@ -1,0 +1,631 @@
+[
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-nativecopper-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Native Copper Ore",
+    "output": { "type": "item", "code": "game:ore-poor-nativecopper-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-nativecopper-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Native Copper Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-nativecopper-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-nativecopper-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Native Copper Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-nativecopper-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-malachite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Malachite Ore",
+    "output": { "type": "item", "code": "game:ore-poor-malachite-limestone", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-malachite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Malachite Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-malachite-limestone", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-malachite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Malachite Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-malachite-limestone", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-cassiterite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Cassiterite Ore",
+    "output": { "type": "item", "code": "game:ore-poor-cassiterite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-cassiterite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Cassiterite Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-cassiterite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-cassiterite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Cassiterite Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-cassiterite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-bismuthinite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Bismuthinite Ore",
+    "output": { "type": "item", "code": "game:ore-poor-bismuthinite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-bismuthinite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Bismuthinite Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-bismuthinite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-bismuthinite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Bismuthinite Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-bismuthinite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-sphalerite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Sphalerite Ore",
+    "output": { "type": "item", "code": "game:ore-poor-sphalerite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-sphalerite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Sphalerite Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-sphalerite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-sphalerite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Sphalerite Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-sphalerite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-galena-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Galena Ore",
+    "output": { "type": "item", "code": "game:ore-poor-galena-claystone", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-galena-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Galena Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-galena-claystone", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-galena-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Galena Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-galena-claystone", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-galena_nativesilver-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Lead-Silver Galena Ore",
+    "output": { "type": "item", "code": "game:ore-poor-galena_nativesilver-claystone", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-galena_nativesilver-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Lead-Silver Galena Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-galena_nativesilver-claystone", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-galena_nativesilver-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Lead-Silver Galena Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-galena_nativesilver-claystone", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-quartz_nativesilver-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Native Silver Quartz Ore",
+    "output": { "type": "item", "code": "game:ore-poor-quartz_nativesilver-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-quartz_nativesilver-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Native Silver Quartz Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-quartz_nativesilver-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-quartz_nativesilver-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Native Silver Quartz Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-quartz_nativesilver-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-quartz_nativegold-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Native Gold Quartz Ore",
+    "output": { "type": "item", "code": "game:ore-poor-quartz_nativegold-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-quartz_nativegold-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Native Gold Quartz Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-quartz_nativegold-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-quartz_nativegold-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Native Gold Quartz Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-quartz_nativegold-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-limonite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Limonite Ore",
+    "output": { "type": "item", "code": "game:ore-poor-limonite-basalt", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-limonite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Limonite Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-limonite-basalt", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-limonite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Limonite Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-limonite-basalt", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-hematite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Hematite Ore",
+    "output": { "type": "item", "code": "game:ore-poor-hematite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-hematite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Hematite Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-hematite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-hematite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Hematite Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-hematite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-magnetite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Magnetite Ore",
+    "output": { "type": "item", "code": "game:ore-poor-magnetite-andesite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-magnetite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Magnetite Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-magnetite-andesite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-magnetite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Magnetite Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-magnetite-andesite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-ilmenite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Ilmenite Ore",
+    "output": { "type": "item", "code": "game:ore-poor-ilmenite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-ilmenite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Ilmenite Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-ilmenite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-ilmenite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Ilmenite Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-ilmenite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-chromite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Chromite Ore",
+    "output": { "type": "item", "code": "game:ore-poor-chromite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-chromite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Chromite Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-chromite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-chromite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Chromite Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-chromite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-pentlandite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Pentlandite Ore",
+    "output": { "type": "item", "code": "game:ore-poor-pentlandite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-pentlandite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Pentlandite Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-pentlandite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-pentlandite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Pentlandite Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-pentlandite-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-uranium-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Uranium Ore",
+    "output": { "type": "item", "code": "game:ore-poor-uranium-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-uranium-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Uranium Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-uranium-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-uranium-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Uranium Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-uranium-granite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-rhodochrosite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Rhodochrosite Ore",
+    "output": { "type": "item", "code": "game:ore-poor-rhodochrosite-claystone", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-rhodochrosite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Rhodochrosite Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-poor-rhodochrosite-claystone", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-rhodochrosite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Rhodochrosite Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-poor-rhodochrosite-claystone", "quantity": 1 }
+  }
+
+]
