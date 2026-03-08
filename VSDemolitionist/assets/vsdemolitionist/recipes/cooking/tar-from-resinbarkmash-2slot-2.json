@@ -1,5 +1,5 @@
 {
-  "code": "thicktar-from-resinbarkmash-2slot-2",
+  "code": "liquidtar-from-resinbarkmash-2slot-2",
   "perishableProps": {
     "freshHours": {
       "avg": 1
@@ -42,7 +42,7 @@
   ],
   "cooksInto": {
     "type": "Item",
-    "code": "vsdemolitionist:thick-tar",
+    "code": "vsdemolitionist:liquid-tar",
     "quantity": 4
   }
 }

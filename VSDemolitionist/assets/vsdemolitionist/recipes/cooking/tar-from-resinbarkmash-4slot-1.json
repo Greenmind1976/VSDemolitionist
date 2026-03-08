@@ -1,5 +1,5 @@
 {
-  "code": "thicktar-from-resinbarkmash-4slot-1",
+  "code": "liquidtar-from-resinbarkmash-4slot-1",
   "perishableProps": {
     "freshHours": {
       "avg": 1
@@ -25,8 +25,8 @@
           "code": "vsdemolitionist:resinbarkmash"
         }
       ],
-      "minQuantity": 1,
-      "maxQuantity": 1
+      "minQuantity": 6,
+      "maxQuantity": 6
     },
     {
       "code": "resinmash2",
@@ -36,8 +36,8 @@
           "code": "vsdemolitionist:resinbarkmash"
         }
       ],
-      "minQuantity": 1,
-      "maxQuantity": 1
+      "minQuantity": 6,
+      "maxQuantity": 6
     },
     {
       "code": "resinmash3",
@@ -47,8 +47,8 @@
           "code": "vsdemolitionist:resinbarkmash"
         }
       ],
-      "minQuantity": 1,
-      "maxQuantity": 1
+      "minQuantity": 6,
+      "maxQuantity": 6
     },
     {
       "code": "resinmash4",
@@ -58,13 +58,13 @@
           "code": "vsdemolitionist:resinbarkmash"
         }
       ],
-      "minQuantity": 1,
-      "maxQuantity": 1
+      "minQuantity": 6,
+      "maxQuantity": 6
     }
   ],
   "cooksInto": {
     "type": "Item",
-    "code": "vsdemolitionist:thick-tar",
-    "quantity": 4
+    "code": "vsdemolitionist:liquid-tar",
+    "quantity": 6
   }
 }

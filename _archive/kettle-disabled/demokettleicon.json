@@ -1,0 +1,9 @@
+{
+  "code": "demokettleicon",
+  "maxstacksize": 1,
+  "texture": { "base": "item/kettle-icon" },
+  "guiTransform": {
+    "scale": 1.12
+  },
+  "creativeinventory": {}
+}

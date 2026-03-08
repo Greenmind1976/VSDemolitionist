@@ -1,0 +1,11 @@
+{
+  "code": "fuse",
+  "maxstacksize": 128,
+  "texture": { "base": "item/fuse-icon" },
+  "creativeinventory": { "general": ["*"], "items": ["*"] },
+  "materialDensity": 500,
+  "combustibleProps": {
+    "burnTemperature": 300,
+    "burnDuration": 2
+  }
+}

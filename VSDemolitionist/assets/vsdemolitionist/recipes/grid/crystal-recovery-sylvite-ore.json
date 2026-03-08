@@ -1,0 +1,36 @@
+[
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-sylvite-halite" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Sylvite From Ore",
+    "output": { "type": "item", "code": "game:ore-sylvite", "quantity": 1 }
+  },
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-sylvite-halite" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Sylvite From Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-sylvite", "quantity": 1 }
+  },
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-sylvite-halite" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Sylvite From Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-sylvite", "quantity": 1 }
+  }
+]

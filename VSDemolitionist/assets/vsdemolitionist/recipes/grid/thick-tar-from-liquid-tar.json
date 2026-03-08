@@ -1,0 +1,92 @@
+[
+  {
+    "ingredientPattern": "WC",
+    "ingredients": {
+      "W": {
+        "type": "block",
+        "code": "game:woodbucket"
+      },
+      "C": {
+        "type": "item",
+        "code": "game:powder-charcoal"
+      }
+    },
+    "attributes": {
+      "liquidContainerProps": {
+        "requiresContent": {
+          "type": "item",
+          "code": "vsdemolitionist:liquid-tar"
+        },
+        "requiresLitres": 0.05
+      }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:thick-tar",
+      "quantity": 1
+    }
+  },
+  {
+    "ingredientPattern": "WC",
+    "ingredients": {
+      "W": {
+        "type": "block",
+        "code": "game:jug-*-fired"
+      },
+      "C": {
+        "type": "item",
+        "code": "game:powder-charcoal"
+      }
+    },
+    "attributes": {
+      "liquidContainerProps": {
+        "requiresContent": {
+          "type": "item",
+          "code": "vsdemolitionist:liquid-tar"
+        },
+        "requiresLitres": 0.05
+      }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:thick-tar",
+      "quantity": 1
+    }
+  },
+  {
+    "ingredientPattern": "WC",
+    "ingredients": {
+      "W": {
+        "type": "block",
+        "code": "game:bowl-*-fired"
+      },
+      "C": {
+        "type": "item",
+        "code": "game:powder-charcoal"
+      }
+    },
+    "attributes": {
+      "liquidContainerProps": {
+        "requiresContent": {
+          "type": "item",
+          "code": "vsdemolitionist:liquid-tar"
+        },
+        "requiresLitres": 0.05
+      }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:thick-tar",
+      "quantity": 1
+    }
+  }
+]

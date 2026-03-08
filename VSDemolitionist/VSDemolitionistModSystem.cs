@@ -13,7 +13,6 @@ public class VSDemolitionistModSystem : ModSystem
         base.Start(api);
 
         api.RegisterItemClass("ItemBomb", typeof(ItemBomb));
-        api.RegisterItemClass("ItemDemokettle", typeof(ItemDemokettle));
         api.RegisterEntity("EntityBomb", typeof(EntityBomb));
     }
 

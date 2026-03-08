@@ -1,13 +1,39 @@
 {
-  "code": "thick-tar",
-  "class": "Item",
-  "texture": {
-    "base": "item/tarportion"
+  "code": "liquid-tar",
+  "class": "ItemLiquidPortion",
+  "matterState": "liquid",
+  "attributes": {
+    "handbook": {
+      "ignoreCreativeInvStacks": true
+    },
+    "waterTightContainerProps": {
+      "containable": true,
+      "itemsPerLitre": 100,
+      "isopaque": true,
+      "texture": { "base": "game:block/liquid/tar" },
+      "allowSpill": true,
+      "whenSpilled": {
+        "action": "DropContents",
+        "stack": { "type": "item", "code": "vsdemolitionist:liquid-tar" }
+      }
+    }
   },
-  "maxstacksize": 999,
-  "creativeinventory": {
-    "general": [
-      "*"
-    ]
-  }
+  "shape": { "base": "game:item/liquid" },
+  "texture": { "base": "game:block/liquid/tar" },
+  "maxstacksize": 5000,
+  "materialDensity": 200,
+  "guiTransform": {
+    "translation": { "x": 0, "y": 1, "z": 0 },
+    "rotation": { "x": 123, "y": -33, "z": -13 },
+    "origin": { "x": 0.5, "y": 0, "z": 0.5 },
+    "scale": 1.4
+  },
+  "fpHandTransform": {
+    "translation": { "x": 0, "y": 0, "z": 0 },
+    "rotation": { "x": 25, "y": 157, "z": -5 }
+  },
+  "tpHandTransform": {
+    "translation": { "x": -1.5, "y": -1, "z": -1.4 }
+  },
+  "creativeinventory": { "general": ["*"], "liquids": ["*"] }
 }
