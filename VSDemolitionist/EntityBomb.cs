@@ -54,12 +54,14 @@ public class EntityBomb : Entity
         public readonly BlockPos Pos;
         public readonly int BlockId;
         public readonly bool IsCrystal;
+        public readonly bool IsSpecialDeposit;
 
-        public TrackedResourceBlock(BlockPos pos, int blockId, bool isCrystal)
+        public TrackedResourceBlock(BlockPos pos, int blockId, bool isCrystal, bool isSpecialDeposit)
         {
             Pos = pos;
             BlockId = blockId;
             IsCrystal = isCrystal;
+            IsSpecialDeposit = isSpecialDeposit;
         }
     }
 
@@ -169,6 +171,43 @@ public class EntityBomb : Entity
         string path = block?.Code?.Path ?? "";
         if (path.Length == 0) return false;
         return path.Contains("crystal") || path.Contains("quartz");
+    }
+
+    private static bool IsSpecialDepositBlock(Block block)
+    {
+        string path = block?.Code?.Path ?? "";
+        if (path.Length == 0) return false;
+
+        // Deposit-style resources that should drop from explosions like ore does.
+        return path.StartsWith("saltpeter-") || path.StartsWith("rawclay-");
+    }
+
+    private ItemStack? GetSpecialDepositFallbackDrop(Block originalBlock)
+    {
+        string path = originalBlock?.Code?.Path ?? "";
+        if (path.Length == 0) return null;
+
+        if (path.StartsWith("saltpeter-"))
+        {
+            Item? saltpeter = World.GetItem(new AssetLocation("game:saltpeter"));
+            return saltpeter == null ? null : new ItemStack(saltpeter, 1);
+        }
+
+        if (path.StartsWith("rawclay-"))
+        {
+            string[] parts = path.Split('-');
+            if (parts.Length >= 2)
+            {
+                string clayType = parts[1];
+                Item? clay = World.GetItem(new AssetLocation($"game:clay-{clayType}"));
+                if (clay != null)
+                {
+                    return new ItemStack(clay, 4);
+                }
+            }
+        }
+
+        return null;
     }
 
     public void ApplyConfigFromItemstack(ItemStack? stack)
@@ -825,9 +864,10 @@ public void Release(EntityAgent holder)
 
                     bool isCrystal = IsCrystalBlock(block);
                     bool isOre = !isCrystal && IsOreBlock(block);
-                    if (!isOre && !isCrystal) continue;
+                    bool isSpecial = !isCrystal && !isOre && IsSpecialDepositBlock(block);
+                    if (!isOre && !isCrystal && !isSpecial) continue;
 
-                    tracked.Add(new TrackedResourceBlock(tmp.Copy(), block.BlockId, isCrystal));
+                    tracked.Add(new TrackedResourceBlock(tmp.Copy(), block.BlockId, isCrystal, isSpecial));
                 }
             }
         }
@@ -862,9 +902,10 @@ public void Release(EntityAgent holder)
 
                     bool isCrystal = IsCrystalBlock(block);
                     bool isOre = !isCrystal && IsOreBlock(block);
-                    if (!isOre && !isCrystal) continue;
+                    bool isSpecial = !isCrystal && !isOre && IsSpecialDepositBlock(block);
+                    if (!isOre && !isCrystal && !isSpecial) continue;
 
-                    tracked.Add(new TrackedResourceBlock(tmp.Copy(), block.BlockId, isCrystal));
+                    tracked.Add(new TrackedResourceBlock(tmp.Copy(), block.BlockId, isCrystal, isSpecial));
                 }
             }
         }
@@ -898,7 +939,7 @@ public void Release(EntityAgent holder)
                     tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
                     Block block = blockAccessor.GetBlock(tmp);
                     if (block == null || block.BlockId == 0) continue;
-                    if (IsOreBlock(block) || IsCrystalBlock(block)) continue;
+                    if (IsOreBlock(block) || IsCrystalBlock(block) || IsSpecialDepositBlock(block)) continue;
 
                     blockAccessor.SetBlock(0, tmp);
                     cleared++;
@@ -922,7 +963,7 @@ public void Release(EntityAgent holder)
             if (tracked.IsCrystal) crystalTotal++;
             else oreTotal++;
 
-            float chance = tracked.IsCrystal ? crystalDestroyChance : oreDestroyChance;
+            float chance = tracked.IsSpecialDeposit ? 0f : (tracked.IsCrystal ? crystalDestroyChance : oreDestroyChance);
             bool shouldDestroy = World.Rand.NextDouble() <= chance;
             if (shouldDestroy)
             {
@@ -934,13 +975,38 @@ public void Release(EntityAgent holder)
             else
             {
                 // Preserve with drops: ensure original ore/crystal exists, then break it normally.
+                Block? originalBlock = World.GetBlock(tracked.BlockId);
+                string originalPath = originalBlock?.Code?.Path ?? "";
                 Block current = blockAccessor.GetBlock(tracked.Pos);
                 if (current == null || current.BlockId != tracked.BlockId)
                 {
                     blockAccessor.SetBlock(tracked.BlockId, tracked.Pos);
+                    current = blockAccessor.GetBlock(tracked.Pos);
                 }
 
-                blockAccessor.BreakBlock(tracked.Pos, byPlayer);
+                // Saltpeter coatings have a low vanilla drop average (0.5); guarantee collection on preserved outcome.
+                if (tracked.IsSpecialDeposit && originalPath.StartsWith("saltpeter-"))
+                {
+                    blockAccessor.SetBlock(0, tracked.Pos);
+                    Item? saltpeter = World.GetItem(new AssetLocation("game:saltpeter"));
+                    if (saltpeter != null)
+                    {
+                        World.SpawnItemEntity(new ItemStack(saltpeter, 1), tracked.Pos.ToVec3d().Add(0.5, 0.1, 0.5));
+                    }
+                }
+                else if (current != null && current.BlockId == tracked.BlockId)
+                {
+                    blockAccessor.BreakBlock(tracked.Pos, byPlayer);
+                }
+                else if (tracked.IsSpecialDeposit && originalBlock != null)
+                {
+                    ItemStack? fallback = GetSpecialDepositFallbackDrop(originalBlock);
+                    if (fallback != null)
+                    {
+                        World.SpawnItemEntity(fallback, tracked.Pos.ToVec3d().Add(0.5, 0.1, 0.5));
+                    }
+                }
+
                 if (tracked.IsCrystal) crystalPreserved++;
                 else orePreserved++;
             }
