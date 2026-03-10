@@ -1,6 +1,6 @@
 {
   "code": "bombicon-copper",
   "maxstacksize": 64,
-  "texture": { "base": "item/dynamite-copper-icon" },
+  "texture": { "base": "item/bombicon-copper" },
   "creativeinventory": {}
 }

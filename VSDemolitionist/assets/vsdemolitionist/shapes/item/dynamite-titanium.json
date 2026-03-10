@@ -12,7 +12,7 @@
     ]
   },
   "textures": {
-    "stick": "block/dynamite-shape-cap-titanium",
+    "stick": "block/bomb-titanium",
     "fuse": "item/fuse-texture"
   },
   "elements": [

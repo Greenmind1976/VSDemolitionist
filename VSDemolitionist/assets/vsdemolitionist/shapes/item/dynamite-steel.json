@@ -12,7 +12,7 @@
     ]
   },
   "textures": {
-    "stick": "block/dynamite-shape-cap-steel",
+    "stick": "block/bomb-steel",
     "fuse": "item/fuse-texture"
   },
   "elements": [

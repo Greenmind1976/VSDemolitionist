@@ -12,7 +12,7 @@
     ]
   },
   "textures": {
-    "bundle": "block/dynamite-bundle-titanium",
+    "bundle": "block/bomb-bundle-titanium",
     "fuse": "item/fuse-texture"
   },
   "elements": [

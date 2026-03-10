@@ -2,7 +2,7 @@
   "code": "bombicon-bundle-iron",
   "maxstacksize": 64,
   "texture": {
-    "base": "item/dynamite-bundle-iron-icon"
+    "base": "item/bombicon-bundle-iron"
   },
   "creativeinventory": {}
 }

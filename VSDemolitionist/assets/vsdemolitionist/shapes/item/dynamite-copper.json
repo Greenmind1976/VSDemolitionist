@@ -12,7 +12,7 @@
     ]
   },
   "textures": {
-    "stick": "block/dynamite-shape-cap-copper",
+    "stick": "block/bomb-copper",
     "fuse": "item/fuse-texture"
   },
   "elements": [
