@@ -1,0 +1,38 @@
+{
+  "textureWidth": 64,
+  "textureHeight": 64,
+  "textures": {
+    "tube": "block/bomb-blasting-charge",
+    "wire": "item/fuse-texture"
+  },
+  "elements": [
+    {
+      "name": "tube",
+      "from": [6.75, 6.75, 4.5],
+      "to": [9.25, 9.25, 13.5],
+      "faces": {
+        "north": { "texture": "#tube", "uv": [0, 20, 10, 30] },
+        "east": { "texture": "#tube", "uv": [10, 20, 20, 30] },
+        "south": { "texture": "#tube", "uv": [20, 20, 30, 30] },
+        "west": { "texture": "#tube", "uv": [30, 20, 40, 30] },
+        "up": { "texture": "#tube", "uv": [12, 2, 20, 10] },
+        "down": { "texture": "#tube", "uv": [22, 2, 30, 10] }
+      }
+    },
+    {
+      "name": "wire",
+      "from": [7.75, 9.25, 12.75],
+      "to": [8.25, 10.75, 14.75],
+      "rotationOrigin": [8, 9.5, 12.75],
+      "rotation": { "angle": -22.5, "axis": "x", "origin": [8, 9.5, 12.75] },
+      "faces": {
+        "north": { "texture": "#wire", "uv": [2, 2, 3, 5] },
+        "east": { "texture": "#wire", "uv": [2, 2, 3, 5] },
+        "south": { "texture": "#wire", "uv": [2, 2, 3, 5] },
+        "west": { "texture": "#wire", "uv": [2, 2, 3, 5] },
+        "up": { "texture": "#wire", "uv": [2, 2, 3, 3] },
+        "down": { "texture": "#wire", "uv": [2, 2, 3, 3] }
+      }
+    }
+  ]
+}

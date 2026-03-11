@@ -1,0 +1,19 @@
+{
+  "code": "detonator",
+  "class": "ItemDetonator",
+  "creativeinventory": {
+    "general": [
+      "*"
+    ]
+  },
+  "maxstacksize": 1,
+  "attributes": {
+    "detonator": {
+      "radius": 24.0,
+      "activationTime": 0.0
+    }
+  },
+  "texture": {
+    "base": "item/detonator-icon"
+  }
+}

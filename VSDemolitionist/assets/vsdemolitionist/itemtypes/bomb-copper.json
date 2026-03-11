@@ -33,7 +33,7 @@
   },
   "textures": {
     "default": {
-      "base": "item/dynamite-copper-icon"
+      "base": "item/bombicon-copper"
     }
   },
   "guiTransform": {

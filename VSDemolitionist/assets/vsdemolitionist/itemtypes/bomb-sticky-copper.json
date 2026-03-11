@@ -34,7 +34,7 @@
   },
   "textures": {
     "default": {
-      "base": "item/dynamite-copper-sticky-icon"
+      "base": "item/bombicon-sticky-copper"
     }
   },
   "guiTransform": {

@@ -1,5 +1,5 @@
 {
-  "code": "bomb-bronze",
+  "code": "blasting-charge",
   "class": "ItemBomb",
   "creativeinventory": {
     "general": [
@@ -9,31 +9,43 @@
   "maxstacksize": 64,
   "attributes": {
     "bomb": {
-      "tier": "bronze",
-      "entityCode": "bomb-bronze",
-      "iconItemCode": "bombicon-bronze",
-      "fuseSeconds": 4.0,
+      "tier": "blasting-charge",
+      "entityCode": "bomb-copper",
+      "placedEntityCode": "bombstuck-charge",
+      "iconItemCode": "bombicon-blasting-charge",
+      "fuseSeconds": 1.0,
       "heldFuseVolume": 3.2,
-      "thrownFuseVolume": 1.8,
+      "thrownFuseVolume": 0.36,
       "throwForwardStrength": 0.4,
       "throwUpwardBoost": 0.1,
-      "blastType": "rock",
-      "blastRadius": 4.4,
-      "rockBlastRadius": 4.4,
-      "oreBlastRadius": 4.4,
-      "entityBlastRadius": 3.8,
-      "oreDestroyChance": 0.4,
-      "crystalDestroyChance": 0.6,
-      "blastDropoff": 1.0,
+      "dualBlast": false,
+      "manualBlockRecovery": true,
+      "placeOnly": true,
+      "placeTopOnly": false,
+      "placeOnFace": true,
+      "attachOffset": 0.56,
+      "blastType": "ore",
+      "blastRadius": 4.0,
+      "rockBlastRadius": 4.0,
+      "oreBlastRadius": 4.0,
+      "entityBlastRadius": 3.4,
+      "oreDestroyChance": 0.05,
+      "crystalDestroyChance": 0.1,
+      "blastDropoff": 1.05,
       "blastPowerLoss": 0.05
+      ,
+      "inwardWidth": 3,
+      "inwardDepth": 5,
+      "outwardDepth": 1,
+      "inwardLinkRange": 7
     }
   },
   "shape": {
-    "base": "vsdemolitionist:item/dynamite-bronze"
+    "base": "vsdemolitionist:item/blasting-charge"
   },
   "textures": {
     "default": {
-      "base": "item/bombicon-bronze"
+      "base": "item/bombicon-blasting-charge"
     }
   },
   "guiTransform": {

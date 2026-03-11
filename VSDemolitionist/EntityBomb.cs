@@ -6,6 +6,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Config;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace VSDemolitionist;
 
@@ -76,6 +77,7 @@ public class EntityBomb : Entity
     private const int MaxManualBlockChanges = 10000;
     private const string BombAttrRoot = "bomb";
     private const string DefaultStaticStickyEntityCode = "bombstuck";
+    private static readonly AssetLocation FuseSoundDefault = new("vsdemolitionist", "sounds/fuse");
 
     private const string AttrLit = "vsd_lit";
     private const string AttrFuseEndMs = "vsd_fuseEndMs";
@@ -84,6 +86,7 @@ public class EntityBomb : Entity
     private const string AttrThrowForwardStrength = "vsd_throwForwardStrength";
     private const string AttrThrowUpwardBoost = "vsd_throwUpwardBoost";
     private const string AttrThrownFuseVolume = "vsd_thrownFuseVolume";
+    private const string AttrAttachOffset = "vsd_attachOffset";
     private const string AttrRockBlastRadius = "vsd_rockBlastRadius";
     private const string AttrOreBlastRadius = "vsd_oreBlastRadius";
     private const string AttrEntityBlastRadius = "vsd_entityBlastRadius";
@@ -92,11 +95,21 @@ public class EntityBomb : Entity
     private const string AttrBlastShape = "vsd_blastShape";
     private const string AttrBlastVerticalRadius = "vsd_blastVerticalRadius";
     private const string AttrBlockBlastType = "vsd_blockBlastType";
+    private const string AttrDualBlast = "vsd_dualBlast";
+    private const string AttrManualBlockRecovery = "vsd_manualBlockRecovery";
     private const string AttrBombTier = "vsd_bombTier";
     private const string AttrIsSticky = "vsd_isSticky";
     private const string AttrOreDestroyChance = "vsd_oreDestroyChance";
     private const string AttrCrystalDestroyChance = "vsd_crystalDestroyChance";
     private const string AttrThrowerPlayerUid = "vsd_throwerPlayerUid";
+    private const int DefaultBlastingChargeInwardWidth = 3;
+    private const int DefaultBlastingChargeInwardDepth = 7;
+    private const int DefaultBlastingChargeOutwardDepth = 0;
+    private const int DefaultBlastingChargeLinkRange = 16;
+    private const string AttrInwardWidth = "vsd_inwardWidth";
+    private const string AttrInwardDepth = "vsd_inwardDepth";
+    private const string AttrOutwardDepth = "vsd_outwardDepth";
+    private const string AttrInwardLinkRange = "vsd_inwardLinkRange";
 
     private static readonly HashSet<string> DebugBlastReportUids = new();
 
@@ -110,6 +123,7 @@ public class EntityBomb : Entity
     private bool impactPlayedServer = false;
     private float sparkAccum;
     private float smokeAccum;
+    private float chargePulseAccum;
     private double lastMotionX;
     private double lastMotionY;
     private double lastMotionZ;
@@ -163,6 +177,7 @@ public class EntityBomb : Entity
     {
         string path = block?.Code?.Path ?? "";
         if (path.Length == 0) return false;
+        if (IsQuartzHostedMetalOre(path)) return true;
         return path.Contains("ore");
     }
 
@@ -170,7 +185,24 @@ public class EntityBomb : Entity
     {
         string path = block?.Code?.Path ?? "";
         if (path.Length == 0) return false;
+        if (IsQuartzHostedMetalOre(path)) return false;
         return path.Contains("crystal") || path.Contains("quartz");
+    }
+
+    private static bool IsQuartzHostedMetalOre(string path)
+    {
+        if (!path.Contains("quartz")) return false;
+        return path.Contains("gold") || path.Contains("silver");
+    }
+
+    private bool ShouldPlayFuseSound()
+    {
+        return WatchedAttributes.GetString(AttrBombTier, "") != "blasting-charge";
+    }
+
+    private AssetLocation GetFuseSoundLocation()
+    {
+        return FuseSoundDefault;
     }
 
     private static bool IsSpecialDepositBlock(Block block)
@@ -180,6 +212,15 @@ public class EntityBomb : Entity
 
         // Deposit-style resources that should drop from explosions like ore does.
         return path.StartsWith("saltpeter-") || path.StartsWith("rawclay-");
+    }
+
+    private static bool IsProtectedBlock(Block? block)
+    {
+        string path = block?.Code?.Path ?? "";
+        if (path.Length == 0) return false;
+
+        // Never allow demolition logic to remove mantle blocks.
+        return path.Contains("mantle");
     }
 
     private ItemStack? GetSpecialDepositFallbackDrop(Block originalBlock)
@@ -220,6 +261,7 @@ public class EntityBomb : Entity
         WatchedAttributes.SetFloat(AttrThrowForwardStrength, GetBombFloat(stack, "throwForwardStrength", DefaultThrowForwardStrength));
         WatchedAttributes.SetFloat(AttrThrowUpwardBoost, GetBombFloat(stack, "throwUpwardBoost", DefaultThrowUpwardBoost));
         WatchedAttributes.SetFloat(AttrThrownFuseVolume, GetBombFloat(stack, "thrownFuseVolume", DefaultThrownFuseVolume));
+        WatchedAttributes.SetFloat(AttrAttachOffset, GetBombFloat(stack, "attachOffset", 0.60f));
         WatchedAttributes.SetFloat(AttrRockBlastRadius, GetBombFloat(stack, "rockBlastRadius", blastRadius));
         WatchedAttributes.SetFloat(AttrOreBlastRadius, GetBombFloat(stack, "oreBlastRadius", blastRadius));
         WatchedAttributes.SetFloat(AttrEntityBlastRadius, GetBombFloat(stack, "entityBlastRadius", blastRadius));
@@ -227,9 +269,15 @@ public class EntityBomb : Entity
         WatchedAttributes.SetFloat(AttrBlastPowerLoss, GetBombFloat(stack, "blastPowerLoss", DefaultBlastPowerLoss));
         WatchedAttributes.SetString(AttrBlastShape, GetBombString(stack, "blastShape", DefaultBlastShape));
         WatchedAttributes.SetFloat(AttrBlastVerticalRadius, GetBombFloat(stack, "blastVerticalRadius", blastRadius));
+        WatchedAttributes.SetInt(AttrInwardWidth, Math.Max(1, stack.Collectible?.Attributes?[BombAttrRoot]?["inwardWidth"].AsInt(DefaultBlastingChargeInwardWidth) ?? DefaultBlastingChargeInwardWidth));
+        WatchedAttributes.SetInt(AttrInwardDepth, Math.Max(1, stack.Collectible?.Attributes?[BombAttrRoot]?["inwardDepth"].AsInt(DefaultBlastingChargeInwardDepth) ?? DefaultBlastingChargeInwardDepth));
+        WatchedAttributes.SetInt(AttrOutwardDepth, Math.Max(0, stack.Collectible?.Attributes?[BombAttrRoot]?["outwardDepth"].AsInt(DefaultBlastingChargeOutwardDepth) ?? DefaultBlastingChargeOutwardDepth));
+        WatchedAttributes.SetInt(AttrInwardLinkRange, Math.Max(1, stack.Collectible?.Attributes?[BombAttrRoot]?["inwardLinkRange"].AsInt(DefaultBlastingChargeLinkRange) ?? DefaultBlastingChargeLinkRange));
         WatchedAttributes.SetFloat(AttrOreDestroyChance, Clamp01(GetBombFloat(stack, "oreDestroyChance", 1f)));
         WatchedAttributes.SetFloat(AttrCrystalDestroyChance, Clamp01(GetBombFloat(stack, "crystalDestroyChance", 1f)));
         WatchedAttributes.SetInt(AttrBlockBlastType, (int)ParseBlockBlastType(GetBombString(stack, "blastType", "rock")));
+        WatchedAttributes.SetBool(AttrDualBlast, stack.Collectible?.Attributes?[BombAttrRoot]?["dualBlast"].AsBool(false) ?? false);
+        WatchedAttributes.SetBool(AttrManualBlockRecovery, stack.Collectible?.Attributes?[BombAttrRoot]?["manualBlockRecovery"].AsBool(false) ?? false);
         WatchedAttributes.SetString(AttrBombTier, GetBombString(stack, "tier", stack.Collectible?.Code?.Path ?? "unknown"));
         WatchedAttributes.SetBool(AttrIsSticky, stack.Collectible?.Attributes?[BombAttrRoot]?["isSticky"].AsBool(false) ?? false);
     }
@@ -305,7 +353,7 @@ public void Release(EntityAgent holder)
         preferredAttachFace = face ?? BlockFacing.UP;
     }
 
-    public void AttachToBlock(BlockPos pos, BlockFacing face)
+    public void AttachToBlock(BlockPos pos, BlockFacing? face)
     {
         if (World.Side != EnumAppSide.Server) return;
 
@@ -338,6 +386,7 @@ public void Release(EntityAgent holder)
         other.WatchedAttributes.SetFloat(AttrThrowForwardStrength, GetConfigFloat(AttrThrowForwardStrength, DefaultThrowForwardStrength));
         other.WatchedAttributes.SetFloat(AttrThrowUpwardBoost, GetConfigFloat(AttrThrowUpwardBoost, DefaultThrowUpwardBoost));
         other.WatchedAttributes.SetFloat(AttrThrownFuseVolume, GetConfigFloat(AttrThrownFuseVolume, DefaultThrownFuseVolume));
+        other.WatchedAttributes.SetFloat(AttrAttachOffset, GetConfigFloat(AttrAttachOffset, 0.60f));
         other.WatchedAttributes.SetFloat(AttrRockBlastRadius, GetConfigFloat(AttrRockBlastRadius, DefaultBlastRadius));
         other.WatchedAttributes.SetFloat(AttrOreBlastRadius, GetConfigFloat(AttrOreBlastRadius, DefaultBlastRadius));
         other.WatchedAttributes.SetFloat(AttrEntityBlastRadius, GetConfigFloat(AttrEntityBlastRadius, DefaultBlastRadius));
@@ -346,6 +395,8 @@ public void Release(EntityAgent holder)
         other.WatchedAttributes.SetString(AttrBlastShape, WatchedAttributes.GetString(AttrBlastShape, DefaultBlastShape));
         other.WatchedAttributes.SetFloat(AttrBlastVerticalRadius, GetConfigFloat(AttrBlastVerticalRadius, DefaultBlastRadius));
         other.WatchedAttributes.SetInt(AttrBlockBlastType, WatchedAttributes.GetInt(AttrBlockBlastType, (int)EnumBlastType.RockBlast));
+        other.WatchedAttributes.SetBool(AttrDualBlast, GetConfigBool(AttrDualBlast, false));
+        other.WatchedAttributes.SetBool(AttrManualBlockRecovery, GetConfigBool(AttrManualBlockRecovery, false));
         other.WatchedAttributes.SetString(AttrBombTier, WatchedAttributes.GetString(AttrBombTier, "unknown"));
         other.WatchedAttributes.SetBool(AttrIsSticky, GetConfigBool(AttrIsSticky, false));
         other.WatchedAttributes.SetFloat(AttrOreDestroyChance, GetConfigFloat(AttrOreDestroyChance, 1f));
@@ -514,23 +565,27 @@ public void Release(EntityAgent holder)
             ICoreClientAPI? capi = Api as ICoreClientAPI;
             if (capi == null) return;
             bool isLit = WatchedAttributes.GetBool(AttrLit);
+            string bombTier = WatchedAttributes.GetString(AttrBombTier, "");
 
             if (isLit && holderId == -1 && !soundStarted)
             {
                 soundStarted = true;
 
-                fuseSound = capi.World.LoadSound(new SoundParams()
+                if (ShouldPlayFuseSound())
                 {
-                    Location = new AssetLocation("vsdemolitionist", "sounds/fuse"),
-                    ShouldLoop = true,
-                    DisposeOnFinish = false,
-                    RelativePosition = false,
-                    Range = 32f,
-                    Volume = GetConfigFloat(AttrThrownFuseVolume, DefaultThrownFuseVolume),
-                    Position = Pos.XYZ.ToVec3f()
-                });
+                    fuseSound = capi.World.LoadSound(new SoundParams()
+                    {
+                        Location = GetFuseSoundLocation(),
+                        ShouldLoop = true,
+                        DisposeOnFinish = false,
+                        RelativePosition = false,
+                        Range = 32f,
+                        Volume = GetConfigFloat(AttrThrownFuseVolume, DefaultThrownFuseVolume),
+                        Position = Pos.XYZ.ToVec3f()
+                    });
 
-                fuseSound?.Start();
+                    fuseSound?.Start();
+                }
             }
 
             if (isLit && holderId == -1 && fuseSound != null)
@@ -553,7 +608,10 @@ public void Release(EntityAgent holder)
             {
                 SpawnFuseSparks(capi, dt);
             }
-
+            else if (!isLit && holderId == -1 && bombTier == "blasting-charge")
+            {
+                SpawnChargePulse(capi, dt);
+            }
             // CLIENT: play one-shot impact when a thrown bomb first contacts a surface.
             if (isLit && !impactPlayedClient && holderId == -1)
             {
@@ -621,7 +679,13 @@ public void Release(EntityAgent holder)
         float verticalRadius = Math.Max(0.1f, GetConfigFloat(AttrBlastVerticalRadius, rockRadius));
         string blastShape = WatchedAttributes.GetString(AttrBlastShape, DefaultBlastShape)?.Trim().ToLowerInvariant() ?? DefaultBlastShape;
         bool isDiscBlast = blastShape == "disc" || blastShape == "flat";
+        int inwardWidth = Math.Max(1, WatchedAttributes.GetInt(AttrInwardWidth, DefaultBlastingChargeInwardWidth));
+        int inwardDepth = Math.Max(1, WatchedAttributes.GetInt(AttrInwardDepth, DefaultBlastingChargeInwardDepth));
+        int outwardDepth = Math.Max(0, WatchedAttributes.GetInt(AttrOutwardDepth, DefaultBlastingChargeOutwardDepth));
+        int inwardLinkRange = Math.Max(1, WatchedAttributes.GetInt(AttrInwardLinkRange, DefaultBlastingChargeLinkRange));
         EnumBlastType blockBlastType = (EnumBlastType)WatchedAttributes.GetInt(AttrBlockBlastType, (int)EnumBlastType.RockBlast);
+        bool dualBlast = GetConfigBool(AttrDualBlast, false);
+        bool manualBlockRecovery = GetConfigBool(AttrManualBlockRecovery, false);
         string ignitedByPlayerUid = WatchedAttributes.GetString(AttrThrowerPlayerUid);
         IServerPlayer? throwerPlayer = null;
         if (!string.IsNullOrWhiteSpace(ignitedByPlayerUid))
@@ -638,13 +702,78 @@ public void Release(EntityAgent holder)
         }
 
         List<TrackedResourceBlock>? trackedResources = null;
-        if (oreRadius > 0f)
+        bool isBlastingCharge = WatchedAttributes.GetString(AttrBombTier, "") == "blasting-charge";
+        int protectedMantleBlocks = 0;
+
+        if (isBlastingCharge && attachedToBlock)
         {
-            trackedResources = isDiscBlast
-                ? CollectResourceBlocksEllipsoid(oreRadius, verticalRadius)
-                : CollectResourceBlocksSphere(oreRadius);
+            protectedMantleBlocks = CountProtectedBlocksInwardLinked(inwardWidth, inwardDepth, outwardDepth, inwardLinkRange);
         }
 
+        if (oreRadius > 0f)
+        {
+            if (manualBlockRecovery && isBlastingCharge && attachedToBlock)
+            {
+                trackedResources = CollectResourceBlocksInwardLinked(inwardWidth, inwardDepth, outwardDepth, inwardLinkRange);
+            }
+            else
+            {
+                trackedResources = isDiscBlast
+                    ? CollectResourceBlocksEllipsoid(oreRadius, verticalRadius)
+                    : CollectResourceBlocksSphere(oreRadius);
+            }
+        }
+
+        string blastModeLabel = blockBlastType.ToString();
+        ResourceDestructionStats? stats = null;
+
+        if (manualBlockRecovery)
+        {
+            // Extraction mode: manually remove blocks and drop them as block items.
+            List<TrackedSolidBlock> extractionTargets = preSnapshot
+                ?? (isBlastingCharge && attachedToBlock
+                    ? CaptureSolidBlocksInwardLinked(inwardWidth, inwardDepth, outwardDepth, inwardLinkRange)
+                    : (isDiscBlast
+                        ? CaptureSolidBlocksEllipsoid(rockRadius, verticalRadius)
+                        : CaptureSolidBlocksSphere(rockRadius)));
+
+            int extracted = ExtractBlocksAsItems(extractionTargets);
+
+            // Keep entity damage/sound without terrain explosion side effects.
+            sapi.World.CreateExplosion(
+                Pos.AsBlockPos,
+                EnumBlastType.EntityBlast,
+                0f,
+                entityRadius,
+                powerLoss,
+                string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
+            );
+
+            if (trackedResources != null && trackedResources.Count > 0)
+            {
+                stats = BuildAllPreservedResourceStats(trackedResources);
+            }
+
+            blastModeLabel = isBlastingCharge && attachedToBlock
+                ? $"ManualRecovery-Inward{inwardWidth}x{inwardWidth}x{inwardDepth}"
+                : "ManualRecovery";
+
+            if (throwerPlayer != null && debugEnabled)
+            {
+                SendBlastReport(throwerPlayer, blastModeLabel, rockRadius, oreRadius, entityRadius, stats, extracted);
+                LogBlastReport(throwerPlayer, blastModeLabel, rockRadius, oreRadius, entityRadius, stats, extracted);
+            }
+
+            if (throwerPlayer != null && protectedMantleBlocks > 0)
+            {
+                string warnMsg = $"[VSD] Warning: {protectedMantleBlocks} mantle block(s) were protected and not broken.";
+                throwerPlayer.SendMessage(GlobalConstants.GeneralChatGroup, warnMsg, EnumChatType.Notification);
+                World.Api?.Logger?.Warning($"[VSD] mantle-protection player={throwerPlayer.PlayerName} uid={throwerPlayer.PlayerUID} bomb={WatchedAttributes.GetString(AttrBombTier, "unknown")} protectedBlocks={protectedMantleBlocks}");
+            }
+
+            Die(EnumDespawnReason.Removed);
+            return;
+        }
         if (isDiscBlast && rockRadius > 0f)
         {
             ClearNonResourceBlocksEllipsoid(rockRadius, verticalRadius);
@@ -658,6 +787,34 @@ public void Release(EntityAgent holder)
                 powerLoss,
                 string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
             );
+            blastModeLabel = "Disc";
+        }
+        else if (dualBlast && rockRadius > 0f)
+        {
+            // Layered blast mode: clear rock first, then do ore blast.
+            sapi.World.CreateExplosion(
+                Pos.AsBlockPos,
+                EnumBlastType.RockBlast,
+                rockRadius,
+                entityRadius,
+                powerLoss,
+                string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
+            );
+
+            if (oreRadius > 0f)
+            {
+                // Second pass focuses on resources, without a second entity damage burst.
+                sapi.World.CreateExplosion(
+                    Pos.AsBlockPos,
+                    EnumBlastType.OreBlast,
+                    oreRadius,
+                    0f,
+                    powerLoss,
+                    string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
+                );
+            }
+
+            blastModeLabel = "Dual(Rock+Ore)";
         }
         else if (rockRadius > 0f)
         {
@@ -669,9 +826,9 @@ public void Release(EntityAgent holder)
                 powerLoss,
                 string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
             );
+            blastModeLabel = blockBlastType.ToString();
         }
 
-        ResourceDestructionStats? stats = null;
         if (trackedResources != null && trackedResources.Count > 0)
         {
             stats = ApplyResourceDestruction(
@@ -685,8 +842,15 @@ public void Release(EntityAgent holder)
         if (throwerPlayer != null && debugEnabled)
         {
             int destroyedBlocks = preSnapshot == null ? -1 : CountDestroyedBlocks(preSnapshot);
-            SendBlastReport(throwerPlayer, blockBlastType, rockRadius, oreRadius, entityRadius, stats, destroyedBlocks);
-            LogBlastReport(throwerPlayer, blockBlastType, rockRadius, oreRadius, entityRadius, stats, destroyedBlocks);
+            SendBlastReport(throwerPlayer, blastModeLabel, rockRadius, oreRadius, entityRadius, stats, destroyedBlocks);
+            LogBlastReport(throwerPlayer, blastModeLabel, rockRadius, oreRadius, entityRadius, stats, destroyedBlocks);
+        }
+
+        if (throwerPlayer != null && protectedMantleBlocks > 0)
+        {
+            string warnMsg = $"[VSD] Warning: {protectedMantleBlocks} mantle block(s) were protected and not broken.";
+            throwerPlayer.SendMessage(GlobalConstants.GeneralChatGroup, warnMsg, EnumChatType.Notification);
+            World.Api?.Logger?.Warning($"[VSD] mantle-protection player={throwerPlayer.PlayerName} uid={throwerPlayer.PlayerUID} bomb={WatchedAttributes.GetString(AttrBombTier, "unknown")} protectedBlocks={protectedMantleBlocks}");
         }
 
         Die(EnumDespawnReason.Removed);
@@ -816,7 +980,21 @@ public void Release(EntityAgent holder)
     {
         Vec3i n = attachedFace.Normali;
         // Place almost on the touched face so it looks mounted instead of hovering.
-        const double offset = 0.60;
+        double offset = GetConfigFloat(AttrAttachOffset, 0.60f);
+        // Fine-tune placed blasting charge top-face seating without changing side/bottom behavior.
+        if (WatchedAttributes.GetString(AttrBombTier, "") == "blasting-charge")
+        {
+            if (attachedFace == BlockFacing.UP)
+            {
+                // Keep top-mounted charges seated without sinking into the block.
+                offset -= 0.33;
+            }
+            else if (attachedFace != BlockFacing.DOWN)
+            {
+                // Side faces inset slightly so charges remain visible while still looking seated.
+                offset -= 0.08;
+            }
+        }
         double x = attachedBlockPos.X + 0.5 + n.X * offset;
         double y = attachedBlockPos.Y + 0.5 + n.Y * offset;
         double z = attachedBlockPos.Z + 0.5 + n.Z * offset;
@@ -861,6 +1039,7 @@ public void Release(EntityAgent holder)
                     tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
                     Block block = blockAccessor.GetBlock(tmp);
                     if (block == null || block.BlockId == 0) continue;
+                    if (IsProtectedBlock(block)) continue;
 
                     bool isCrystal = IsCrystalBlock(block);
                     bool isOre = !isCrystal && IsOreBlock(block);
@@ -899,6 +1078,7 @@ public void Release(EntityAgent holder)
                     tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
                     Block block = blockAccessor.GetBlock(tmp);
                     if (block == null || block.BlockId == 0) continue;
+                    if (IsProtectedBlock(block)) continue;
 
                     bool isCrystal = IsCrystalBlock(block);
                     bool isOre = !isCrystal && IsOreBlock(block);
@@ -939,6 +1119,7 @@ public void Release(EntityAgent holder)
                     tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
                     Block block = blockAccessor.GetBlock(tmp);
                     if (block == null || block.BlockId == 0) continue;
+                    if (IsProtectedBlock(block)) continue;
                     if (IsOreBlock(block) || IsCrystalBlock(block) || IsSpecialDepositBlock(block)) continue;
 
                     blockAccessor.SetBlock(0, tmp);
@@ -977,6 +1158,7 @@ public void Release(EntityAgent holder)
                 // Preserve with drops: ensure original ore/crystal exists, then break it normally.
                 Block? originalBlock = World.GetBlock(tracked.BlockId);
                 string originalPath = originalBlock?.Code?.Path ?? "";
+                if (IsProtectedBlock(originalBlock)) continue;
                 Block current = blockAccessor.GetBlock(tracked.Pos);
                 if (current == null || current.BlockId != tracked.BlockId)
                 {
@@ -1022,9 +1204,57 @@ public void Release(EntityAgent holder)
         );
     }
 
+    private int ExtractBlocksAsItems(List<TrackedSolidBlock> targets)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        int extracted = 0;
+
+        foreach (TrackedSolidBlock tracked in targets)
+        {
+            if (extracted >= MaxManualBlockChanges) break;
+
+            Block current = blockAccessor.GetBlock(tracked.Pos);
+            if (current == null || current.BlockId == 0) continue;
+            if (IsProtectedBlock(current)) continue;
+            if (current.EntityClass != null) continue;
+
+            // Skip fluids/plants to keep extraction focused on solid building/resources.
+            if (current.Replaceable >= 6000) continue;
+
+            ItemStack drop = new(current, 1);
+            blockAccessor.SetBlock(0, tracked.Pos);
+            World.SpawnItemEntity(drop, tracked.Pos.ToVec3d().Add(0.5, 0.1, 0.5));
+            extracted++;
+        }
+
+        return extracted;
+    }
+
+
+    private static ResourceDestructionStats BuildAllPreservedResourceStats(List<TrackedResourceBlock> trackedResources)
+    {
+        int oreTotal = 0;
+        int crystalTotal = 0;
+
+        foreach (TrackedResourceBlock tracked in trackedResources)
+        {
+            if (tracked.IsCrystal) crystalTotal++;
+            else oreTotal++;
+        }
+
+        return new ResourceDestructionStats(
+            oreTotal,
+            0,
+            oreTotal,
+            crystalTotal,
+            0,
+            crystalTotal
+        );
+    }
+
     private void SendBlastReport(
         IServerPlayer byPlayer,
-        EnumBlastType blockBlastType,
+        string blastMode,
         float rockRadius,
         float oreRadius,
         float entityRadius,
@@ -1036,7 +1266,7 @@ public void Release(EntityAgent holder)
         float crystalPct = s.CrystalTotal > 0 ? (100f * s.CrystalDestroyed / s.CrystalTotal) : 0f;
         string bombTier = WatchedAttributes.GetString(AttrBombTier, "unknown");
         string destroyedStr = destroyedBlocks >= 0 ? destroyedBlocks.ToString() : "?";
-        string msg = $"[VSD] {bombTier} blast={blockBlastType} blocksDestroyed={destroyedStr} rock={rockRadius:0.0} ore={oreRadius:0.0} entity={entityRadius:0.0} | " +
+        string msg = $"[VSD] {bombTier} blast={blastMode} blocksDestroyed={destroyedStr} rock={rockRadius:0.0} ore={oreRadius:0.0} entity={entityRadius:0.0} | " +
                      $"Ore total={s.OreTotal} destroyed={s.OreDestroyed} ({orePct:0.#}%) preserved={s.OrePreserved} | " +
                      $"Crystal total={s.CrystalTotal} destroyed={s.CrystalDestroyed} ({crystalPct:0.#}%) preserved={s.CrystalPreserved}";
 
@@ -1045,7 +1275,7 @@ public void Release(EntityAgent holder)
 
     private void LogBlastReport(
         IServerPlayer byPlayer,
-        EnumBlastType blockBlastType,
+        string blastMode,
         float rockRadius,
         float oreRadius,
         float entityRadius,
@@ -1057,7 +1287,7 @@ public void Release(EntityAgent holder)
         float crystalPct = s.CrystalTotal > 0 ? (100f * s.CrystalDestroyed / s.CrystalTotal) : 0f;
         string bombTier = WatchedAttributes.GetString(AttrBombTier, "unknown");
         string destroyedStr = destroyedBlocks >= 0 ? destroyedBlocks.ToString() : "?";
-        string msg = $"[VSD-DEBUG] player={byPlayer.PlayerName} uid={byPlayer.PlayerUID} bomb={bombTier} blast={blockBlastType} " +
+        string msg = $"[VSD-DEBUG] player={byPlayer.PlayerName} uid={byPlayer.PlayerUID} bomb={bombTier} blast={blastMode} " +
                      $"blocksDestroyed={destroyedStr} rock={rockRadius:0.0} ore={oreRadius:0.0} entity={entityRadius:0.0} " +
                      $"oreDestroyed={s.OreDestroyed}/{s.OreTotal} ({orePct:0.#}%) crystalDestroyed={s.CrystalDestroyed}/{s.CrystalTotal} ({crystalPct:0.#}%)";
 
@@ -1096,6 +1326,7 @@ public void Release(EntityAgent holder)
                     tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
                     Block block = blockAccessor.GetBlock(tmp);
                     if (block == null || block.BlockId == 0) continue;
+                    if (IsProtectedBlock(block)) continue;
                     tracked.Add(new TrackedSolidBlock(tmp.Copy(), block.BlockId));
                 }
             }
@@ -1130,12 +1361,276 @@ public void Release(EntityAgent holder)
                     tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
                     Block block = blockAccessor.GetBlock(tmp);
                     if (block == null || block.BlockId == 0) continue;
+                    if (IsProtectedBlock(block)) continue;
                     tracked.Add(new TrackedSolidBlock(tmp.Copy(), block.BlockId));
                 }
             }
         }
 
         return tracked;
+    }
+
+    private List<TrackedSolidBlock> CaptureSolidBlocksInwardLinked(int width, int depth, int outwardDepth, int linkRange)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        List<TrackedSolidBlock> tracked = new();
+        if (!attachedToBlock) return tracked;
+
+        int safeWidth = Math.Max(1, width);
+        int safeDepth = Math.Max(1, depth);
+        int half = safeWidth / 2;
+
+        Vec3i inward = attachedFace.Opposite.Normali;
+        GetPerpendicularAxes(inward, out Vec3i axisA, out Vec3i axisB);
+        BlockPos basePos = attachedBlockPos.Copy();
+        BlockPos tmp = basePos.Copy();
+        GetLinkedRangeOnPlane(axisA, axisB, inward, half, linkRange, out int minA, out int maxA, out int minB, out int maxB);
+
+        for (int d = -outwardDepth; d < safeDepth; d++)
+        {
+            for (int a = minA; a <= maxA; a++)
+            {
+                for (int b = minB; b <= maxB; b++)
+                {
+                    if (tracked.Count >= MaxManualBlockChanges) return tracked;
+
+                    tmp.Set(
+                        basePos.X + inward.X * d + axisA.X * a + axisB.X * b,
+                        basePos.Y + inward.Y * d + axisA.Y * a + axisB.Y * b,
+                        basePos.Z + inward.Z * d + axisA.Z * a + axisB.Z * b
+                    );
+
+                    Block block = blockAccessor.GetBlock(tmp);
+                    if (block == null || block.BlockId == 0) continue;
+                    if (IsProtectedBlock(block)) continue;
+                    tracked.Add(new TrackedSolidBlock(tmp.Copy(), block.BlockId));
+                }
+            }
+        }
+
+        return tracked;
+    }
+
+    private List<TrackedResourceBlock> CollectResourceBlocksInwardLinked(int width, int depth, int outwardDepth, int linkRange)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        List<TrackedResourceBlock> tracked = new();
+        if (!attachedToBlock) return tracked;
+
+        int safeWidth = Math.Max(1, width);
+        int safeDepth = Math.Max(1, depth);
+        int half = safeWidth / 2;
+
+        Vec3i inward = attachedFace.Opposite.Normali;
+        GetPerpendicularAxes(inward, out Vec3i axisA, out Vec3i axisB);
+        BlockPos basePos = attachedBlockPos.Copy();
+        BlockPos tmp = basePos.Copy();
+        GetLinkedRangeOnPlane(axisA, axisB, inward, half, linkRange, out int minA, out int maxA, out int minB, out int maxB);
+
+        for (int d = -outwardDepth; d < safeDepth; d++)
+        {
+            for (int a = minA; a <= maxA; a++)
+            {
+                for (int b = minB; b <= maxB; b++)
+                {
+                    tmp.Set(
+                        basePos.X + inward.X * d + axisA.X * a + axisB.X * b,
+                        basePos.Y + inward.Y * d + axisA.Y * a + axisB.Y * b,
+                        basePos.Z + inward.Z * d + axisA.Z * a + axisB.Z * b
+                    );
+
+                    Block block = blockAccessor.GetBlock(tmp);
+                    if (block == null || block.BlockId == 0) continue;
+                    if (IsProtectedBlock(block)) continue;
+
+                    bool isCrystal = IsCrystalBlock(block);
+                    bool isOre = !isCrystal && IsOreBlock(block);
+                    bool isSpecial = !isCrystal && !isOre && IsSpecialDepositBlock(block);
+                    if (!isOre && !isCrystal && !isSpecial) continue;
+
+                    tracked.Add(new TrackedResourceBlock(tmp.Copy(), block.BlockId, isCrystal, isSpecial));
+                }
+            }
+        }
+
+        return tracked;
+    }
+
+    private int CountProtectedBlocksInwardLinked(int width, int depth, int outwardDepth, int linkRange)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        if (!attachedToBlock) return 0;
+
+        int safeWidth = Math.Max(1, width);
+        int safeDepth = Math.Max(1, depth);
+        int half = safeWidth / 2;
+
+        Vec3i inward = attachedFace.Opposite.Normali;
+        GetPerpendicularAxes(inward, out Vec3i axisA, out Vec3i axisB);
+        BlockPos basePos = attachedBlockPos.Copy();
+        BlockPos tmp = basePos.Copy();
+        GetLinkedRangeOnPlane(axisA, axisB, inward, half, linkRange, out int minA, out int maxA, out int minB, out int maxB);
+
+        int count = 0;
+        for (int d = -outwardDepth; d < safeDepth; d++)
+        {
+            for (int a = minA; a <= maxA; a++)
+            {
+                for (int b = minB; b <= maxB; b++)
+                {
+                    tmp.Set(
+                        basePos.X + inward.X * d + axisA.X * a + axisB.X * b,
+                        basePos.Y + inward.Y * d + axisA.Y * a + axisB.Y * b,
+                        basePos.Z + inward.Z * d + axisA.Z * a + axisB.Z * b
+                    );
+
+                    Block block = blockAccessor.GetBlock(tmp);
+                    if (block == null || block.BlockId == 0) continue;
+                    if (!IsProtectedBlock(block)) continue;
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private void GetLinkedRangeOnPlane(
+        Vec3i axisA,
+        Vec3i axisB,
+        Vec3i inward,
+        int halfWidth,
+        int linkRange,
+        out int minA,
+        out int maxA,
+        out int minB,
+        out int maxB)
+    {
+        minA = -halfWidth;
+        maxA = halfWidth;
+        minB = -halfWidth;
+        maxB = halfWidth;
+
+        int linkRangeSq = linkRange * linkRange;
+        BlockPos basePos = attachedBlockPos;
+        List<(int a, int b)> linkedOffsets = new();
+
+        if (Api is not ICoreServerAPI sapi) return;
+
+        Entity[] entities = sapi.World.LoadedEntities.Values.ToArray();
+        foreach (Entity entity in entities)
+        {
+            if (entity is not EntityBomb other || other.EntityId == EntityId) continue;
+            if (!other.attachedToBlock || other.attachedFace != attachedFace) continue;
+            if (other.WatchedAttributes.GetString(AttrBombTier, "") != "blasting-charge") continue;
+
+            int dx = other.attachedBlockPos.X - basePos.X;
+            int dy = other.attachedBlockPos.Y - basePos.Y;
+            int dz = other.attachedBlockPos.Z - basePos.Z;
+            int distSq = dx * dx + dy * dy + dz * dz;
+            if (distSq > linkRangeSq) continue;
+
+            // Must be on the same face plane to be linked in this pass.
+            int planeDelta = dx * inward.X + dy * inward.Y + dz * inward.Z;
+            if (planeDelta != 0) continue;
+
+            int a = dx * axisA.X + dy * axisA.Y + dz * axisA.Z;
+            int b = dx * axisB.X + dy * axisB.Y + dz * axisB.Z;
+            linkedOffsets.Add((a, b));
+        }
+
+        if (linkedOffsets.Count == 0) return;
+
+        // Expand width axis only when we have a horizontal-type link (same row band).
+        bool hasHorizontalLink = linkedOffsets.Any(p => Math.Abs(p.b) <= halfWidth && Math.Abs(p.a) > halfWidth);
+        int minAH = minA;
+        int maxAH = maxA;
+        if (hasHorizontalLink)
+        {
+            foreach ((int a, int b) in linkedOffsets)
+            {
+                if (Math.Abs(b) > halfWidth) continue;
+                minAH = Math.Min(minAH, a - halfWidth);
+                maxAH = Math.Max(maxAH, a + halfWidth);
+            }
+        }
+
+        // Expand height axis only when we have a vertical-type link (same column band).
+        bool hasVerticalLink = linkedOffsets.Any(p => Math.Abs(p.a) <= halfWidth && Math.Abs(p.b) > halfWidth);
+        int minBV = minB;
+        int maxBV = maxB;
+        if (hasVerticalLink)
+        {
+            foreach ((int a, int b) in linkedOffsets)
+            {
+                if (Math.Abs(a) > halfWidth) continue;
+                minBV = Math.Min(minBV, b - halfWidth);
+                maxBV = Math.Max(maxBV, b + halfWidth);
+            }
+        }
+
+        // Full area expansion requires a 4-charge frame (self + at least 3 linked charges).
+        // With only 2-3 total charges, keep line-style behavior to avoid auto-filling full rectangles.
+        if (hasHorizontalLink && hasVerticalLink)
+        {
+            if (linkedOffsets.Count >= 3)
+            {
+                minA = minAH;
+                maxA = maxAH;
+                minB = minBV;
+                maxB = maxBV;
+            }
+            else
+            {
+                int spanA = maxAH - minAH;
+                int spanB = maxBV - minBV;
+                if (spanA >= spanB)
+                {
+                    minA = minAH;
+                    maxA = maxAH;
+                }
+                else
+                {
+                    minB = minBV;
+                    maxB = maxBV;
+                }
+            }
+            return;
+        }
+
+        if (hasHorizontalLink)
+        {
+            minA = minAH;
+            maxA = maxAH;
+        }
+        else if (hasVerticalLink)
+        {
+            minB = minBV;
+            maxB = maxBV;
+        }
+    }
+
+    private static void GetPerpendicularAxes(Vec3i inward, out Vec3i axisA, out Vec3i axisB)
+    {
+        // Build a stable local frame for the inward cube:
+        // inward + two perpendicular axes that form the 7x7 cross-section.
+        if (Math.Abs(inward.Y) == 1)
+        {
+            axisA = new Vec3i(1, 0, 0);
+            axisB = new Vec3i(0, 0, 1);
+            return;
+        }
+
+        if (Math.Abs(inward.X) == 1)
+        {
+            axisA = new Vec3i(0, 1, 0);
+            axisB = new Vec3i(0, 0, 1);
+            return;
+        }
+
+        // Z axis inward
+        axisA = new Vec3i(1, 0, 0);
+        axisB = new Vec3i(0, 1, 0);
     }
 
     private int CountDestroyedBlocks(List<TrackedSolidBlock> preSnapshot)
@@ -1252,6 +1747,28 @@ public void Release(EntityAgent holder)
                 null
             );
         }
+    }
+
+    private void SpawnChargePulse(ICoreClientAPI capi, float dt)
+    {
+        chargePulseAccum += dt;
+        if (chargePulseAccum < 0.18f) return;
+        chargePulseAccum = 0f;
+
+        Vec3d pulsePos = Pos.XYZ.AddCopy(0, 0.07, 0);
+        capi.World.SpawnParticles(
+            0.22f,
+            unchecked((int)0xFF66D9FF),
+            pulsePos.AddCopy(-0.012, -0.002, -0.012),
+            pulsePos.AddCopy(0.012, 0.003, 0.012),
+            new Vec3f(-0.006f, 0.001f, -0.006f),
+            new Vec3f(0.012f, 0.010f, 0.012f),
+            0.18f,
+            0f,
+            0.045f,
+            EnumParticleModel.Quad,
+            null
+        );
     }
 
     private static Vec3d RotateLocalOffset(Vec3d local, float yaw, float pitch, float roll)

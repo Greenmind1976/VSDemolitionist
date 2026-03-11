@@ -80,5 +80,11 @@
   "incontainer-item-liquid-tar": "Liquid Tar",
   "item-vsdemolitionist-item-thick-tar": "Thick Tar",
   "item-thick-tar": "Thick Tar",
-  "item-vsdemolitionist-thick-tar": "Thick Tar"
+  "item-vsdemolitionist-thick-tar": "Thick Tar",
+  "item-vsdemolitionist-blasting-charge": "Block-Blasting Charge",
+  "item-vsdemolitionist-item-blasting-charge": "Block-Blasting Charge",
+  "item-blasting-charge": "Block-Blasting Charge",
+  "item-vsdemolitionist-detonator": "Detonator",
+  "item-vsdemolitionist-item-detonator": "Detonator",
+  "item-detonator": "Detonator"
 }

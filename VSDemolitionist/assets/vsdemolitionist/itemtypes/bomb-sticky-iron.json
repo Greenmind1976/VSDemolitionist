@@ -35,7 +35,7 @@
   },
   "textures": {
     "default": {
-      "base": "item/dynamite-iron-sticky-icon"
+      "base": "item/bombicon-sticky-iron"
     }
   },
   "guiTransform": {
