@@ -627,5 +627,116 @@
     "name": "Recover Rhodochrosite Ore Any Position",
     "output": { "type": "item", "code": "game:ore-poor-rhodochrosite-claystone", "quantity": 1 }
   }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-lignite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Brown Coal Ore",
+    "output": { "type": "item", "code": "game:ore-lignite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-lignite-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Brown Coal Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-lignite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-lignite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Brown Coal Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-lignite", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-bituminouscoal-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Black Coal Ore",
+    "output": { "type": "item", "code": "game:ore-bituminouscoal", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-bituminouscoal-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Black Coal Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-bituminouscoal", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-bituminouscoal-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Black Coal Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-bituminouscoal", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-sulfur-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Sulfur Ore",
+    "output": { "type": "item", "code": "game:ore-sulfur", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-sulfur-*" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Sulfur Ore Vertical",
+    "output": { "type": "item", "code": "game:ore-sulfur", "quantity": 1 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-sulfur-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Sulfur Ore Any Position",
+    "output": { "type": "item", "code": "game:ore-sulfur", "quantity": 1 }
+  }
 
 ]

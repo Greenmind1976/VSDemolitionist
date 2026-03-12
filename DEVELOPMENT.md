@@ -45,3 +45,11 @@ dotnet build VSDemolitionist.sln
 - Tools are intentionally installed outside this repo.
 - Re-running setup is safe.
 - If Python packages break after updates, run setup again.
+
+## In-Game Commands
+
+- `/dynamitedebug on|off`
+  - Toggles VSD blast debug reporting in chat and server log for the player.
+- `/dynamitesounds on|off`
+  - Toggles custom VSD explosion-side blast sounds (e.g., water explosion overlay sound).
+  - Does not change fuse/throw interaction sounds.

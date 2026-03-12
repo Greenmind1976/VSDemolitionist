@@ -101,6 +101,10 @@ public class EntityBomb : Entity
     private const string AttrIsSticky = "vsd_isSticky";
     private const string AttrOreDestroyChance = "vsd_oreDestroyChance";
     private const string AttrCrystalDestroyChance = "vsd_crystalDestroyChance";
+    private const string AttrAnimalsOnlyDamage = "vsd_animalsOnlyDamage";
+    private const string AttrEntityDamage = "vsd_entityDamage";
+    private const string AttrFisherSurfaceDestroyChance = "vsd_fisherSurfaceDestroyChance";
+    private const string AttrExploded = "vsd_exploded";
     private const string AttrThrowerPlayerUid = "vsd_throwerPlayerUid";
     private const int DefaultBlastingChargeInwardWidth = 3;
     private const int DefaultBlastingChargeInwardDepth = 7;
@@ -112,6 +116,7 @@ public class EntityBomb : Entity
     private const string AttrInwardLinkRange = "vsd_inwardLinkRange";
 
     private static readonly HashSet<string> DebugBlastReportUids = new();
+    private static bool customBlastSoundsEnabled = true;
 
     private long holderId = -1;
 
@@ -119,6 +124,7 @@ public class EntityBomb : Entity
     private bool soundStarted = false;
     private bool airborneClient = false;
     private bool impactPlayedClient = false;
+    private bool explosionFxPlayedClient = false;
     private bool airborneServer = false;
     private bool impactPlayedServer = false;
     private float sparkAccum;
@@ -278,8 +284,12 @@ public class EntityBomb : Entity
         WatchedAttributes.SetInt(AttrBlockBlastType, (int)ParseBlockBlastType(GetBombString(stack, "blastType", "rock")));
         WatchedAttributes.SetBool(AttrDualBlast, stack.Collectible?.Attributes?[BombAttrRoot]?["dualBlast"].AsBool(false) ?? false);
         WatchedAttributes.SetBool(AttrManualBlockRecovery, stack.Collectible?.Attributes?[BombAttrRoot]?["manualBlockRecovery"].AsBool(false) ?? false);
+        WatchedAttributes.SetBool(AttrAnimalsOnlyDamage, stack.Collectible?.Attributes?[BombAttrRoot]?["animalsOnlyDamage"].AsBool(false) ?? false);
+        WatchedAttributes.SetFloat(AttrEntityDamage, GetBombFloat(stack, "entityDamage", 8f));
+        WatchedAttributes.SetFloat(AttrFisherSurfaceDestroyChance, Clamp01(GetBombFloat(stack, "fisherSurfaceDestroyChance", 0f)));
         WatchedAttributes.SetString(AttrBombTier, GetBombString(stack, "tier", stack.Collectible?.Code?.Path ?? "unknown"));
         WatchedAttributes.SetBool(AttrIsSticky, stack.Collectible?.Attributes?[BombAttrRoot]?["isSticky"].AsBool(false) ?? false);
+        WatchedAttributes.SetBool(AttrExploded, false);
     }
 
     public void StartFuse()
@@ -567,6 +577,11 @@ public void Release(EntityAgent holder)
             bool isLit = WatchedAttributes.GetBool(AttrLit);
             string bombTier = WatchedAttributes.GetString(AttrBombTier, "");
 
+            if (!explosionFxPlayedClient && WatchedAttributes.GetBool(AttrExploded, false))
+            {
+                PlayClientExplosionFx(capi);
+            }
+
             if (isLit && holderId == -1 && !soundStarted)
             {
                 soundStarted = true;
@@ -633,6 +648,18 @@ public void Release(EntityAgent holder)
         base.OnCollided();
 
         if (World.Side != EnumAppSide.Server) return;
+
+        // Non-sticky thrown bombs: apply stronger damping in water so they don't roll/glide too far.
+        if (holderId == -1 && WatchedAttributes.GetBool(AttrLit) && !GetConfigBool(AttrIsSticky, false))
+        {
+            if (IsPositionInWater(ServerPos.X, ServerPos.Y, ServerPos.Z))
+            {
+                ServerPos.Motion.Set(ServerPos.Motion.X * 0.45, ServerPos.Motion.Y * 0.65, ServerPos.Motion.Z * 0.45);
+                Pos.Motion.Set(ServerPos.Motion.X, ServerPos.Motion.Y, ServerPos.Motion.Z);
+            }
+            return;
+        }
+
         if (holderId != -1) return;
         if (!WatchedAttributes.GetBool(AttrLit)) return;
         if (!GetConfigBool(AttrIsSticky, false)) return;
@@ -669,6 +696,7 @@ public void Release(EntityAgent holder)
     private void Explode()
     {
         if (World.Side != EnumAppSide.Server) return;
+        WatchedAttributes.SetBool(AttrExploded, true);
 
         ICoreServerAPI sapi = (ICoreServerAPI)World.Api;
 
@@ -686,6 +714,9 @@ public void Release(EntityAgent holder)
         EnumBlastType blockBlastType = (EnumBlastType)WatchedAttributes.GetInt(AttrBlockBlastType, (int)EnumBlastType.RockBlast);
         bool dualBlast = GetConfigBool(AttrDualBlast, false);
         bool manualBlockRecovery = GetConfigBool(AttrManualBlockRecovery, false);
+        bool animalsOnlyDamage = WatchedAttributes.GetBool(AttrAnimalsOnlyDamage, false);
+        float entityDamage = Math.Max(0f, WatchedAttributes.GetFloat(AttrEntityDamage, 8f));
+        float fisherSurfaceDestroyChance = Clamp01(WatchedAttributes.GetFloat(AttrFisherSurfaceDestroyChance, 0f));
         string ignitedByPlayerUid = WatchedAttributes.GetString(AttrThrowerPlayerUid);
         IServerPlayer? throwerPlayer = null;
         if (!string.IsNullOrWhiteSpace(ignitedByPlayerUid))
@@ -726,6 +757,33 @@ public void Release(EntityAgent holder)
 
         string blastModeLabel = blockBlastType.ToString();
         ResourceDestructionStats? stats = null;
+
+        if (animalsOnlyDamage)
+        {
+            // Keep the blast event for visuals/sound/entity pressure, but no terrain crater logic.
+            sapi.World.CreateExplosion(
+                Pos.AsBlockPos,
+                EnumBlastType.EntityBlast,
+                0f,
+                entityRadius,
+                powerLoss,
+                string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
+            );
+
+            int animalsHit = ApplyAnimalsOnlyExplosionDamage(entityRadius, entityDamage, throwerPlayer?.Entity);
+            int disrupted = ApplyFisherWaterAndBottomDisruption(fisherSurfaceDestroyChance);
+            blastModeLabel = "AnimalsOnly";
+
+            if (throwerPlayer != null && debugEnabled)
+            {
+                int reportCount = animalsHit + disrupted;
+                SendBlastReport(throwerPlayer, blastModeLabel, 0f, 0f, entityRadius, stats, reportCount);
+                LogBlastReport(throwerPlayer, blastModeLabel, 0f, 0f, entityRadius, stats, reportCount);
+            }
+
+            Die(EnumDespawnReason.Removed);
+            return;
+        }
 
         if (manualBlockRecovery)
         {
@@ -1661,10 +1719,26 @@ public void Release(EntityAgent holder)
         }
     }
 
+    public static void SetCustomBlastSoundsEnabled(bool enabled)
+    {
+        customBlastSoundsEnabled = enabled;
+    }
+
+    public static bool IsCustomBlastSoundsEnabled()
+    {
+        return customBlastSoundsEnabled;
+    }
+
     public override void OnEntityDespawn(EntityDespawnData despawn)
     {
         if (World.Side == EnumAppSide.Client)
         {
+            ICoreClientAPI? capi = World.Api as ICoreClientAPI;
+            if (capi != null && !explosionFxPlayedClient && IsExplosionDespawnLikelyClient())
+            {
+                PlayClientExplosionFx(capi);
+            }
+
             fuseSound?.Stop();
             fuseSound?.Dispose();
             fuseSound = null;
@@ -1674,7 +1748,64 @@ public void Release(EntityAgent holder)
         base.OnEntityDespawn(despawn);
     }
 
-    private static void PlayClientOneShot(ICoreClientAPI capi, string soundPath, Vec3f atPos, float volume)
+    private void PlayClientExplosionFx(ICoreClientAPI capi)
+    {
+        bool nearWater = IsWaterNearbyForSplash();
+        if (nearWater)
+        {
+            bool playerSubmerged = false;
+            if (capi.World.Player?.Entity is EntityAgent playerAgent)
+            {
+                playerSubmerged = playerAgent.IsEyesSubmerged();
+            }
+
+            if (IsCustomBlastSoundsEnabled() && playerSubmerged)
+            {
+                PlayClientOneShot(capi, "vsdemolitionist:sounds/water-explosion-below", Pos.XYZ.ToVec3f(), GetWaterExplosionBelowVolume(capi), 40f);
+            }
+            else if (IsCustomBlastSoundsEnabled())
+            {
+                PlayClientOneShot(capi, "vsdemolitionist:sounds/water-explosion-above", Pos.XYZ.ToVec3f(), GetWaterExplosionAboveVolume(capi), 40f);
+            }
+
+            SpawnWaterDomeBurst(capi);
+        }
+        else if (IsCustomBlastSoundsEnabled())
+        {
+            string bombTier = WatchedAttributes.GetString(AttrBombTier, "") ?? "";
+            if (bombTier == "blasting-charge")
+            {
+                Vec3f explosionPos = Pos.XYZ.ToVec3f();
+                PlayClientOneShot(capi, "game:sounds/effect/explosion", explosionPos, GetLandExplosionVolume(capi), 40f);
+                capi.Event.RegisterCallback(_ =>
+                {
+                    PlayClientOneShot(capi, "vsdemolitionist:sounds/charge-rubble", explosionPos, GetLandRubbleVolume(capi), 40f);
+                }, 120);
+            }
+            else if (bombTier.Contains("bundle", StringComparison.OrdinalIgnoreCase))
+            {
+                Vec3f explosionPos = Pos.XYZ.ToVec3f();
+                PlayClientOneShot(capi, "vsdemolitionist:sounds/bundle-blast", explosionPos, GetLandExplosionVolume(capi), 40f);
+                capi.Event.RegisterCallback(_ =>
+                {
+                    PlayClientOneShot(capi, "vsdemolitionist:sounds/stick-bundle-rubble", explosionPos, GetLandRubbleVolume(capi), 40f);
+                }, 120);
+            }
+            else
+            {
+                Vec3f explosionPos = Pos.XYZ.ToVec3f();
+                PlayClientOneShot(capi, "vsdemolitionist:sounds/stick-blast", explosionPos, GetLandExplosionVolume(capi), 40f);
+                capi.Event.RegisterCallback(_ =>
+                {
+                    PlayClientOneShot(capi, "vsdemolitionist:sounds/stick-bundle-rubble", explosionPos, GetLandRubbleVolume(capi), 40f);
+                }, 120);
+            }
+        }
+
+        explosionFxPlayedClient = true;
+    }
+
+    private static void PlayClientOneShot(ICoreClientAPI capi, string soundPath, Vec3f atPos, float volume, float range = 24f)
     {
         ILoadedSound? oneshot = capi.World.LoadSound(new SoundParams()
         {
@@ -1683,11 +1814,261 @@ public void Release(EntityAgent holder)
             DisposeOnFinish = true,
             RelativePosition = false,
             Position = atPos,
-            Range = 24f,
+            Range = range,
             Volume = volume
         });
 
         oneshot?.Start();
+    }
+
+    private bool IsExplosionDespawnLikelyClient()
+    {
+        if (WatchedAttributes.GetBool(AttrExploded, false)) return true;
+        if (!WatchedAttributes.GetBool(AttrLit, false)) return false;
+        float remaining = WatchedAttributes.GetFloat(AttrFuseRemainingSeconds, -1f);
+        if (remaining >= 0f)
+        {
+            // Small tolerance avoids missing effect/sound due client-side tick drift.
+            if (remaining <= 0.45f) return true;
+        }
+
+        // Fallback for sync race: legacy fuse-end timestamp may still be present and reliable.
+        long fuseEndMs = WatchedAttributes.GetLong(AttrFuseEndMs, 0L);
+        if (fuseEndMs > 0L)
+        {
+            long now = World.ElapsedMilliseconds;
+            if (now >= fuseEndMs - 250L) return true;
+        }
+
+        return false;
+    }
+
+    private bool IsPositionInWater(double x, double y, double z)
+    {
+        BlockPos pos = new((int)Math.Floor(x), (int)Math.Floor(y), (int)Math.Floor(z));
+        Block block = World.BlockAccessor.GetBlock(pos);
+        string path = block?.Code?.Path ?? string.Empty;
+        return path.Contains("water", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool IsWaterNearbyForSplash()
+    {
+        BlockPos center = Pos.AsBlockPos;
+        var ba = World.BlockAccessor;
+        for (int dy = -2; dy <= 2; dy++)
+        {
+            for (int dx = -2; dx <= 2; dx++)
+            {
+                for (int dz = -2; dz <= 2; dz++)
+                {
+                    BlockPos p = center.AddCopy(dx, dy, dz);
+                    Block b = ba.GetBlock(p);
+                    if (b == null || b.Id == 0) continue;
+                    string path = b.Code?.Path ?? string.Empty;
+                    if (path.Contains("water", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private float GetWaterExplosionAboveVolume(ICoreClientAPI capi)
+    {
+        Entity? player = capi.World.Player?.Entity;
+        if (player == null) return 1.0f;
+        double dist = player.Pos.DistanceTo(Pos.XYZ);
+        float near = 1.0f;
+        float far = 0.45f;
+        float t = GameMath.Clamp((float)(dist / 40.0), 0f, 1f);
+        return near + (far - near) * t;
+    }
+
+    private float GetWaterExplosionBelowVolume(ICoreClientAPI capi)
+    {
+        Entity? player = capi.World.Player?.Entity;
+        if (player == null) return 1.0f;
+        double dist = player.Pos.DistanceTo(Pos.XYZ);
+        float near = 1.0f;
+        float far = 0.45f;
+        float t = GameMath.Clamp((float)(dist / 40.0), 0f, 1f);
+        return near + (far - near) * t;
+    }
+
+    private float GetLandExplosionVolume(ICoreClientAPI capi)
+    {
+        string bombTier = WatchedAttributes.GetString(AttrBombTier, "") ?? "";
+        float near = 1.0f;
+        float far = 0.45f;
+        float fadeDistance = 40.0f;
+        if (bombTier.Contains("bundle", StringComparison.OrdinalIgnoreCase))
+        {
+            near = 0.9f;
+            far = 0.22f;
+            fadeDistance = 28.0f;
+        }
+        else if (bombTier != "blasting-charge")
+        {
+            near = 0.8f;
+            far = 0.18f;
+            fadeDistance = 24.0f;
+        }
+
+        Entity? player = capi.World.Player?.Entity;
+        if (player == null) return near;
+
+        double dist = player.Pos.DistanceTo(Pos.XYZ);
+        float t = GameMath.Clamp((float)(dist / fadeDistance), 0f, 1f);
+        return near + (far - near) * t;
+    }
+
+    private float GetLandRubbleVolume(ICoreClientAPI capi)
+    {
+        Entity? player = capi.World.Player?.Entity;
+        if (player == null) return 0.8f;
+
+        double dist = player.Pos.DistanceTo(Pos.XYZ);
+        float near = 0.8f;
+        float far = 0.0f;
+        float t = GameMath.Clamp((float)(dist / 16.0), 0f, 1f);
+        return near + (far - near) * t;
+    }
+
+    private void SpawnWaterDomeBurst(ICoreClientAPI capi)
+    {
+        Vec3d basePos = Pos.XYZ.AddCopy(0, 0.1, 0);
+
+        // Wide low dome spray
+        capi.World.SpawnParticles(
+            2.2f,
+            unchecked((int)0xA8E6F6FF),
+            basePos.AddCopy(-1.4, -0.1, -1.4),
+            basePos.AddCopy(1.4, 0.35, 1.4),
+            new Vec3f(-0.28f, 0.10f, -0.28f),
+            new Vec3f(0.28f, 0.90f, 0.28f),
+            0.40f,
+            0f,
+            0.14f,
+            EnumParticleModel.Quad,
+            null
+        );
+
+        // Bright froth cap
+        capi.World.SpawnParticles(
+            1.4f,
+            unchecked((int)0xD8FFFFFF),
+            basePos.AddCopy(-0.9, 0.05, -0.9),
+            basePos.AddCopy(0.9, 0.55, 0.9),
+            new Vec3f(-0.12f, 0.15f, -0.12f),
+            new Vec3f(0.12f, 0.85f, 0.12f),
+            0.26f,
+            0f,
+            0.11f,
+            EnumParticleModel.Quad,
+            null
+        );
+    }
+
+    private int ApplyAnimalsOnlyExplosionDamage(float radius, float damage, Entity? throwerEntity)
+    {
+        if (Api is not ICoreServerAPI sapi) return 0;
+        int hitCount = 0;
+        Vec3d center = Pos.XYZ;
+        double radiusSq = radius * radius;
+
+        foreach (Entity entity in sapi.World.LoadedEntities.Values)
+        {
+            if (entity == null || entity.EntityId == EntityId) continue;
+            if (throwerEntity != null && entity.EntityId == throwerEntity.EntityId) continue;
+            if (entity is not EntityAgent agent) continue;
+
+            string codePath = entity.Code?.Path ?? string.Empty;
+            bool isAnimal = !codePath.Contains("drifter", StringComparison.OrdinalIgnoreCase)
+                            && !codePath.Contains("locust", StringComparison.OrdinalIgnoreCase)
+                            && !codePath.Contains("bell", StringComparison.OrdinalIgnoreCase)
+                            && !codePath.Contains("player", StringComparison.OrdinalIgnoreCase);
+            if (!isAnimal) continue;
+
+            double dx = entity.Pos.X - center.X;
+            double dy = entity.Pos.Y - center.Y;
+            double dz = entity.Pos.Z - center.Z;
+            double distSq = dx * dx + dy * dy + dz * dz;
+            if (distSq > radiusSq) continue;
+
+            float falloff = 1f - GameMath.Clamp((float)(Math.Sqrt(distSq) / Math.Max(0.1f, radius)), 0f, 1f);
+            float dmg = Math.Max(0f, damage * falloff);
+            if (dmg <= 0.05f) continue;
+
+            DamageSource src = new()
+            {
+                Source = EnumDamageSource.Block,
+                Type = EnumDamageType.BluntAttack,
+                CauseEntity = this
+            };
+
+            agent.ReceiveDamage(src, dmg);
+            hitCount++;
+        }
+
+        return hitCount;
+    }
+
+    private int ApplyFisherWaterAndBottomDisruption(float destroyChance)
+    {
+        destroyChance = Clamp01(destroyChance);
+        if (destroyChance <= 0f) return 0;
+
+        IBlockAccessor ba = World.BlockAccessor;
+        BlockPos center = Pos.AsBlockPos;
+        int changed = 0;
+
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dz = -1; dz <= 1; dz++)
+            {
+                // Water at/above blast center
+                for (int wy = 0; wy <= 1; wy++)
+                {
+                    BlockPos wp = new(center.X + dx, center.Y + wy, center.Z + dz);
+                    Block wb = ba.GetBlock(wp);
+                    string wpath = wb?.Code?.Path ?? string.Empty;
+                    if (!wpath.Contains("water", StringComparison.OrdinalIgnoreCase)) continue;
+                    if (World.Rand.NextDouble() > destroyChance) continue;
+                    ba.SetBlock(0, wp);
+                    changed++;
+                }
+
+                // One block underneath the blast
+                BlockPos bp = new(center.X + dx, center.Y - 1, center.Z + dz);
+                Block b = ba.GetBlock(bp);
+                if (b == null || b.BlockId == 0 || b.Replaceable >= 6000) continue;
+                if (IsProtectedBlock(b)) continue;
+                ba.SetBlock(0, bp);
+                changed++;
+            }
+        }
+
+        // Side ring at blast level (N/E/S/W) also breaks with 100% chance.
+        BlockPos[] sideRing =
+        {
+            new(center.X + 1, center.Y, center.Z),
+            new(center.X - 1, center.Y, center.Z),
+            new(center.X, center.Y, center.Z + 1),
+            new(center.X, center.Y, center.Z - 1)
+        };
+
+        foreach (BlockPos sp in sideRing)
+        {
+            Block sb = ba.GetBlock(sp);
+            if (sb == null || sb.BlockId == 0 || sb.Replaceable >= 6000) continue;
+            if (IsProtectedBlock(sb)) continue;
+            ba.SetBlock(0, sp);
+            changed++;
+        }
+
+        return changed;
     }
 
     private void SpawnFuseSparks(ICoreClientAPI capi, float dt)

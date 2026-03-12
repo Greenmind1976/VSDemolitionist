@@ -7,3 +7,4 @@
 - Add warning to documentation about large blast drop/entity volume causing performance or render issues.
 - Allow higher unbroken block stack size.
 - Enable support for Config Lib mod with user-facing settings UI.
+- Retest water explosion sounds later (above/below branches, distance scaling, and /dynamitesounds toggle behavior).

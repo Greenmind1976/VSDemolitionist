@@ -102,6 +102,38 @@
     "ingredientPattern": "FM,BL",
     "ingredients": {
       "M": {
+        "type": "block",
+        "code": "game:planks-*"
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "L": {
+        "type": "block",
+        "code": "game:linen-*"
+      },
+      "F": {
+        "type": "item",
+        "code": "vsdemolitionist:fuse",
+        "quantity": 3
+      }
+    },
+    "name": "bomb-fisherman",
+    "width": 2,
+    "height": 2,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:bomb-fisherman",
+      "quantity": 3
+    }
+  },
+  {
+    "ingredientPattern": "FM,BL",
+    "ingredients": {
+      "M": {
         "type": "item",
         "code": "game:metalbit-tinbronze",
         "quantity": 3

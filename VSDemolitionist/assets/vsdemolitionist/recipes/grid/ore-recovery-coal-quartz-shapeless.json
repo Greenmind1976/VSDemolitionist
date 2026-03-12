@@ -1,0 +1,50 @@
+[
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-quartz-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Quartz From Ore Shapeless",
+    "output": { "type": "item", "code": "game:ore-quartz", "quantity": 1 }
+  },
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-*-quartz-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Quartz From Hosted Ore Shapeless",
+    "output": { "type": "item", "code": "game:ore-quartz", "quantity": 1 }
+  },
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-lignite-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Brown Coal Ore Shapeless",
+    "output": { "type": "item", "code": "game:ore-lignite", "quantity": 1 }
+  },
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:ore-bituminouscoal-*" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Black Coal Ore Shapeless",
+    "output": { "type": "item", "code": "game:ore-bituminouscoal", "quantity": 1 }
+  }
+]

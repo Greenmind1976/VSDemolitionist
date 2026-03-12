@@ -86,5 +86,8 @@
   "item-blasting-charge": "Block-Blasting Charge",
   "item-vsdemolitionist-detonator": "Detonator",
   "item-vsdemolitionist-item-detonator": "Detonator",
-  "item-detonator": "Detonator"
+  "item-detonator": "Detonator",
+  "item-vsdemolitionist-bomb-fisherman": "Fisherman's Dynamite",
+  "item-vsdemolitionist-item-bomb-fisherman": "Fisherman's Dynamite",
+  "item-bomb-fisherman": "Fisherman's Dynamite"
 }
