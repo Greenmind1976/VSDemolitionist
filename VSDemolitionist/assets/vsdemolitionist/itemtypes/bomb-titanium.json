@@ -1,0 +1,93 @@
+{
+  "code": "bomb-titanium",
+  "class": "ItemBomb",
+  "creativeinventory": {
+    "general": [
+      "*"
+    ]
+  },
+  "maxstacksize": 128,
+  "attributes": {
+    "bomb": {
+      "tier": "titanium",
+      "entityCode": "bomb-titanium",
+      "iconItemCode": "bombicon-titanium",
+      "fuseSeconds": 4.0,
+      "heldFuseVolume": 3.2,
+      "thrownFuseVolume": 1.8,
+      "throwForwardStrength": 0.4,
+      "throwUpwardBoost": 0.1,
+      "blastType": "rock",
+      "blastRadius": 5.5,
+      "rockBlastRadius": 5.5,
+      "oreBlastRadius": 5.5,
+      "entityBlastRadius": 4.7,
+      "oreDestroyChance": 0.05,
+      "crystalDestroyChance": 0.1,
+      "blastDropoff": 0.85,
+      "blastPowerLoss": 0.12
+    }
+  },
+  "shape": {
+    "base": "vsdemolitionist:item/dynamite-titanium"
+  },
+  "textures": {
+    "default": {
+      "base": "item/bombicon-titanium"
+    }
+  },
+  "guiTransform": {
+    "translation": {
+      "x": 0.02,
+      "y": -0.24,
+      "z": 0
+    },
+    "rotation": {
+      "x": 6,
+      "y": 126,
+      "z": -58
+    },
+    "origin": {
+      "x": 0.56,
+      "y": 0.42,
+      "z": 0.5
+    },
+    "scale": 1.34
+  },
+  "fpHandTransform": {
+    "translation": {
+      "x": 0.08,
+      "y": -0.03,
+      "z": 0.04
+    },
+    "rotation": {
+      "x": 94,
+      "y": 90,
+      "z": -34
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.5,
+      "z": 0.5
+    },
+    "scale": 0.88
+  },
+  "tpHandTransform": {
+    "translation": {
+      "x": -1.45,
+      "y": 0.15,
+      "z": -1.05
+    },
+    "rotation": {
+      "x": 2,
+      "y": -16,
+      "z": 16
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 0.36
+  }
+}

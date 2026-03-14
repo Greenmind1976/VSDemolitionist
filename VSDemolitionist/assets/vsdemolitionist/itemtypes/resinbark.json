@@ -1,0 +1,27 @@
+{
+  "code": "resinbark",
+  "maxstacksize": 128,
+  "texture": {
+    "base": "item/resinbark"
+  },
+  "creativeinventory": {
+    "general": [
+      "*"
+    ],
+    "items": [
+      "*"
+    ]
+  },
+  "materialDensity": 620,
+  "combustibleProps": {
+    "burnTemperature": 620,
+    "burnDuration": 11
+  },
+  "grindingProps": {
+    "groundStack": {
+      "type": "item",
+      "code": "vsdemolitionist:resinbarkmash",
+      "stacksize": 1
+    }
+  }
+}

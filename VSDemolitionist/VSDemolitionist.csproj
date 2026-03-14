@@ -14,16 +14,23 @@
     </Reference>
   </ItemGroup>
 
-<ItemGroup>
-  <Content Include="modinfo.json">
+  <ItemGroup>
+    <Content Include="modinfo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-  </Content>
-</ItemGroup>
+    </Content>
+  </ItemGroup>
 
-<ItemGroup>
-  <Content Include="modicon.png" Condition="Exists('modicon.png')">
+  <ItemGroup>
+    <Content Include="modicon.png" Condition="Exists('modicon.png')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-  </Content>
-</ItemGroup>
+    </Content>
+  </ItemGroup>
+
+  <!-- 🔥 ADD THIS -->
+  <ItemGroup>
+    <Content Include="assets/**/*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
 </Project>

@@ -1,0 +1,6 @@
+{
+  "code": "bombicon-sticky-steel",
+  "maxstacksize": 64,
+  "texture": { "base": "item/bombicon-sticky-steel" },
+  "creativeinventory": {}
+}

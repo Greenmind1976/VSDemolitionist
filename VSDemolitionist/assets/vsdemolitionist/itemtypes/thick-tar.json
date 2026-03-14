@@ -1,0 +1,12 @@
+{
+  "code": "thick-tar",
+  "texture": {
+    "base": "item/thick-tarportion-icon"
+  },
+  "maxstacksize": 128,
+  "creativeinventory": {
+    "general": [
+      "*"
+    ]
+  }
+}

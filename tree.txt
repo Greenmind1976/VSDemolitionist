@@ -1,0 +1,32 @@
+.
+├── build-install.sh
+├── build.sh
+├── tree.txt
+├── VSDemolitionist
+│   ├── assets
+│   │   └── vsdemolitionist
+│   │       ├── entities
+│   │       │   └── bomb.json
+│   │       ├── itemtypes
+│   │       │   └── bomb.json
+│   │       ├── shapes
+│   │       │   └── block
+│   │       │       └── bomb.json
+│   │       └── textures
+│   │           └── item
+│   │               ├── dynamite-bronze.png
+│   │               ├── dynamite-copper.png
+│   │               ├── dynamite-iron.png
+│   │               ├── dynamite-steel.png
+│   │               └── dynamite-titanium.png
+│   ├── EntityBomb.cs
+│   ├── ItemBomb.cs
+│   ├── modinfo.json
+│   ├── Properties
+│   │   └── launchSettings.json
+│   ├── VSDemolitionist.code-workspace
+│   ├── VSDemolitionist.csproj
+│   └── VSDemolitionistModSystem.cs
+└── VSDemolitionist.sln
+
+11 directories, 19 files

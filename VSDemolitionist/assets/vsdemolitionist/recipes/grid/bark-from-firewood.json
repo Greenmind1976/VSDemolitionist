@@ -1,0 +1,9 @@
+{
+  "ingredientPattern": "F",
+  "ingredients": {
+    "F": { "type": "item", "code": "game:firewood" }
+  },
+  "width": 1,
+  "height": 1,
+  "output": { "type": "item", "code": "vsdemolitionist:bark", "quantity": 1 }
+}

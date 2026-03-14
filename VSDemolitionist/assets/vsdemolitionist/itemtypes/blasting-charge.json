@@ -1,0 +1,104 @@
+{
+  "code": "blasting-charge",
+  "class": "ItemBomb",
+  "creativeinventory": {
+    "general": [
+      "*"
+    ]
+  },
+  "maxstacksize": 128,
+  "attributes": {
+    "bomb": {
+      "tier": "blasting-charge",
+      "entityCode": "bomb-copper",
+      "placedEntityCode": "bombstuck-charge",
+      "iconItemCode": "bombicon-blasting-charge",
+      "fuseSeconds": 1.0,
+      "heldFuseVolume": 3.2,
+      "thrownFuseVolume": 0.36,
+      "throwForwardStrength": 0.4,
+      "throwUpwardBoost": 0.1,
+      "dualBlast": false,
+      "manualBlockRecovery": true,
+      "placeOnly": true,
+      "placeTopOnly": false,
+      "placeOnFace": true,
+      "attachOffset": 0.56,
+      "blastType": "ore",
+      "blastRadius": 4.0,
+      "rockBlastRadius": 4.0,
+      "oreBlastRadius": 4.0,
+      "entityBlastRadius": 3.4,
+      "oreDestroyChance": 0.05,
+      "crystalDestroyChance": 0.1,
+      "blastDropoff": 1.05,
+      "blastPowerLoss": 0.05,
+      "inwardWidth": 3,
+      "inwardDepth": 5,
+      "outwardDepth": 1,
+      "inwardLinkRange": 7
+    }
+  },
+  "shape": {
+    "base": "vsdemolitionist:item/blasting-charge"
+  },
+  "textures": {
+    "default": {
+      "base": "item/bombicon-blasting-charge"
+    }
+  },
+  "guiTransform": {
+    "translation": {
+      "x": 0.02,
+      "y": -0.24,
+      "z": 0
+    },
+    "rotation": {
+      "x": 6,
+      "y": 126,
+      "z": -58
+    },
+    "origin": {
+      "x": 0.56,
+      "y": 0.42,
+      "z": 0.5
+    },
+    "scale": 1.34
+  },
+  "fpHandTransform": {
+    "translation": {
+      "x": 0.08,
+      "y": -0.03,
+      "z": 0.04
+    },
+    "rotation": {
+      "x": 94,
+      "y": 90,
+      "z": -34
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.5,
+      "z": 0.5
+    },
+    "scale": 0.88
+  },
+  "tpHandTransform": {
+    "translation": {
+      "x": -1.45,
+      "y": 0.15,
+      "z": -1.05
+    },
+    "rotation": {
+      "x": 2,
+      "y": -16,
+      "z": 16
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 0.36
+  }
+}

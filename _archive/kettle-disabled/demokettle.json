@@ -1,0 +1,76 @@
+{
+  "textureWidth": 16,
+  "textureHeight": 16,
+  "textures": {
+    "outer": "game:block/wood/bark/quad/debarked/aged",
+    "inner": "game:block/metal/sheet-plain/copper4"
+  },
+  "elements": [
+    {
+      "name": "base",
+      "from": [4, 0, 4],
+      "to": [12, 2, 12],
+      "faces": {
+        "north": { "texture": "#outer", "uv": [0, 0, 8, 2] },
+        "east": { "texture": "#outer", "uv": [0, 0, 8, 2] },
+        "south": { "texture": "#outer", "uv": [0, 0, 8, 2] },
+        "west": { "texture": "#outer", "uv": [0, 0, 8, 2] },
+        "up": { "texture": "#inner", "uv": [4, 4, 12, 12] },
+        "down": { "texture": "#outer", "uv": [4, 4, 12, 12] }
+      }
+    },
+    {
+      "name": "wall_north",
+      "from": [4, 2, 3],
+      "to": [12, 8, 4],
+      "faces": {
+        "north": { "texture": "#outer", "uv": [0, 2, 8, 8] },
+        "east": { "texture": "#outer", "uv": [0, 2, 1, 8] },
+        "south": { "texture": "#inner", "uv": [0, 2, 8, 8] },
+        "west": { "texture": "#outer", "uv": [0, 2, 1, 8] },
+        "up": { "texture": "#outer", "uv": [0, 0, 8, 1] },
+        "down": { "texture": "#inner", "uv": [0, 0, 8, 1] }
+      }
+    },
+    {
+      "name": "wall_south",
+      "from": [4, 2, 12],
+      "to": [12, 8, 13],
+      "faces": {
+        "north": { "texture": "#inner", "uv": [0, 2, 8, 8] },
+        "east": { "texture": "#outer", "uv": [0, 2, 1, 8] },
+        "south": { "texture": "#outer", "uv": [0, 2, 8, 8] },
+        "west": { "texture": "#outer", "uv": [0, 2, 1, 8] },
+        "up": { "texture": "#outer", "uv": [0, 0, 8, 1] },
+        "down": { "texture": "#inner", "uv": [0, 0, 8, 1] }
+      }
+    },
+    {
+      "name": "wall_west",
+      "from": [3, 2, 4],
+      "to": [4, 8, 12],
+      "faces": {
+        "north": { "texture": "#outer", "uv": [0, 2, 1, 8] },
+        "east": { "texture": "#inner", "uv": [0, 2, 8, 8] },
+        "south": { "texture": "#outer", "uv": [0, 2, 1, 8] },
+        "west": { "texture": "#outer", "uv": [0, 2, 8, 8] },
+        "up": { "texture": "#outer", "uv": [0, 0, 8, 1] },
+        "down": { "texture": "#inner", "uv": [0, 0, 8, 1] }
+      }
+    },
+    {
+      "name": "wall_east",
+      "from": [12, 2, 4],
+      "to": [13, 8, 12],
+      "faces": {
+        "north": { "texture": "#outer", "uv": [0, 2, 1, 8] },
+        "east": { "texture": "#outer", "uv": [0, 2, 8, 8] },
+        "south": { "texture": "#outer", "uv": [0, 2, 1, 8] },
+        "west": { "texture": "#inner", "uv": [0, 2, 8, 8] },
+        "up": { "texture": "#outer", "uv": [0, 0, 8, 1] },
+        "down": { "texture": "#inner", "uv": [0, 0, 8, 1] }
+      }
+    }
+  ],
+  "animations": []
+}

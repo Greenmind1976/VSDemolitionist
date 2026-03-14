@@ -1,0 +1,27 @@
+{
+  "code": "bombstuck",
+  "class": "EntityBomb",
+  "tags": ["inanimate", "projectile"],
+
+  "attributes": {
+    "isProjectile": false
+  },
+
+  "hitboxSize": { "x": 0.7, "y": 0.15 },
+  "deadHitboxSize": { "x": 0.7, "y": 0.15 },
+
+  "client": {
+    "renderer": "Shape",
+    "shape": { "base": "vsdemolitionist:item/dynamite" },
+    "size": 0.5,
+    "behaviors": [
+      { "code": "interpolateposition" }
+    ]
+  },
+
+  "server": {
+    "behaviors": [
+      { "code": "despawn", "minSeconds": 30 }
+    ]
+  }
+}

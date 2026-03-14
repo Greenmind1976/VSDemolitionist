@@ -1,0 +1,8 @@
+{
+  "code": "bombicon-bronze",
+  "maxstacksize": 128,
+  "texture": {
+    "base": "item/bombicon-bronze"
+  },
+  "creativeinventory": {}
+}

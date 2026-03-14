@@ -1,0 +1,14 @@
+[
+  {
+    "ingredientPattern": "TF",
+    "ingredients": {
+      "T": { "type": "item", "code": "vsdemolitionist:thick-tar", "quantity": 1 },
+      "F": { "type": "item", "code": "game:flaxtwine", "quantity": 1 }
+    },
+    "name": "fuse-from-tar",
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "output": { "type": "item", "code": "vsdemolitionist:fuse", "quantity": 12 }
+  }
+]

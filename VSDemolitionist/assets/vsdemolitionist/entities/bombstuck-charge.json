@@ -1,0 +1,27 @@
+{
+  "code": "bombstuck-charge",
+  "class": "EntityBomb",
+  "tags": ["inanimate", "projectile"],
+
+  "attributes": {
+    "isProjectile": false
+  },
+
+  "hitboxSize": { "x": 0.25, "y": 0.25 },
+  "deadHitboxSize": { "x": 0.25, "y": 0.25 },
+
+  "client": {
+    "renderer": "Shape",
+    "shape": { "base": "vsdemolitionist:item/blasting-charge-placed" },
+    "size": 0.5,
+    "behaviors": [
+      { "code": "interpolateposition" }
+    ]
+  },
+
+  "server": {
+    "behaviors": [
+      { "code": "despawn", "minSeconds": 1800 }
+    ]
+  }
+}

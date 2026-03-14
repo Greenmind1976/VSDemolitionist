@@ -1,0 +1,879 @@
+{
+  "version": 10,
+  "file": "VSDemolitionistConfig.json",
+  "patches": {},
+  "settings": [
+    {
+      "type": "separator",
+      "title": "Global",
+      "weight": 100
+    },
+    {
+      "code": "CustomBlastSoundsEnabled",
+      "ingui": "Use custom explosion sounds",
+      "type": "boolean",
+      "weight": 99,
+      "comment": "Toggle VSD explosion sound replacements. Turn this off to use the default game explosion sounds instead.",
+      "default": true
+    },
+    {
+      "code": "CustomBlastSoundsVolume",
+      "ingui": "Custom explosion sound volume",
+      "type": "float",
+      "weight": 98,
+      "comment": "Master starting volume multiplier for VSD custom explosion sounds.",
+      "default": 1.0,
+      "range": {
+        "min": 0.0,
+        "max": 2.0
+      }
+    },
+    {
+      "code": "BundleRockRubbleChance",
+      "ingui": "Bundle rock rubble chance",
+      "type": "float",
+      "weight": 97,
+      "comment": "Chance for bundle blasts to leave loose stone rubble when clearing normal rock.",
+      "default": 0.15,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Copper Stick Dynamite",
+      "weight": 90
+    },
+    {
+      "code": "CopperStickFuseSeconds",
+      "ingui": "Copper stick fuse seconds",
+      "type": "float",
+      "weight": 89.9,
+      "comment": "Fuse duration for copper stick dynamite.",
+      "default": 4.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "CopperStickRockBlastRadius",
+      "ingui": "Copper stick rock blast radius",
+      "type": "float",
+      "weight": 89.8,
+      "comment": "Rock blast radius for copper stick dynamite.",
+      "default": 4.0,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "CopperStickOreBlastRadius",
+      "ingui": "Copper stick ore blast radius",
+      "type": "float",
+      "weight": 89.7,
+      "comment": "Ore blast radius for copper stick dynamite.",
+      "default": 4.0,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "CopperStickEntityBlastRadius",
+      "ingui": "Copper stick entity blast radius",
+      "type": "float",
+      "weight": 89.6,
+      "comment": "Entity damage radius for copper stick dynamite.",
+      "default": 3.4,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "CopperStickOreDestroyChance",
+      "ingui": "Copper stick ore destroy chance",
+      "type": "float",
+      "weight": 89.5,
+      "comment": "Chance to destroy ore without drops for copper stick dynamite.",
+      "default": 0.5,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "code": "CopperStickCrystalDestroyChance",
+      "ingui": "Copper stick crystal destroy chance",
+      "type": "float",
+      "weight": 89.4,
+      "comment": "Chance to destroy crystal without drops for copper stick dynamite.",
+      "default": 0.8,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Bronze Stick Dynamite",
+      "weight": 83
+    },
+    {
+      "code": "BronzeStickFuseSeconds",
+      "ingui": "Bronze stick fuse seconds",
+      "type": "float",
+      "weight": 82.9,
+      "comment": "Fuse duration for bronze stick dynamite.",
+      "default": 4.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "BronzeStickRockBlastRadius",
+      "ingui": "Bronze stick rock blast radius",
+      "type": "float",
+      "weight": 82.8,
+      "comment": "Rock blast radius for bronze stick dynamite.",
+      "default": 4.4,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "BronzeStickOreBlastRadius",
+      "ingui": "Bronze stick ore blast radius",
+      "type": "float",
+      "weight": 82.7,
+      "comment": "Ore blast radius for bronze stick dynamite.",
+      "default": 4.4,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "BronzeStickEntityBlastRadius",
+      "ingui": "Bronze stick entity blast radius",
+      "type": "float",
+      "weight": 82.6,
+      "comment": "Entity damage radius for bronze stick dynamite.",
+      "default": 3.8,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "BronzeStickOreDestroyChance",
+      "ingui": "Bronze stick ore destroy chance",
+      "type": "float",
+      "weight": 82.5,
+      "comment": "Chance to destroy ore without drops for bronze stick dynamite.",
+      "default": 0.4,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "code": "BronzeStickCrystalDestroyChance",
+      "ingui": "Bronze stick crystal destroy chance",
+      "type": "float",
+      "weight": 82.4,
+      "comment": "Chance to destroy crystal without drops for bronze stick dynamite.",
+      "default": 0.6,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Iron Stick Dynamite",
+      "weight": 76
+    },
+    {
+      "code": "IronStickFuseSeconds",
+      "ingui": "Iron stick fuse seconds",
+      "type": "float",
+      "weight": 75.9,
+      "comment": "Fuse duration for iron stick dynamite.",
+      "default": 4.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "IronStickRockBlastRadius",
+      "ingui": "Iron stick rock blast radius",
+      "type": "float",
+      "weight": 75.8,
+      "comment": "Rock blast radius for iron stick dynamite.",
+      "default": 5.5,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "IronStickOreBlastRadius",
+      "ingui": "Iron stick ore blast radius",
+      "type": "float",
+      "weight": 75.7,
+      "comment": "Ore blast radius for iron stick dynamite.",
+      "default": 5.5,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "IronStickEntityBlastRadius",
+      "ingui": "Iron stick entity blast radius",
+      "type": "float",
+      "weight": 75.6,
+      "comment": "Entity damage radius for iron stick dynamite.",
+      "default": 4.7,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "IronStickOreDestroyChance",
+      "ingui": "Iron stick ore destroy chance",
+      "type": "float",
+      "weight": 75.5,
+      "comment": "Chance to destroy ore without drops for iron stick dynamite.",
+      "default": 0.2,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "code": "IronStickCrystalDestroyChance",
+      "ingui": "Iron stick crystal destroy chance",
+      "type": "float",
+      "weight": 75.4,
+      "comment": "Chance to destroy crystal without drops for iron stick dynamite.",
+      "default": 0.4,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Steel Stick Dynamite",
+      "weight": 69
+    },
+    {
+      "code": "SteelStickFuseSeconds",
+      "ingui": "Steel stick fuse seconds",
+      "type": "float",
+      "weight": 68.9,
+      "comment": "Fuse duration for steel stick dynamite.",
+      "default": 4.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "SteelStickRockBlastRadius",
+      "ingui": "Steel stick rock blast radius",
+      "type": "float",
+      "weight": 68.8,
+      "comment": "Rock blast radius for steel stick dynamite.",
+      "default": 5.5,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "SteelStickOreBlastRadius",
+      "ingui": "Steel stick ore blast radius",
+      "type": "float",
+      "weight": 68.7,
+      "comment": "Ore blast radius for steel stick dynamite.",
+      "default": 5.5,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "SteelStickEntityBlastRadius",
+      "ingui": "Steel stick entity blast radius",
+      "type": "float",
+      "weight": 68.6,
+      "comment": "Entity damage radius for steel stick dynamite.",
+      "default": 4.7,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "SteelStickOreDestroyChance",
+      "ingui": "Steel stick ore destroy chance",
+      "type": "float",
+      "weight": 68.5,
+      "comment": "Chance to destroy ore without drops for steel stick dynamite.",
+      "default": 0.1,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "code": "SteelStickCrystalDestroyChance",
+      "ingui": "Steel stick crystal destroy chance",
+      "type": "float",
+      "weight": 68.4,
+      "comment": "Chance to destroy crystal without drops for steel stick dynamite.",
+      "default": 0.2,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Titanium Stick Dynamite",
+      "weight": 62
+    },
+    {
+      "code": "TitaniumStickFuseSeconds",
+      "ingui": "Titanium stick fuse seconds",
+      "type": "float",
+      "weight": 61.9,
+      "comment": "Fuse duration for titanium stick dynamite.",
+      "default": 4.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "TitaniumStickRockBlastRadius",
+      "ingui": "Titanium stick rock blast radius",
+      "type": "float",
+      "weight": 61.8,
+      "comment": "Rock blast radius for titanium stick dynamite.",
+      "default": 5.5,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "TitaniumStickOreBlastRadius",
+      "ingui": "Titanium stick ore blast radius",
+      "type": "float",
+      "weight": 61.7,
+      "comment": "Ore blast radius for titanium stick dynamite.",
+      "default": 5.5,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "TitaniumStickEntityBlastRadius",
+      "ingui": "Titanium stick entity blast radius",
+      "type": "float",
+      "weight": 61.6,
+      "comment": "Entity damage radius for titanium stick dynamite.",
+      "default": 4.7,
+      "range": {
+        "min": 0.0,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "TitaniumStickOreDestroyChance",
+      "ingui": "Titanium stick ore destroy chance",
+      "type": "float",
+      "weight": 61.5,
+      "comment": "Chance to destroy ore without drops for titanium stick dynamite.",
+      "default": 0.05,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "code": "TitaniumStickCrystalDestroyChance",
+      "ingui": "Titanium stick crystal destroy chance",
+      "type": "float",
+      "weight": 61.4,
+      "comment": "Chance to destroy crystal without drops for titanium stick dynamite.",
+      "default": 0.1,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Copper Dynamite Bundle",
+      "weight": 50
+    },
+    {
+      "code": "CopperBundleFuseSeconds",
+      "ingui": "Copper bundle fuse seconds",
+      "type": "float",
+      "weight": 49.9,
+      "comment": "Fuse duration for copper dynamite bundles.",
+      "default": 4.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "CopperBundleRockBlastRadius",
+      "ingui": "Copper bundle rock blast radius",
+      "type": "float",
+      "weight": 49.8,
+      "comment": "Rock blast radius for copper dynamite bundles.",
+      "default": 7.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "CopperBundleOreBlastRadius",
+      "ingui": "Copper bundle ore blast radius",
+      "type": "float",
+      "weight": 49.7,
+      "comment": "Ore blast radius for copper dynamite bundles.",
+      "default": 7.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "CopperBundleEntityBlastRadius",
+      "ingui": "Copper bundle entity blast radius",
+      "type": "float",
+      "weight": 49.6,
+      "comment": "Entity damage radius for copper dynamite bundles.",
+      "default": 6.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "CopperBundleOreDestroyChance",
+      "ingui": "Copper bundle ore destroy chance",
+      "type": "float",
+      "weight": 49.5,
+      "comment": "Chance to destroy ore without drops for copper dynamite bundles.",
+      "default": 0.6,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "code": "CopperBundleCrystalDestroyChance",
+      "ingui": "Copper bundle crystal destroy chance",
+      "type": "float",
+      "weight": 49.4,
+      "comment": "Chance to destroy crystal without drops for copper dynamite bundles.",
+      "default": 1.0,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Bronze Dynamite Bundle",
+      "weight": 43
+    },
+    {
+      "code": "BronzeBundleFuseSeconds",
+      "ingui": "Bronze bundle fuse seconds",
+      "type": "float",
+      "weight": 42.9,
+      "comment": "Fuse duration for bronze dynamite bundles.",
+      "default": 4.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "BronzeBundleRockBlastRadius",
+      "ingui": "Bronze bundle rock blast radius",
+      "type": "float",
+      "weight": 42.8,
+      "comment": "Rock blast radius for bronze dynamite bundles.",
+      "default": 7.5,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "BronzeBundleOreBlastRadius",
+      "ingui": "Bronze bundle ore blast radius",
+      "type": "float",
+      "weight": 42.7,
+      "comment": "Ore blast radius for bronze dynamite bundles.",
+      "default": 7.5,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "BronzeBundleEntityBlastRadius",
+      "ingui": "Bronze bundle entity blast radius",
+      "type": "float",
+      "weight": 42.6,
+      "comment": "Entity damage radius for bronze dynamite bundles.",
+      "default": 6.5,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "BronzeBundleOreDestroyChance",
+      "ingui": "Bronze bundle ore destroy chance",
+      "type": "float",
+      "weight": 42.5,
+      "comment": "Chance to destroy ore without drops for bronze dynamite bundles.",
+      "default": 0.5,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "code": "BronzeBundleCrystalDestroyChance",
+      "ingui": "Bronze bundle crystal destroy chance",
+      "type": "float",
+      "weight": 42.4,
+      "comment": "Chance to destroy crystal without drops for bronze dynamite bundles.",
+      "default": 0.8,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Iron Dynamite Bundle",
+      "weight": 36
+    },
+    {
+      "code": "IronBundleFuseSeconds",
+      "ingui": "Iron bundle fuse seconds",
+      "type": "float",
+      "weight": 35.9,
+      "comment": "Fuse duration for iron dynamite bundles.",
+      "default": 4.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "IronBundleRockBlastRadius",
+      "ingui": "Iron bundle rock blast radius",
+      "type": "float",
+      "weight": 35.8,
+      "comment": "Rock blast radius for iron dynamite bundles.",
+      "default": 8.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "IronBundleOreBlastRadius",
+      "ingui": "Iron bundle ore blast radius",
+      "type": "float",
+      "weight": 35.7,
+      "comment": "Ore blast radius for iron dynamite bundles.",
+      "default": 8.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "IronBundleEntityBlastRadius",
+      "ingui": "Iron bundle entity blast radius",
+      "type": "float",
+      "weight": 35.6,
+      "comment": "Entity damage radius for iron dynamite bundles.",
+      "default": 7.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "IronBundleOreDestroyChance",
+      "ingui": "Iron bundle ore destroy chance",
+      "type": "float",
+      "weight": 35.5,
+      "comment": "Chance to destroy ore without drops for iron dynamite bundles.",
+      "default": 0.3,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "code": "IronBundleCrystalDestroyChance",
+      "ingui": "Iron bundle crystal destroy chance",
+      "type": "float",
+      "weight": 35.4,
+      "comment": "Chance to destroy crystal without drops for iron dynamite bundles.",
+      "default": 0.6,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Steel Dynamite Bundle",
+      "weight": 29
+    },
+    {
+      "code": "SteelBundleFuseSeconds",
+      "ingui": "Steel bundle fuse seconds",
+      "type": "float",
+      "weight": 28.9,
+      "comment": "Fuse duration for steel dynamite bundles.",
+      "default": 4.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "SteelBundleRockBlastRadius",
+      "ingui": "Steel bundle rock blast radius",
+      "type": "float",
+      "weight": 28.8,
+      "comment": "Rock blast radius for steel dynamite bundles.",
+      "default": 8.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "SteelBundleOreBlastRadius",
+      "ingui": "Steel bundle ore blast radius",
+      "type": "float",
+      "weight": 28.7,
+      "comment": "Ore blast radius for steel dynamite bundles.",
+      "default": 8.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "SteelBundleEntityBlastRadius",
+      "ingui": "Steel bundle entity blast radius",
+      "type": "float",
+      "weight": 28.6,
+      "comment": "Entity damage radius for steel dynamite bundles.",
+      "default": 7.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "SteelBundleOreDestroyChance",
+      "ingui": "Steel bundle ore destroy chance",
+      "type": "float",
+      "weight": 28.5,
+      "comment": "Chance to destroy ore without drops for steel dynamite bundles.",
+      "default": 0.2,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "code": "SteelBundleCrystalDestroyChance",
+      "ingui": "Steel bundle crystal destroy chance",
+      "type": "float",
+      "weight": 28.4,
+      "comment": "Chance to destroy crystal without drops for steel dynamite bundles.",
+      "default": 0.4,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Titanium Dynamite Bundle",
+      "weight": 22
+    },
+    {
+      "code": "TitaniumBundleFuseSeconds",
+      "ingui": "Titanium bundle fuse seconds",
+      "type": "float",
+      "weight": 21.9,
+      "comment": "Fuse duration for titanium dynamite bundles.",
+      "default": 4.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "TitaniumBundleRockBlastRadius",
+      "ingui": "Titanium bundle rock blast radius",
+      "type": "float",
+      "weight": 21.8,
+      "comment": "Rock blast radius for titanium dynamite bundles.",
+      "default": 8.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "TitaniumBundleOreBlastRadius",
+      "ingui": "Titanium bundle ore blast radius",
+      "type": "float",
+      "weight": 21.7,
+      "comment": "Ore blast radius for titanium dynamite bundles.",
+      "default": 8.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "TitaniumBundleEntityBlastRadius",
+      "ingui": "Titanium bundle entity blast radius",
+      "type": "float",
+      "weight": 21.6,
+      "comment": "Entity damage radius for titanium dynamite bundles.",
+      "default": 7.0,
+      "range": {
+        "min": 0.0,
+        "max": 30.0
+      }
+    },
+    {
+      "code": "TitaniumBundleOreDestroyChance",
+      "ingui": "Titanium bundle ore destroy chance",
+      "type": "float",
+      "weight": 21.5,
+      "comment": "Chance to destroy ore without drops for titanium dynamite bundles.",
+      "default": 0.15,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "code": "TitaniumBundleCrystalDestroyChance",
+      "ingui": "Titanium bundle crystal destroy chance",
+      "type": "float",
+      "weight": 21.4,
+      "comment": "Chance to destroy crystal without drops for titanium dynamite bundles.",
+      "default": 0.3,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Block-Blasting Charge",
+      "weight": 10
+    },
+    {
+      "code": "ChargeFuseSeconds",
+      "ingui": "Charge detonation delay",
+      "type": "float",
+      "weight": 9.9,
+      "comment": "Delay between arming a charge and detonation.",
+      "default": 1.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "ChargeInwardDepth",
+      "ingui": "Charge inward depth",
+      "type": "integer",
+      "weight": 9.8,
+      "comment": "Depth a charge cuts into the block face.",
+      "default": 5,
+      "range": {
+        "min": 1,
+        "max": 32
+      }
+    },
+    {
+      "code": "ChargeOutwardDepth",
+      "ingui": "Charge outward depth",
+      "type": "integer",
+      "weight": 9.7,
+      "comment": "Blocks removed outward from the charge face.",
+      "default": 1,
+      "range": {
+        "min": 0,
+        "max": 8
+      }
+    },
+    {
+      "code": "ChargeLinkRange",
+      "ingui": "Charge link range",
+      "type": "integer",
+      "weight": 9.6,
+      "comment": "Maximum distance at which placed charges can link together.",
+      "default": 7,
+      "range": {
+        "min": 1,
+        "max": 16
+      }
+    },
+    {
+      "code": "DetonatorRadius",
+      "ingui": "Detonator radius",
+      "type": "float",
+      "weight": 9.5,
+      "comment": "Maximum range at which the detonator can trigger nearby blasting charges.",
+      "default": 24.0,
+      "range": {
+        "min": 1.0,
+        "max": 64.0
+      }
+    }
+  ]
+}

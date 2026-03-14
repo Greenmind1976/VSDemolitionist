@@ -1,0 +1,95 @@
+{
+  "code": "bomb-bundle-iron",
+  "class": "ItemBomb",
+  "creativeinventory": {
+    "general": [
+      "*"
+    ]
+  },
+  "maxstacksize": 128,
+  "attributes": {
+    "bomb": {
+      "tier": "iron-bundle",
+      "entityCode": "bomb-bundle-iron",
+      "iconItemCode": "bombicon-bundle-iron",
+      "fuseSeconds": 4.0,
+      "heldFuseVolume": 3.2,
+      "thrownFuseVolume": 1.8,
+      "throwForwardStrength": 0.4,
+      "throwUpwardBoost": 0.1,
+      "blastType": "ore",
+      "blastShape": "disc",
+      "blastVerticalRadius": 1.5,
+      "blastRadius": 8.0,
+      "rockBlastRadius": 8.0,
+      "oreBlastRadius": 8.0,
+      "entityBlastRadius": 7.0,
+      "oreDestroyChance": 0.3,
+      "crystalDestroyChance": 0.6,
+      "blastDropoff": 0.9,
+      "blastPowerLoss": 0.12
+    }
+  },
+  "shape": {
+    "base": "vsdemolitionist:item/dynamite-bundle-iron"
+  },
+  "textures": {
+    "default": {
+      "base": "item/bombicon-bundle-iron"
+    }
+  },
+  "guiTransform": {
+    "translation": {
+      "x": 0.02,
+      "y": -0.24,
+      "z": 0
+    },
+    "rotation": {
+      "x": 4,
+      "y": 136,
+      "z": -52
+    },
+    "origin": {
+      "x": 0.56,
+      "y": 0.42,
+      "z": 0.5
+    },
+    "scale": 1.7
+  },
+  "fpHandTransform": {
+    "translation": {
+      "x": 0.1,
+      "y": -0.02,
+      "z": 0.04
+    },
+    "rotation": {
+      "x": 94,
+      "y": 90,
+      "z": -34
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.5,
+      "z": 0.5
+    },
+    "scale": 1.18
+  },
+  "tpHandTransform": {
+    "translation": {
+      "x": -1.45,
+      "y": 0.15,
+      "z": -1.05
+    },
+    "rotation": {
+      "x": 2,
+      "y": -16,
+      "z": 16
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 0.5
+  }
+}

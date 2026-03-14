@@ -1,0 +1,38 @@
+{
+  "code": "demokettle",
+  "behaviors": [
+    { "name": "RightClickPickup", "properties": { "dropsPickupMode": true } }
+  ],
+  "drops": [
+    { "type": "item", "code": "vsdemolitionist:demokettle" }
+  ],
+  "shape": {
+    "base": "vsdemolitionist:item/demokettle"
+  },
+  "attributes": {
+    "requiresFirepitForCooking": true
+  },
+  "textures": {
+    "outer": { "base": "game:block/wood/planks/aged1" },
+    "inner": { "base": "game:block/metal/sheet-plain/copper4" }
+  },
+  "drawtype": "json",
+  "replaceable": 500,
+  "sidesolid": { "all": false },
+  "sideopaque": { "all": false },
+  "collisionBox": { "x1": 0.1875, "y1": 0, "z1": 0.1875, "x2": 0.8125, "y2": 0.6875, "z2": 0.8125 },
+  "selectionBox": { "x1": 0.1875, "y1": 0, "z1": 0.1875, "x2": 0.8125, "y2": 0.6875, "z2": 0.8125 },
+  "resistance": 1.5,
+  "blockmaterial": "Wood",
+  "sounds": {
+    "place": "game:block/wood",
+    "break": "game:block/wood",
+    "hit": "game:block/wood"
+  },
+  "guiTransform": {
+    "translation": { "x": 2.2, "y": 1.0, "z": 0.0 },
+    "rotation": { "x": 152, "y": -45, "z": 0 },
+    "origin": { "x": 0.5, "y": 0.3, "z": 0.5 },
+    "scale": 1.75
+  }
+}

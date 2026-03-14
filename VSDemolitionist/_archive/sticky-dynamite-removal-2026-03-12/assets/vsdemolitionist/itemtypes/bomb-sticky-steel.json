@@ -1,0 +1,95 @@
+{
+  "code": "bomb-sticky-steel",
+  "class": "ItemBomb",
+  "creativeinventory": {
+    "general": [
+      "*"
+    ]
+  },
+  "maxstacksize": 64,
+  "attributes": {
+    "bomb": {
+      "tier": "sticky-steel",
+      "entityCode": "bomb-sticky-steel",
+      "iconItemCode": "bombicon-sticky-steel",
+      "isSticky": true,
+      "lightTime": 1.25,
+      "fuseSeconds": 4.0,
+      "heldFuseVolume": 3.2,
+      "thrownFuseVolume": 1.8,
+      "throwForwardStrength": 0.73125,
+      "throwUpwardBoost": 0.08,
+      "blastType": "rock",
+      "blastRadius": 5.5,
+      "rockBlastRadius": 5.5,
+      "oreBlastRadius": 5.5,
+      "entityBlastRadius": 4.7,
+      "oreDestroyChance": 0.1,
+      "crystalDestroyChance": 0.2,
+      "blastDropoff": 0.9,
+      "blastPowerLoss": 0.1
+    }
+  },
+  "shape": {
+    "base": "vsdemolitionist:item/dynamite-steel-sticky"
+  },
+  "textures": {
+    "default": {
+      "base": "item/bombicon-sticky-steel"
+    }
+  },
+  "guiTransform": {
+    "translation": {
+      "x": 0.03,
+      "y": -0.28,
+      "z": 0
+    },
+    "rotation": {
+      "x": 5,
+      "y": 122,
+      "z": -48
+    },
+    "origin": {
+      "x": 0.56,
+      "y": 0.44,
+      "z": 0.5
+    },
+    "scale": 1.84
+  },
+  "fpHandTransform": {
+    "translation": {
+      "x": 0.52,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "rotation": {
+      "x": 90,
+      "y": 180,
+      "z": 0
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.5,
+      "z": 0.5
+    },
+    "scale": 1.05
+  },
+  "tpHandTransform": {
+    "translation": {
+      "x": -0.04,
+      "y": -0.36,
+      "z": -0.12
+    },
+    "rotation": {
+      "x": -22,
+      "y": 82,
+      "z": 8
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0,
+      "z": 0.5
+    },
+    "scale": 0.8
+  }
+}
