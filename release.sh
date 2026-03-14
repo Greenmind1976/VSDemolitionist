@@ -4,7 +4,6 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_PATH="$ROOT_DIR/VSDemolitionist/VSDemolitionist.csproj"
 MOD_OUTPUT_DIR="$ROOT_DIR/VSDemolitionist/bin/Release/Mods/mod"
-MODINFO_PATH="$ROOT_DIR/VSDemolitionist/modinfo.json"
 VERSION_FILE="$ROOT_DIR/VERSION"
 DIST_DIR="$ROOT_DIR/dist"
 
