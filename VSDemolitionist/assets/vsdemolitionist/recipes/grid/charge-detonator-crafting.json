@@ -39,6 +39,45 @@
     }
   },
   {
+    "ingredientPattern": " F ,IBM, L ",
+    "ingredients": {
+      "F": {
+        "type": "item",
+        "code": "vsdemolitionist:fuse",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 32
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "M": {
+        "type": "block",
+        "code": "game:linen-*",
+        "quantity": 4
+      },
+      "L": {
+        "type": "item",
+        "code": "game:nugget-galena",
+        "quantity": 32
+      }
+    },
+    "name": "blasting-charge-galena",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:blasting-charge",
+      "quantity": 32
+    }
+  },
+  {
     "ingredientPattern": "SQO,CTM, P ",
     "ingredients": {
       "S": {

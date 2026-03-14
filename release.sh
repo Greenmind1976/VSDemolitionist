@@ -29,7 +29,7 @@ if [[ -z "$VERSION" ]]; then
 fi
 
 echo "Building VSDemolitionist $VERSION"
-dotnet build "$PROJECT_PATH" -c Release
+dotnet build "$PROJECT_PATH" -c Release -p:NuGetAudit=false
 
 if [[ ! -f "$MOD_OUTPUT_DIR/vsdemolitionist.dll" ]]; then
   echo "Expected built DLL not found in $MOD_OUTPUT_DIR" >&2
