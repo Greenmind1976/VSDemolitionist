@@ -3,7 +3,7 @@
   "modid": "vsdemolitionist",
   "name": "VSDemolitionist",
   "authors": ["Garret"],
-  "description": "Exploding thrown bombs.",
+  "description": "Explosives-focused mod with dynamite, bundles, charges, and supporting crafting.",
   "version": "1.0.0",
   "dependencies": {
     "game": "1.21.0"

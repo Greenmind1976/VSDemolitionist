@@ -76,7 +76,6 @@ public class EntityBomb : Entity
     private const string DefaultBlastShape = "sphere";
     private const int MaxManualBlockChanges = 10000;
     private const string BombAttrRoot = "bomb";
-    private const string DefaultStaticStickyEntityCode = "bombstuck";
     private static readonly AssetLocation FuseSoundDefault = new("vsdemolitionist", "sounds/fuse");
 
     private const string AttrLit = "vsd_lit";
@@ -98,7 +97,6 @@ public class EntityBomb : Entity
     private const string AttrDualBlast = "vsd_dualBlast";
     private const string AttrManualBlockRecovery = "vsd_manualBlockRecovery";
     private const string AttrBombTier = "vsd_bombTier";
-    private const string AttrIsSticky = "vsd_isSticky";
     private const string AttrOreDestroyChance = "vsd_oreDestroyChance";
     private const string AttrCrystalDestroyChance = "vsd_crystalDestroyChance";
     private const string AttrAnimalsOnlyDamage = "vsd_animalsOnlyDamage";
@@ -117,6 +115,7 @@ public class EntityBomb : Entity
 
     private static readonly HashSet<string> DebugBlastReportUids = new();
     private static bool customBlastSoundsEnabled = true;
+    private static float customBlastSoundVolume = 1f;
 
     private long holderId = -1;
 
@@ -134,14 +133,8 @@ public class EntityBomb : Entity
     private double lastMotionY;
     private double lastMotionZ;
     private bool attachedToBlock;
-    private bool attachedToEntity;
     private readonly BlockPos attachedBlockPos = new(0);
     private BlockFacing attachedFace = BlockFacing.UP;
-    private long attachedEntityId = -1;
-    private Vec3d attachedEntityOffset = new();
-    private bool hasPreferredAttach;
-    private readonly BlockPos preferredAttachPos = new(0);
-    private BlockFacing preferredAttachFace = BlockFacing.UP;
 
     private float GetConfigFloat(string key, float defaultValue)
     {
@@ -184,6 +177,7 @@ public class EntityBomb : Entity
         string path = block?.Code?.Path ?? "";
         if (path.Length == 0) return false;
         if (IsQuartzHostedMetalOre(path)) return true;
+        if (path.StartsWith("meteorite-")) return true;
         return path.Contains("ore");
     }
 
@@ -217,7 +211,7 @@ public class EntityBomb : Entity
         if (path.Length == 0) return false;
 
         // Deposit-style resources that should drop from explosions like ore does.
-        return path.StartsWith("saltpeter-") || path.StartsWith("rawclay-");
+        return path.StartsWith("saltpeter-") || path.StartsWith("rawclay-") || path == "rock-halite" || path == "crackedrock-halite";
     }
 
     private static bool IsProtectedBlock(Block? block)
@@ -254,41 +248,150 @@ public class EntityBomb : Entity
             }
         }
 
+        if (path == "rock-halite" || path == "crackedrock-halite")
+        {
+            Item? halite = World.GetItem(new AssetLocation("game:stone-halite"));
+            if (halite != null)
+            {
+                return new ItemStack(halite, 3);
+            }
+        }
+
         return null;
+    }
+
+    private ItemStack? GetRockRubbleDrop(Block originalBlock)
+    {
+        string path = originalBlock?.Code?.Path ?? "";
+        if (path.Length == 0) return null;
+        if (path == "rock-halite" || path == "crackedrock-halite") return null;
+
+        string? stonePath = null;
+        if (path.StartsWith("rock-"))
+        {
+            stonePath = "stone-" + path["rock-".Length..];
+        }
+        else if (path.StartsWith("crackedrock-"))
+        {
+            stonePath = "stone-" + path["crackedrock-".Length..];
+        }
+
+        if (stonePath == null) return null;
+
+        Item? stone = World.GetItem(new AssetLocation("game", stonePath));
+        return stone == null ? null : new ItemStack(stone, 1);
+    }
+
+    private BombBalanceConfig? GetBombOverride(ItemStack? stack)
+    {
+        string? bombCode = stack?.Collectible?.Code?.Path;
+        return VSDemolitionistModSystem.GetBombOverride(bombCode);
+    }
+
+    private float GetConfiguredBombFloat(ItemStack? stack, string key, float defaultValue)
+    {
+        BombBalanceConfig? cfg = GetBombOverride(stack);
+        if (cfg != null)
+        {
+            float? overrideValue = key switch
+            {
+                "blastRadius" => cfg.BlastRadius,
+                "rockBlastRadius" => cfg.RockBlastRadius,
+                "oreBlastRadius" => cfg.OreBlastRadius,
+                "entityBlastRadius" => cfg.EntityBlastRadius,
+                "oreDestroyChance" => cfg.OreDestroyChance,
+                "crystalDestroyChance" => cfg.CrystalDestroyChance,
+                "blastDropoff" => cfg.BlastDropoff,
+                "blastPowerLoss" => cfg.BlastPowerLoss,
+                "blastVerticalRadius" => cfg.BlastVerticalRadius,
+                "entityDamage" => cfg.EntityDamage,
+                "fisherSurfaceDestroyChance" => cfg.FisherSurfaceDestroyChance,
+                _ => null
+            };
+
+            if (overrideValue.HasValue)
+            {
+                return overrideValue.Value;
+            }
+        }
+
+        return GetBombFloat(stack, key, defaultValue);
+    }
+
+    private int GetConfiguredBombInt(ItemStack? stack, string key, int defaultValue)
+    {
+        BombBalanceConfig? cfg = GetBombOverride(stack);
+        if (cfg != null)
+        {
+            int? overrideValue = key switch
+            {
+                "inwardWidth" => cfg.InwardWidth,
+                "inwardDepth" => cfg.InwardDepth,
+                "outwardDepth" => cfg.OutwardDepth,
+                "inwardLinkRange" => cfg.InwardLinkRange,
+                _ => null
+            };
+
+            if (overrideValue.HasValue)
+            {
+                return overrideValue.Value;
+            }
+        }
+
+        return stack?.Collectible?.Attributes?[BombAttrRoot]?[key].AsInt(defaultValue) ?? defaultValue;
+    }
+
+    private string GetConfiguredBombString(ItemStack? stack, string key, string defaultValue)
+    {
+        BombBalanceConfig? cfg = GetBombOverride(stack);
+        if (cfg != null)
+        {
+            string? overrideValue = key switch
+            {
+                "blastShape" => cfg.BlastShape,
+                _ => null
+            };
+
+            if (!string.IsNullOrWhiteSpace(overrideValue))
+            {
+                return overrideValue;
+            }
+        }
+
+        return GetBombString(stack, key, defaultValue);
     }
 
     public void ApplyConfigFromItemstack(ItemStack? stack)
     {
         if (World.Side != EnumAppSide.Server || stack == null) return;
 
-        float blastRadius = GetBombFloat(stack, "blastRadius", DefaultBlastRadius);
+        float blastRadius = GetConfiguredBombFloat(stack, "blastRadius", DefaultBlastRadius);
 
-        WatchedAttributes.SetFloat(AttrFuseSeconds, GetBombFloat(stack, "fuseSeconds", DefaultFuseSeconds));
+        WatchedAttributes.SetFloat(AttrFuseSeconds, GetConfiguredBombFloat(stack, "fuseSeconds", DefaultFuseSeconds));
         WatchedAttributes.SetFloat(AttrThrowForwardStrength, GetBombFloat(stack, "throwForwardStrength", DefaultThrowForwardStrength));
         WatchedAttributes.SetFloat(AttrThrowUpwardBoost, GetBombFloat(stack, "throwUpwardBoost", DefaultThrowUpwardBoost));
         WatchedAttributes.SetFloat(AttrThrownFuseVolume, GetBombFloat(stack, "thrownFuseVolume", DefaultThrownFuseVolume));
         WatchedAttributes.SetFloat(AttrAttachOffset, GetBombFloat(stack, "attachOffset", 0.60f));
-        WatchedAttributes.SetFloat(AttrRockBlastRadius, GetBombFloat(stack, "rockBlastRadius", blastRadius));
-        WatchedAttributes.SetFloat(AttrOreBlastRadius, GetBombFloat(stack, "oreBlastRadius", blastRadius));
-        WatchedAttributes.SetFloat(AttrEntityBlastRadius, GetBombFloat(stack, "entityBlastRadius", blastRadius));
-        WatchedAttributes.SetFloat(AttrBlastDropoff, GetBombFloat(stack, "blastDropoff", DefaultBlastDropoff));
-        WatchedAttributes.SetFloat(AttrBlastPowerLoss, GetBombFloat(stack, "blastPowerLoss", DefaultBlastPowerLoss));
-        WatchedAttributes.SetString(AttrBlastShape, GetBombString(stack, "blastShape", DefaultBlastShape));
-        WatchedAttributes.SetFloat(AttrBlastVerticalRadius, GetBombFloat(stack, "blastVerticalRadius", blastRadius));
-        WatchedAttributes.SetInt(AttrInwardWidth, Math.Max(1, stack.Collectible?.Attributes?[BombAttrRoot]?["inwardWidth"].AsInt(DefaultBlastingChargeInwardWidth) ?? DefaultBlastingChargeInwardWidth));
-        WatchedAttributes.SetInt(AttrInwardDepth, Math.Max(1, stack.Collectible?.Attributes?[BombAttrRoot]?["inwardDepth"].AsInt(DefaultBlastingChargeInwardDepth) ?? DefaultBlastingChargeInwardDepth));
-        WatchedAttributes.SetInt(AttrOutwardDepth, Math.Max(0, stack.Collectible?.Attributes?[BombAttrRoot]?["outwardDepth"].AsInt(DefaultBlastingChargeOutwardDepth) ?? DefaultBlastingChargeOutwardDepth));
-        WatchedAttributes.SetInt(AttrInwardLinkRange, Math.Max(1, stack.Collectible?.Attributes?[BombAttrRoot]?["inwardLinkRange"].AsInt(DefaultBlastingChargeLinkRange) ?? DefaultBlastingChargeLinkRange));
-        WatchedAttributes.SetFloat(AttrOreDestroyChance, Clamp01(GetBombFloat(stack, "oreDestroyChance", 1f)));
-        WatchedAttributes.SetFloat(AttrCrystalDestroyChance, Clamp01(GetBombFloat(stack, "crystalDestroyChance", 1f)));
+        WatchedAttributes.SetFloat(AttrRockBlastRadius, GetConfiguredBombFloat(stack, "rockBlastRadius", blastRadius));
+        WatchedAttributes.SetFloat(AttrOreBlastRadius, GetConfiguredBombFloat(stack, "oreBlastRadius", blastRadius));
+        WatchedAttributes.SetFloat(AttrEntityBlastRadius, GetConfiguredBombFloat(stack, "entityBlastRadius", blastRadius));
+        WatchedAttributes.SetFloat(AttrBlastDropoff, GetConfiguredBombFloat(stack, "blastDropoff", DefaultBlastDropoff));
+        WatchedAttributes.SetFloat(AttrBlastPowerLoss, GetConfiguredBombFloat(stack, "blastPowerLoss", DefaultBlastPowerLoss));
+        WatchedAttributes.SetString(AttrBlastShape, GetConfiguredBombString(stack, "blastShape", DefaultBlastShape));
+        WatchedAttributes.SetFloat(AttrBlastVerticalRadius, GetConfiguredBombFloat(stack, "blastVerticalRadius", blastRadius));
+        WatchedAttributes.SetInt(AttrInwardWidth, Math.Max(1, GetConfiguredBombInt(stack, "inwardWidth", DefaultBlastingChargeInwardWidth)));
+        WatchedAttributes.SetInt(AttrInwardDepth, Math.Max(1, GetConfiguredBombInt(stack, "inwardDepth", DefaultBlastingChargeInwardDepth)));
+        WatchedAttributes.SetInt(AttrOutwardDepth, Math.Max(0, GetConfiguredBombInt(stack, "outwardDepth", DefaultBlastingChargeOutwardDepth)));
+        WatchedAttributes.SetInt(AttrInwardLinkRange, Math.Max(1, GetConfiguredBombInt(stack, "inwardLinkRange", DefaultBlastingChargeLinkRange)));
+        WatchedAttributes.SetFloat(AttrOreDestroyChance, Clamp01(GetConfiguredBombFloat(stack, "oreDestroyChance", 1f)));
+        WatchedAttributes.SetFloat(AttrCrystalDestroyChance, Clamp01(GetConfiguredBombFloat(stack, "crystalDestroyChance", 1f)));
         WatchedAttributes.SetInt(AttrBlockBlastType, (int)ParseBlockBlastType(GetBombString(stack, "blastType", "rock")));
         WatchedAttributes.SetBool(AttrDualBlast, stack.Collectible?.Attributes?[BombAttrRoot]?["dualBlast"].AsBool(false) ?? false);
         WatchedAttributes.SetBool(AttrManualBlockRecovery, stack.Collectible?.Attributes?[BombAttrRoot]?["manualBlockRecovery"].AsBool(false) ?? false);
         WatchedAttributes.SetBool(AttrAnimalsOnlyDamage, stack.Collectible?.Attributes?[BombAttrRoot]?["animalsOnlyDamage"].AsBool(false) ?? false);
-        WatchedAttributes.SetFloat(AttrEntityDamage, GetBombFloat(stack, "entityDamage", 8f));
-        WatchedAttributes.SetFloat(AttrFisherSurfaceDestroyChance, Clamp01(GetBombFloat(stack, "fisherSurfaceDestroyChance", 0f)));
+        WatchedAttributes.SetFloat(AttrEntityDamage, GetConfiguredBombFloat(stack, "entityDamage", 8f));
+        WatchedAttributes.SetFloat(AttrFisherSurfaceDestroyChance, Clamp01(GetConfiguredBombFloat(stack, "fisherSurfaceDestroyChance", 0f)));
         WatchedAttributes.SetString(AttrBombTier, GetBombString(stack, "tier", stack.Collectible?.Code?.Path ?? "unknown"));
-        WatchedAttributes.SetBool(AttrIsSticky, stack.Collectible?.Attributes?[BombAttrRoot]?["isSticky"].AsBool(false) ?? false);
         WatchedAttributes.SetBool(AttrExploded, false);
     }
 
@@ -329,9 +432,6 @@ public void Release(EntityAgent holder)
 {
     holderId = -1;
     attachedToBlock = false;
-    attachedToEntity = false;
-    attachedEntityId = -1;
-    hasPreferredAttach = false;
 
     Vec3f dir = holder.SidedPos.GetViewVector().Normalize();
 
@@ -355,99 +455,19 @@ public void Release(EntityAgent holder)
     );
 }
 
-    public void SetPreferredAttach(BlockPos pos, BlockFacing face)
-    {
-        if (pos == null) return;
-        hasPreferredAttach = true;
-        preferredAttachPos.Set(pos);
-        preferredAttachFace = face ?? BlockFacing.UP;
-    }
-
     public void AttachToBlock(BlockPos pos, BlockFacing? face)
     {
         if (World.Side != EnumAppSide.Server) return;
 
-        attachedToEntity = false;
-        attachedEntityId = -1;
         attachedToBlock = true;
         attachedBlockPos.Set(pos);
         attachedFace = face ?? BlockFacing.UP;
-        hasPreferredAttach = false;
         ServerPos.Motion.Set(0, 0, 0);
         Pos.Motion.Set(0, 0, 0);
         lastMotionX = 0;
         lastMotionY = 0;
         lastMotionZ = 0;
         SnapToAttachedFace();
-    }
-
-    private bool IsStaticStickyEntity()
-    {
-        string path = Properties?.Code?.Path ?? "";
-        return path == DefaultStaticStickyEntityCode || path.StartsWith("bombstuck-");
-    }
-
-    private void CopyFuseAndConfigTo(EntityBomb other)
-    {
-        other.WatchedAttributes.SetBool(AttrLit, WatchedAttributes.GetBool(AttrLit));
-        other.WatchedAttributes.SetFloat(AttrFuseRemainingSeconds, WatchedAttributes.GetFloat(AttrFuseRemainingSeconds, GetConfigFloat(AttrFuseSeconds, DefaultFuseSeconds)));
-        other.WatchedAttributes.SetLong(AttrFuseEndMs, WatchedAttributes.GetLong(AttrFuseEndMs, 0));
-        other.WatchedAttributes.SetFloat(AttrFuseSeconds, GetConfigFloat(AttrFuseSeconds, DefaultFuseSeconds));
-        other.WatchedAttributes.SetFloat(AttrThrowForwardStrength, GetConfigFloat(AttrThrowForwardStrength, DefaultThrowForwardStrength));
-        other.WatchedAttributes.SetFloat(AttrThrowUpwardBoost, GetConfigFloat(AttrThrowUpwardBoost, DefaultThrowUpwardBoost));
-        other.WatchedAttributes.SetFloat(AttrThrownFuseVolume, GetConfigFloat(AttrThrownFuseVolume, DefaultThrownFuseVolume));
-        other.WatchedAttributes.SetFloat(AttrAttachOffset, GetConfigFloat(AttrAttachOffset, 0.60f));
-        other.WatchedAttributes.SetFloat(AttrRockBlastRadius, GetConfigFloat(AttrRockBlastRadius, DefaultBlastRadius));
-        other.WatchedAttributes.SetFloat(AttrOreBlastRadius, GetConfigFloat(AttrOreBlastRadius, DefaultBlastRadius));
-        other.WatchedAttributes.SetFloat(AttrEntityBlastRadius, GetConfigFloat(AttrEntityBlastRadius, DefaultBlastRadius));
-        other.WatchedAttributes.SetFloat(AttrBlastDropoff, GetConfigFloat(AttrBlastDropoff, DefaultBlastDropoff));
-        other.WatchedAttributes.SetFloat(AttrBlastPowerLoss, GetConfigFloat(AttrBlastPowerLoss, DefaultBlastPowerLoss));
-        other.WatchedAttributes.SetString(AttrBlastShape, WatchedAttributes.GetString(AttrBlastShape, DefaultBlastShape));
-        other.WatchedAttributes.SetFloat(AttrBlastVerticalRadius, GetConfigFloat(AttrBlastVerticalRadius, DefaultBlastRadius));
-        other.WatchedAttributes.SetInt(AttrBlockBlastType, WatchedAttributes.GetInt(AttrBlockBlastType, (int)EnumBlastType.RockBlast));
-        other.WatchedAttributes.SetBool(AttrDualBlast, GetConfigBool(AttrDualBlast, false));
-        other.WatchedAttributes.SetBool(AttrManualBlockRecovery, GetConfigBool(AttrManualBlockRecovery, false));
-        other.WatchedAttributes.SetString(AttrBombTier, WatchedAttributes.GetString(AttrBombTier, "unknown"));
-        other.WatchedAttributes.SetBool(AttrIsSticky, GetConfigBool(AttrIsSticky, false));
-        other.WatchedAttributes.SetFloat(AttrOreDestroyChance, GetConfigFloat(AttrOreDestroyChance, 1f));
-        other.WatchedAttributes.SetFloat(AttrCrystalDestroyChance, GetConfigFloat(AttrCrystalDestroyChance, 1f));
-        other.WatchedAttributes.SetString(AttrThrowerPlayerUid, WatchedAttributes.GetString(AttrThrowerPlayerUid));
-    }
-
-    private bool TrySwitchToStaticSticky(BlockPos pos, BlockFacing face)
-    {
-        if (World.Side != EnumAppSide.Server) return false;
-        if (IsStaticStickyEntity()) return false;
-
-        string currentCode = Properties?.Code?.Path ?? "";
-        string staticCode = DefaultStaticStickyEntityCode;
-        if (currentCode.StartsWith("bomb-sticky-"))
-        {
-            staticCode = "bombstuck-sticky-" + currentCode["bomb-sticky-".Length..];
-        }
-
-        EntityProperties staticType = World.GetEntityType(new AssetLocation("vsdemolitionist", staticCode));
-        if (staticType == null) return false;
-
-        Entity entity = World.ClassRegistry.CreateEntity(staticType);
-        if (entity is not EntityBomb stuckBomb) return false;
-
-        stuckBomb.ServerPos.SetPos(ServerPos.X, ServerPos.Y, ServerPos.Z);
-        stuckBomb.ServerPos.Motion.Set(0, 0, 0);
-        stuckBomb.Pos.SetPos(Pos.X, Pos.Y, Pos.Z);
-        stuckBomb.Pos.Motion.Set(0, 0, 0);
-        stuckBomb.ServerPos.Yaw = ServerPos.Yaw;
-        stuckBomb.Pos.Yaw = Pos.Yaw;
-        stuckBomb.ServerPos.Pitch = ServerPos.Pitch;
-        stuckBomb.Pos.Pitch = Pos.Pitch;
-
-        CopyFuseAndConfigTo(stuckBomb);
-
-        World.SpawnEntity(stuckBomb);
-
-        stuckBomb.AttachToBlock(pos, face);
-        Die(EnumDespawnReason.Removed);
-        return true;
     }
 
     private void TeleportToHolder(EntityAgent holder)
@@ -490,16 +510,17 @@ public void Release(EntityAgent holder)
 
         if (World.Side == EnumAppSide.Server)
         {
-            if (holderId == -1 && GetConfigBool(AttrIsSticky, false) && WatchedAttributes.GetBool(AttrLit))
+            if (attachedToBlock)
             {
-                if (attachedToEntity)
+                if (!UpdateAttachedToBlock())
                 {
-                    if (!UpdateAttachedToEntity()) attachedToEntity = false;
-                }
+                    // Keep armed blasting charges anchored to their recorded face even if
+                    // a neighboring charge removes the support block before detonation.
+                    bool keepAnchoredForDetonation =
+                        WatchedAttributes.GetBool(AttrLit, false) &&
+                        WatchedAttributes.GetString(AttrBombTier, "") == "blasting-charge";
 
-                if (attachedToBlock)
-                {
-                    if (!UpdateAttachedToBlock())
+                    if (!keepAnchoredForDetonation)
                     {
                         attachedToBlock = false;
                     }
@@ -649,47 +670,13 @@ public void Release(EntityAgent holder)
 
         if (World.Side != EnumAppSide.Server) return;
 
-        // Non-sticky thrown bombs: apply stronger damping in water so they don't roll/glide too far.
-        if (holderId == -1 && WatchedAttributes.GetBool(AttrLit) && !GetConfigBool(AttrIsSticky, false))
+        if (holderId == -1 && WatchedAttributes.GetBool(AttrLit))
         {
             if (IsPositionInWater(ServerPos.X, ServerPos.Y, ServerPos.Z))
             {
                 ServerPos.Motion.Set(ServerPos.Motion.X * 0.45, ServerPos.Motion.Y * 0.65, ServerPos.Motion.Z * 0.45);
                 Pos.Motion.Set(ServerPos.Motion.X, ServerPos.Motion.Y, ServerPos.Motion.Z);
             }
-            return;
-        }
-
-        if (holderId != -1) return;
-        if (!WatchedAttributes.GetBool(AttrLit)) return;
-        if (!GetConfigBool(AttrIsSticky, false)) return;
-        if (attachedToBlock || attachedToEntity) return;
-
-        // Hard-stop bounce on first sticky contact.
-        ServerPos.Motion.Set(0, 0, 0);
-        Pos.Motion.Set(0, 0, 0);
-        lastMotionX = 0;
-        lastMotionY = 0;
-        lastMotionZ = 0;
-
-        if (hasPreferredAttach)
-        {
-            Block targetBlock = World.BlockAccessor.GetBlock(preferredAttachPos);
-            if (targetBlock != null && targetBlock.BlockId != 0 && targetBlock.Replaceable < 6000)
-            {
-                if (!TrySwitchToStaticSticky(preferredAttachPos, preferredAttachFace))
-                {
-                    AttachToBlock(preferredAttachPos, preferredAttachFace);
-                }
-                return;
-            }
-
-            hasPreferredAttach = false;
-        }
-
-        if (!TryAttachToEntity())
-        {
-            AttachToSurface();
         }
     }
 
@@ -834,7 +821,8 @@ public void Release(EntityAgent holder)
         }
         if (isDiscBlast && rockRadius > 0f)
         {
-            ClearNonResourceBlocksEllipsoid(rockRadius, verticalRadius);
+            bool spawnBundleRubble = WatchedAttributes.GetString(AttrBombTier, "").Contains("bundle", StringComparison.Ordinal);
+            ClearNonResourceBlocksEllipsoid(rockRadius, verticalRadius, spawnBundleRubble);
 
             // Keep one explosion event for damage/sound, but no spherical terrain crater.
             sapi.World.CreateExplosion(
@@ -914,52 +902,6 @@ public void Release(EntityAgent holder)
         Die(EnumDespawnReason.Removed);
     }
 
-    private bool TryAttachToEntity()
-    {
-        if (attachedToEntity || attachedToBlock) return false;
-
-        Entity? candidate = World.GetNearestEntity(Pos.XYZ, 0.65f, 0.65f, (entity) =>
-        {
-            if (entity == null) return false;
-            if (entity.EntityId == EntityId) return false;
-            if (entity.EntityId == holderId) return false;
-            if (entity is EntityBomb) return false;
-            return true;
-        });
-
-        if (candidate == null) return false;
-
-        attachedToEntity = true;
-        attachedEntityId = candidate.EntityId;
-        attachedEntityOffset.Set(
-            Pos.X - candidate.Pos.X,
-            Pos.Y - candidate.Pos.Y,
-            Pos.Z - candidate.Pos.Z
-        );
-        SnapToEntity(candidate);
-        return true;
-    }
-
-    private bool UpdateAttachedToEntity()
-    {
-        Entity? entity = World.GetEntityById(attachedEntityId);
-        if (entity == null) return false;
-
-        SnapToEntity(entity);
-        return true;
-    }
-
-    private void SnapToEntity(Entity entity)
-    {
-        double x = entity.Pos.X + attachedEntityOffset.X;
-        double y = entity.Pos.Y + attachedEntityOffset.Y;
-        double z = entity.Pos.Z + attachedEntityOffset.Z;
-        ServerPos.SetPos(x, y, z);
-        Pos.SetPos(x, y, z);
-        ServerPos.Motion.Set(0, 0, 0);
-        Pos.Motion.Set(0, 0, 0);
-    }
-
     private bool UpdateAttachedToBlock()
     {
         Block block = World.BlockAccessor.GetBlock(attachedBlockPos);
@@ -970,68 +912,6 @@ public void Release(EntityAgent holder)
 
         SnapToAttachedFace();
         return true;
-    }
-
-    private void AttachToSurface()
-    {
-        BlockPos? bestPos = null;
-        double bestDistSq = double.MaxValue;
-        BlockPos center = Pos.AsBlockPos;
-
-        for (int dx = -1; dx <= 1; dx++)
-        {
-            for (int dy = -1; dy <= 1; dy++)
-            {
-                for (int dz = -1; dz <= 1; dz++)
-                {
-                    BlockPos pos = new(center.X + dx, center.Y + dy, center.Z + dz);
-                    Block block = World.BlockAccessor.GetBlock(pos);
-                    if (block == null || block.BlockId == 0 || block.Replaceable >= 6000) continue;
-
-                    double cx = pos.X + 0.5;
-                    double cy = pos.Y + 0.5;
-                    double cz = pos.Z + 0.5;
-                    double distSq = (Pos.X - cx) * (Pos.X - cx) + (Pos.Y - cy) * (Pos.Y - cy) + (Pos.Z - cz) * (Pos.Z - cz);
-                    if (distSq < bestDistSq)
-                    {
-                        bestDistSq = distSq;
-                        bestPos = pos;
-                    }
-                }
-            }
-        }
-
-        if (bestPos == null) return;
-
-        attachedBlockPos.Set(bestPos.X, bestPos.Y, bestPos.Z);
-        attachedFace = EstimateImpactFace(attachedBlockPos);
-        if (!TrySwitchToStaticSticky(attachedBlockPos, attachedFace))
-        {
-            attachedToBlock = true;
-            SnapToAttachedFace();
-        }
-    }
-
-    private BlockFacing EstimateImpactFace(BlockPos blockPos)
-    {
-        double dx = Pos.X - (blockPos.X + 0.5);
-        double dy = Pos.Y - (blockPos.Y + 0.5);
-        double dz = Pos.Z - (blockPos.Z + 0.5);
-
-        if (Math.Abs(lastMotionX) + Math.Abs(lastMotionY) + Math.Abs(lastMotionZ) > 0.0001)
-        {
-            dx = -lastMotionX;
-            dy = -lastMotionY;
-            dz = -lastMotionZ;
-        }
-
-        double ax = Math.Abs(dx);
-        double ay = Math.Abs(dy);
-        double az = Math.Abs(dz);
-
-        if (ax >= ay && ax >= az) return dx >= 0 ? BlockFacing.EAST : BlockFacing.WEST;
-        if (ay >= ax && ay >= az) return dy >= 0 ? BlockFacing.UP : BlockFacing.DOWN;
-        return dz >= 0 ? BlockFacing.SOUTH : BlockFacing.NORTH;
     }
 
     private void SnapToAttachedFace()
@@ -1151,7 +1031,7 @@ public void Release(EntityAgent holder)
         return tracked;
     }
 
-    private void ClearNonResourceBlocksEllipsoid(float horizontalRadius, float verticalRadius)
+    private void ClearNonResourceBlocksEllipsoid(float horizontalRadius, float verticalRadius, bool spawnRubble)
     {
         IBlockAccessor blockAccessor = World.BlockAccessor;
         BlockPos center = Pos.AsBlockPos;
@@ -1179,6 +1059,15 @@ public void Release(EntityAgent holder)
                     if (block == null || block.BlockId == 0) continue;
                     if (IsProtectedBlock(block)) continue;
                     if (IsOreBlock(block) || IsCrystalBlock(block) || IsSpecialDepositBlock(block)) continue;
+
+                    if (spawnRubble && World.Rand.NextDouble() <= VSDemolitionistModSystem.GetBundleRockRubbleChance())
+                    {
+                        ItemStack? rubble = GetRockRubbleDrop(block);
+                        if (rubble != null)
+                        {
+                            World.SpawnItemEntity(rubble, tmp.ToVec3d().Add(0.5, 0.1, 0.5));
+                        }
+                    }
 
                     blockAccessor.SetBlock(0, tmp);
                     cleared++;
@@ -1729,6 +1618,11 @@ public void Release(EntityAgent holder)
         return customBlastSoundsEnabled;
     }
 
+    public static void SetCustomBlastSoundVolume(float volume)
+    {
+        customBlastSoundVolume = GameMath.Clamp(volume, 0f, 2f);
+    }
+
     public override void OnEntityDespawn(EntityDespawnData despawn)
     {
         if (World.Side == EnumAppSide.Client)
@@ -1807,6 +1701,11 @@ public void Release(EntityAgent holder)
 
     private static void PlayClientOneShot(ICoreClientAPI capi, string soundPath, Vec3f atPos, float volume, float range = 24f)
     {
+        if (soundPath.StartsWith("vsdemolitionist:sounds/", StringComparison.OrdinalIgnoreCase))
+        {
+            volume *= customBlastSoundVolume;
+        }
+
         ILoadedSound? oneshot = capi.World.LoadSound(new SoundParams()
         {
             Location = new AssetLocation(soundPath),

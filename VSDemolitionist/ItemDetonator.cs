@@ -3,6 +3,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using System;
+using System.Text;
 
 namespace VSDemolitionist;
 
@@ -17,7 +18,24 @@ public class ItemDetonator : Item
 
     private float GetDetonatorFloat(ItemStack? stack, string key, float defaultValue)
     {
+        if (key == "radius")
+        {
+            return VSDemolitionistModSystem.GetDetonatorRadius();
+        }
+
         return stack?.Collectible?.Attributes?[DetonatorAttrRoot]?[key].AsFloat(defaultValue) ?? defaultValue;
+    }
+
+    public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
+    {
+        base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
+
+        ItemStack? stack = inSlot?.Itemstack;
+        if (stack == null) return;
+
+        float radius = GetDetonatorFloat(stack, "radius", DefaultDetonationRadius);
+        dsc.AppendLine();
+        dsc.AppendLine($"Triggers nearby blasting charges within {Math.Round(radius):0} blocks.");
     }
 
     public override void OnHeldInteractStart(

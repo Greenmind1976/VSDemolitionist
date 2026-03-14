@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Client;
@@ -50,6 +51,76 @@ public class ItemBomb : Item
         return stack?.Collectible?.Attributes?[BombAttrRoot]?[key].AsBool(defaultValue) ?? defaultValue;
     }
 
+    private float GetEffectiveBombFloat(ItemStack? stack, string key, float defaultValue)
+    {
+        string? bombCode = stack?.Collectible?.Code?.Path;
+        BombBalanceConfig? overrideConfig = VSDemolitionistModSystem.GetBombOverride(bombCode);
+
+        float? overrideValue = key switch
+        {
+            "fuseSeconds" => overrideConfig?.FuseSeconds,
+            "blastRadius" => overrideConfig?.BlastRadius,
+            "rockBlastRadius" => overrideConfig?.RockBlastRadius,
+            "oreBlastRadius" => overrideConfig?.OreBlastRadius,
+            "entityBlastRadius" => overrideConfig?.EntityBlastRadius,
+            "oreDestroyChance" => overrideConfig?.OreDestroyChance,
+            "crystalDestroyChance" => overrideConfig?.CrystalDestroyChance,
+            "blastDropoff" => overrideConfig?.BlastDropoff,
+            "blastPowerLoss" => overrideConfig?.BlastPowerLoss,
+            "blastVerticalRadius" => overrideConfig?.BlastVerticalRadius,
+            "entityDamage" => overrideConfig?.EntityDamage,
+            "fisherSurfaceDestroyChance" => overrideConfig?.FisherSurfaceDestroyChance,
+            "inwardWidth" => overrideConfig?.InwardWidth,
+            "inwardDepth" => overrideConfig?.InwardDepth,
+            "outwardDepth" => overrideConfig?.OutwardDepth,
+            "inwardLinkRange" => overrideConfig?.InwardLinkRange,
+            _ => null
+        };
+
+        return overrideValue ?? GetBombFloat(stack, key, defaultValue);
+    }
+
+    private static string FormatPercent(float value)
+    {
+        return $"{Math.Round(value * 100f, 1):0.#}%";
+    }
+
+    private string BuildBombDescription(ItemStack stack)
+    {
+        string bombCode = stack.Collectible?.Code?.Path ?? "";
+        string defaultShape = GetBombString(stack, "blastShape", "sphere");
+
+        if (bombCode == "bomb-fisherman")
+        {
+            return "This stick is designed for blasting in water. It creates a splash burst and is best used against fish and other nearby creatures.";
+        }
+
+        if (bombCode == "blasting-charge")
+        {
+            float inwardDepth = GetEffectiveBombFloat(stack, "inwardDepth", 5f);
+            float outwardDepth = GetEffectiveBombFloat(stack, "outwardDepth", 1f);
+            float inwardWidth = GetEffectiveBombFloat(stack, "inwardWidth", 3f);
+            float linkRange = GetEffectiveBombFloat(stack, "inwardLinkRange", 7f);
+
+            return $"This placed charge creates a directional blast about {Math.Round(inwardWidth):0} blocks wide, {Math.Round(inwardDepth):0} blocks inward, and {Math.Round(outwardDepth):0} block outward. Best used for controlled excavation and unbroken block extraction. Linked charges can bridge gaps up to {Math.Round(linkRange):0} blocks.";
+        }
+
+        if (bombCode.Contains("bundle"))
+        {
+            return defaultShape switch
+            {
+                "disc" => "This bundle creates a wide, shallow blast and is best used to clear broad ore veins and large excavation faces.",
+                _ => "This bundle creates a large blast and is best used for heavy excavation work."
+            };
+        }
+
+        return defaultShape switch
+        {
+            "disc" => "This dynamite creates a wide blast and is best used to clear broad sections of terrain.",
+            _ => "This dynamite creates a compact spherical blast and is best used for general ore and crystal extraction."
+        };
+    }
+
     private static AssetLocation ResolveModAsset(string code)
     {
         if (code.Contains(":")) return new AssetLocation(code);
@@ -77,6 +148,27 @@ public class ItemBomb : Item
 
         ItemRenderInfo iconRender = capi.Render.GetItemStackRenderInfo(guiIconSlot, target, 0);
         renderinfo = iconRender;
+    }
+
+    public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
+    {
+        base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
+
+        ItemStack? stack = inSlot?.Itemstack;
+        if (stack == null) return;
+
+        float oreDestroyChance = GetEffectiveBombFloat(stack, "oreDestroyChance", 0.5f);
+        float crystalDestroyChance = GetEffectiveBombFloat(stack, "crystalDestroyChance", 0.8f);
+        string bombCode = stack.Collectible?.Code?.Path ?? "";
+
+        dsc.AppendLine();
+        dsc.AppendLine(BuildBombDescription(stack));
+
+        if (bombCode != "blasting-charge")
+        {
+            dsc.AppendLine($"{Lang.Get("Ore destruction chance")}: {FormatPercent(oreDestroyChance)}");
+            dsc.AppendLine($"{Lang.Get("Crystal destruction chance")}: {FormatPercent(crystalDestroyChance)}");
+        }
     }
 
     public override void OnHeldInteractStart(
@@ -362,7 +454,6 @@ public class ItemBomb : Item
 
         if (entity is EntityBomb bomb)
         {
-            bool isSticky = GetBombBool(slot.Itemstack, "isSticky", false);
             bomb.ApplyConfigFromItemstack(slot.Itemstack);
             bomb.SetThrower(byEntity);
             bomb.StartFuseWithRemainingSeconds(remainingFuse);
@@ -373,11 +464,6 @@ public class ItemBomb : Item
             else if (allowThrow && remainingFuse > 0.001f)
             {
                 bomb.Release(byEntity);
-                if (isSticky && targetBlockSel?.Position != null)
-                {
-                    bomb.SetPreferredAttach(targetBlockSel.Position, targetBlockSel.Face);
-                }
-
                 byEntity.World.PlaySoundAt(
                     ThrowSound,
                     spawnX, spawnY, spawnZ,
@@ -401,6 +487,21 @@ public class ItemBomb : Item
         EntityProperties type = sapi.World.GetEntityType(ResolveModAsset(entityCode));
         if (type == null) return;
 
+        bool placeTopOnly = GetBombBool(slot.Itemstack, "placeTopOnly", false);
+        BlockFacing face = placeTopOnly ? BlockFacing.UP : ResolveAttachFace(targetBlockSel, byEntity);
+        face ??= BlockFacing.UP;
+        if (face == BlockFacing.DOWN)
+        {
+            SendChargePlacementMessage(byEntity, "Cannot place charge on underside.");
+            return;
+        }
+
+        if (!TryResolveChargeAttachPos(byEntity, targetBlockSel.Position, face, out BlockPos attachPos))
+        {
+            SendChargePlacementMessage(byEntity, "Charge must be placed on a solid ore, stone, soil, or crystal block.");
+            return;
+        }
+
         Entity entity = sapi.World.ClassRegistry.CreateEntity(type);
         if (entity == null) return;
 
@@ -419,37 +520,84 @@ public class ItemBomb : Item
         {
             bomb.ApplyConfigFromItemstack(slot.Itemstack);
             bomb.SetThrower(byEntity);
-            bool placeTopOnly = GetBombBool(slot.Itemstack, "placeTopOnly", false);
-            BlockFacing face = placeTopOnly ? BlockFacing.UP : ResolveAttachFace(targetBlockSel, byEntity);
-            face ??= BlockFacing.UP;
-            if (face == BlockFacing.DOWN)
-            {
-                // Underside placement is disabled for charges to avoid clipping/sinking behavior.
-                entity.Die(EnumDespawnReason.Removed);
-                if (byEntity is EntityPlayer entityPlayer && entityPlayer.Player is IServerPlayer serverPlayer)
-                {
-                    serverPlayer.SendMessage(
-                        GlobalConstants.GeneralChatGroup,
-                        "Cannot place charge on underside.",
-                        EnumChatType.Notification
-                    );
-                }
-                return;
-            }
-
-            BlockPos attachPos = targetBlockSel.Position.Copy();
-            Block targetBlock = byEntity.World.BlockAccessor.GetBlock(attachPos);
-            // If selection position is non-solid (common on place interactions), snap to the support block behind the hit face.
-            if ((targetBlock == null || targetBlock.BlockId == 0 || targetBlock.Replaceable >= 6000) && face != null)
-            {
-                attachPos = attachPos.AddCopy(face.Opposite);
-            }
-
             bomb.AttachToBlock(attachPos, face);
         }
 
         slot.TakeOut(1);
         slot.MarkDirty();
+    }
+
+    private static bool TryResolveChargeAttachPos(EntityAgent byEntity, BlockPos selectionPos, BlockFacing face, out BlockPos attachPos)
+    {
+        attachPos = selectionPos.Copy();
+        IBlockAccessor blockAccessor = byEntity.World.BlockAccessor;
+        Block targetBlock = blockAccessor.GetBlock(attachPos);
+
+        // If the selected block is replaceable/non-solid, mount to the support block behind the hit face.
+        if (!IsValidChargeSupportBlock(blockAccessor, attachPos, targetBlock, face))
+        {
+            attachPos = attachPos.AddCopy(face.Opposite);
+            targetBlock = blockAccessor.GetBlock(attachPos);
+        }
+
+        return IsValidChargeSupportBlock(blockAccessor, attachPos, targetBlock, face);
+    }
+
+    private static bool IsValidChargeSupportBlock(IBlockAccessor blockAccessor, BlockPos pos, Block? block, BlockFacing face)
+    {
+        if (block == null || block.BlockId == 0) return false;
+        if (block.Replaceable >= 6000) return false;
+        if (!block.SideSolid.OnSide(face)) return false;
+        if (!IsFullBlockCollision(block, blockAccessor, pos)) return false;
+        if (block.BlockMaterial == EnumBlockMaterial.Wood) return false;
+
+        string path = block.Code?.Path ?? string.Empty;
+        if (path.Length == 0) return false;
+
+        // Prevent placement on vegetation or tree-like supports even if they expose collision.
+        if (path.Contains("grass", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("flower", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("crop", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("plant", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("reed", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("vine", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("mushroom", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("sapling", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("leaves", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("bush", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("berry", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("log", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("trunk", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("branch", StringComparison.OrdinalIgnoreCase)) return false;
+
+        return true;
+    }
+
+    private static bool IsFullBlockCollision(Block block, IBlockAccessor blockAccessor, BlockPos pos)
+    {
+        Cuboidf[]? boxes = block.GetCollisionBoxes(blockAccessor, pos);
+        if (boxes == null || boxes.Length != 1) return false;
+
+        Cuboidf box = boxes[0];
+        const float epsilon = 0.001f;
+        return box.X1 <= epsilon
+            && box.Y1 <= epsilon
+            && box.Z1 <= epsilon
+            && box.X2 >= 1f - epsilon
+            && box.Y2 >= 1f - epsilon
+            && box.Z2 >= 1f - epsilon;
+    }
+
+    private static void SendChargePlacementMessage(EntityAgent byEntity, string message)
+    {
+        if (byEntity is EntityPlayer entityPlayer && entityPlayer.Player is IServerPlayer serverPlayer)
+        {
+            serverPlayer.SendMessage(
+                GlobalConstants.GeneralChatGroup,
+                message,
+                EnumChatType.Notification
+            );
+        }
     }
 
     private static BlockFacing ResolveAttachFace(BlockSelection blockSel, EntityAgent byEntity)

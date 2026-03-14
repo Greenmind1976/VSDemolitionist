@@ -2,7 +2,7 @@
   "code": "bomb",
   "class": "ItemBomb",
   "creativeinventory": {},
-  "maxstacksize": 64,
+  "maxstacksize": 128,
   "attributes": {
     "bomb": {
       "tier": "copper",

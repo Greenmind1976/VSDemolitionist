@@ -40,6 +40,18 @@ Or:
 dotnet build VSDemolitionist.sln
 ```
 
+## 5) Package Release Zip
+
+```bash
+./release.sh
+```
+
+This builds the mod in `Release` and creates:
+
+```bash
+dist/vsdemolitionist-<version>.zip
+```
+
 ## Notes
 
 - Tools are intentionally installed outside this repo.

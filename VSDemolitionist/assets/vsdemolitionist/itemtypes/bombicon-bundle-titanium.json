@@ -1,6 +1,6 @@
 {
   "code": "bombicon-bundle-titanium",
-  "maxstacksize": 64,
+  "maxstacksize": 128,
   "texture": {
     "base": "item/bombicon-bundle-titanium"
   },

@@ -6,7 +6,7 @@
       "*"
     ]
   },
-  "maxstacksize": 64,
+  "maxstacksize": 128,
   "attributes": {
     "bomb": {
       "tier": "bronze",

@@ -484,6 +484,43 @@
     "ingredientPattern": "HC",
     "ingredients": {
       "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:meteorite-iron" }
+    },
+    "width": 2,
+    "height": 1,
+    "name": "Recover Meteoric Iron Ore",
+    "output": { "type": "item", "code": "game:stone-meteorite-iron", "quantity": 4 }
+  }
+,
+  {
+    "ingredientPattern": "H,C",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:meteorite-iron" }
+    },
+    "width": 1,
+    "height": 2,
+    "name": "Recover Meteoric Iron Ore Vertical",
+    "output": { "type": "item", "code": "game:stone-meteorite-iron", "quantity": 4 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:meteorite-iron" }
+    },
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "name": "Recover Meteoric Iron Ore Any Position",
+    "output": { "type": "item", "code": "game:stone-meteorite-iron", "quantity": 4 }
+  }
+,
+  {
+    "ingredientPattern": "HC",
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
       "C": { "type": "block", "code": "game:ore-*-chromite-*" }
     },
     "width": 2,

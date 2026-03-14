@@ -10,7 +10,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -43,7 +43,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -76,7 +76,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -102,13 +102,13 @@
     "ingredientPattern": "FM,BL",
     "ingredients": {
       "M": {
-        "type": "block",
-        "code": "game:planks-*"
+        "type": "item",
+        "code": "game:plank-*"
       },
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -141,7 +141,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -174,7 +174,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -207,7 +207,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -240,7 +240,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -273,7 +273,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -306,7 +306,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -339,7 +339,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -372,7 +372,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -405,7 +405,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -438,7 +438,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -471,7 +471,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -504,7 +504,7 @@
       "B": {
         "type": "item",
         "code": "game:blastingpowder",
-        "quantity": 12
+        "quantity": 6
       },
       "L": {
         "type": "block",
@@ -663,116 +663,6 @@
     "output": {
       "type": "item",
       "code": "vsdemolitionist:bomb-bundle-titanium",
-      "quantity": 1
-    }
-  },
-  {
-    "ingredientPattern": "BT",
-    "ingredients": {
-      "B": {
-        "type": "item",
-        "code": "vsdemolitionist:bomb-copper"
-      },
-      "T": {
-        "type": "item",
-        "code": "vsdemolitionist:thick-tar"
-      }
-    },
-    "name": "bomb-sticky-copper",
-    "width": 2,
-    "height": 1,
-    "shapeless": true,
-    "output": {
-      "type": "item",
-      "code": "vsdemolitionist:bomb-sticky-copper",
-      "quantity": 1
-    }
-  },
-  {
-    "ingredientPattern": "BT",
-    "ingredients": {
-      "B": {
-        "type": "item",
-        "code": "vsdemolitionist:bomb-bronze"
-      },
-      "T": {
-        "type": "item",
-        "code": "vsdemolitionist:thick-tar"
-      }
-    },
-    "name": "bomb-sticky-bronze",
-    "width": 2,
-    "height": 1,
-    "shapeless": true,
-    "output": {
-      "type": "item",
-      "code": "vsdemolitionist:bomb-sticky-bronze",
-      "quantity": 1
-    }
-  },
-  {
-    "ingredientPattern": "BT",
-    "ingredients": {
-      "B": {
-        "type": "item",
-        "code": "vsdemolitionist:bomb-iron"
-      },
-      "T": {
-        "type": "item",
-        "code": "vsdemolitionist:thick-tar"
-      }
-    },
-    "name": "bomb-sticky-iron",
-    "width": 2,
-    "height": 1,
-    "shapeless": true,
-    "output": {
-      "type": "item",
-      "code": "vsdemolitionist:bomb-sticky-iron",
-      "quantity": 1
-    }
-  },
-  {
-    "ingredientPattern": "BT",
-    "ingredients": {
-      "B": {
-        "type": "item",
-        "code": "vsdemolitionist:bomb-steel"
-      },
-      "T": {
-        "type": "item",
-        "code": "vsdemolitionist:thick-tar"
-      }
-    },
-    "name": "bomb-sticky-steel",
-    "width": 2,
-    "height": 1,
-    "shapeless": true,
-    "output": {
-      "type": "item",
-      "code": "vsdemolitionist:bomb-sticky-steel",
-      "quantity": 1
-    }
-  },
-  {
-    "ingredientPattern": "BT",
-    "ingredients": {
-      "B": {
-        "type": "item",
-        "code": "vsdemolitionist:bomb-titanium"
-      },
-      "T": {
-        "type": "item",
-        "code": "vsdemolitionist:thick-tar"
-      }
-    },
-    "name": "bomb-sticky-titanium",
-    "width": 2,
-    "height": 1,
-    "shapeless": true,
-    "output": {
-      "type": "item",
-      "code": "vsdemolitionist:bomb-sticky-titanium",
       "quantity": 1
     }
   }

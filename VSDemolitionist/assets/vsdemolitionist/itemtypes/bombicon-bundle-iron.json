@@ -1,6 +1,6 @@
 {
   "code": "bombicon-bundle-iron",
-  "maxstacksize": 64,
+  "maxstacksize": 128,
   "texture": {
     "base": "item/bombicon-bundle-iron"
   },

@@ -1,0 +1,70 @@
+[
+  {
+    "ingredientPattern": "HC",
+    "width": 2,
+    "height": 1,
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:rock-halite" }
+    },
+    "output": { "type": "item", "code": "game:stone-halite", "quantity": 3 },
+    "name": "recover-halite-horizontal"
+  },
+  {
+    "ingredientPattern": "H,C",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:rock-halite" }
+    },
+    "output": { "type": "item", "code": "game:stone-halite", "quantity": 3 },
+    "name": "recover-halite-vertical"
+  },
+  {
+    "ingredientPattern": "HC",
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:rock-halite" }
+    },
+    "output": { "type": "item", "code": "game:stone-halite", "quantity": 3 },
+    "name": "recover-halite-shapeless"
+  },
+  {
+    "ingredientPattern": "HC",
+    "width": 2,
+    "height": 1,
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:crackedrock-halite" }
+    },
+    "output": { "type": "item", "code": "game:stone-halite", "quantity": 3 },
+    "name": "recover-cracked-halite-horizontal"
+  },
+  {
+    "ingredientPattern": "H,C",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:crackedrock-halite" }
+    },
+    "output": { "type": "item", "code": "game:stone-halite", "quantity": 3 },
+    "name": "recover-cracked-halite-vertical"
+  },
+  {
+    "ingredientPattern": "HC",
+    "width": 2,
+    "height": 1,
+    "shapeless": true,
+    "ingredients": {
+      "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
+      "C": { "type": "block", "code": "game:crackedrock-halite" }
+    },
+    "output": { "type": "item", "code": "game:stone-halite", "quantity": 3 },
+    "name": "recover-cracked-halite-shapeless"
+  }
+]

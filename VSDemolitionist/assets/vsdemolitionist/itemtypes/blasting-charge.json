@@ -6,7 +6,7 @@
       "*"
     ]
   },
-  "maxstacksize": 64,
+  "maxstacksize": 128,
   "attributes": {
     "bomb": {
       "tier": "blasting-charge",
@@ -32,8 +32,7 @@
       "oreDestroyChance": 0.05,
       "crystalDestroyChance": 0.1,
       "blastDropoff": 1.05,
-      "blastPowerLoss": 0.05
-      ,
+      "blastPowerLoss": 0.05,
       "inwardWidth": 3,
       "inwardDepth": 5,
       "outwardDepth": 1,
