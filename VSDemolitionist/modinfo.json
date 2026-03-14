@@ -2,10 +2,10 @@
   "type": "code",
   "modid": "vsdemolitionist",
   "name": "VSDemolitionist",
-  "authors": ["Garret"],
+  "authors": ["Greenmind"],
   "description": "Explosives-focused mod with dynamite, bundles, charges, and supporting crafting.",
   "iconpath": "modicon.png",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
     "game": "1.21.0"
   }
