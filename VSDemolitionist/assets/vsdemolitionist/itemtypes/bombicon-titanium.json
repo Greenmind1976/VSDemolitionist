@@ -1,8 +1,40 @@
 {
   "code": "bombicon-titanium",
   "maxstacksize": 128,
-  "texture": {
-    "base": "item/bombicon-titanium"
+  "shape": {
+    "base": "vsdemolitionist:item/dynamite-stick-gui"
+  },
+  "textures": {
+    "stick": {
+      "base": "block/bomb-stick-gui"
+    },
+    "cap": {
+      "base": "block/bomb-cap-titanium-gui"
+    },
+    "fuse": {
+      "base": "item/fuse-texture"
+    },
+    "default": {
+      "base": "item/bombicon-titanium"
+    }
+  },
+  "guiTransform": {
+    "translation": {
+      "x": 0.9,
+      "y": -0.05,
+      "z": 0
+    },
+    "rotation": {
+      "x": -78,
+      "y": -6,
+      "z": -19
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.27,
+      "z": 0.5
+    },
+    "scale": 1.42
   },
   "creativeinventory": {}
 }

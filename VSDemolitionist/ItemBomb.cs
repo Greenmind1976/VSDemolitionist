@@ -136,6 +136,11 @@ public class ItemBomb : Item
             return;
         }
 
+        if (GetBombBool(itemstack, "useShapeIcon", false))
+        {
+            return;
+        }
+
         string iconCode = GetBombString(itemstack, "iconItemCode", "bombicon");
         Item? iconItem = capi.World.GetItem(new AssetLocation("vsdemolitionist", iconCode));
         if (iconItem == null)
