@@ -17,6 +17,14 @@
       "default": true
     },
     {
+      "code": "Use3DIcons",
+      "ingui": "Use 3D icons",
+      "type": "boolean",
+      "weight": 98.5,
+      "comment": "Use the new 3D explosive and detonator icons in GUI slots. Turn this off to fall back to the original 2D PNG icons.",
+      "default": true
+    },
+    {
       "code": "CustomBlastSoundsVolume",
       "ingui": "Custom explosion sound volume",
       "type": "float",

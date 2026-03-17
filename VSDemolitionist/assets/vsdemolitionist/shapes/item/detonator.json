@@ -1,0 +1,67 @@
+{
+  "textureWidth": 64,
+  "textureHeight": 64,
+  "textureSizes": {
+    "body": [64, 64],
+    "dot": [16, 16]
+  },
+  "textures": {
+    "body": "block/detonator-gui",
+    "dot": "block/detonator-light-gui"
+  },
+  "elements": [
+    {
+      "name": "base",
+      "from": [5, 0.5, 8],
+      "to": [11, 6.5, 10],
+      "faces": {
+        "north": { "texture": "#body", "uv": [2, 2, 14, 14] },
+        "east": { "texture": "#body", "uv": [14, 2, 18, 14] },
+        "south": { "texture": "#body", "uv": [2, 2, 14, 14] },
+        "west": { "texture": "#body", "uv": [18, 2, 22, 14] },
+        "up": { "texture": "#body", "uv": [2, 14, 14, 18] },
+        "down": { "texture": "#body", "uv": [14, 14, 26, 18] }
+      }
+    },
+    {
+      "name": "button",
+      "from": [7, 2.5, 10],
+      "to": [9, 4.5, 11],
+      "faces": {
+        "north": { "texture": "#dot", "uv": [0, 0, 8, 8] },
+        "east": { "texture": "#dot", "uv": [8, 0, 12, 8] },
+        "south": { "texture": "#dot", "uv": [0, 0, 8, 8] },
+        "west": { "texture": "#dot", "uv": [12, 0, 16, 8] },
+        "up": { "texture": "#dot", "uv": [0, 8, 8, 16] },
+        "down": { "texture": "#dot", "uv": [8, 8, 16, 16] }
+      }
+    },
+    {
+      "name": "antenna_base",
+      "from": [7.6, 6.5, 8.5],
+      "to": [8.4, 7.2, 9.3],
+      "faces": {
+        "north": { "texture": "#body", "uv": [30, 2, 31, 3] },
+        "east": { "texture": "#body", "uv": [31, 2, 32, 3] },
+        "south": { "texture": "#body", "uv": [30, 2, 31, 3] },
+        "west": { "texture": "#body", "uv": [32, 2, 33, 3] },
+        "up": { "texture": "#body", "uv": [30, 3, 31, 4] },
+        "down": { "texture": "#body", "uv": [31, 3, 32, 4] }
+      }
+    },
+    {
+      "name": "antenna_stem",
+      "from": [7.8, 7.2, 8.7],
+      "to": [8.2, 10.4, 9.1],
+      "faces": {
+        "north": { "texture": "#body", "uv": [30, 2, 31, 8] },
+        "east": { "texture": "#body", "uv": [31, 2, 32, 8] },
+        "south": { "texture": "#body", "uv": [30, 2, 31, 8] },
+        "west": { "texture": "#body", "uv": [32, 2, 33, 8] },
+        "up": { "texture": "#body", "uv": [30, 8, 31, 9] },
+        "down": { "texture": "#body", "uv": [31, 8, 32, 9] }
+      }
+    }
+  ],
+  "animations": []
+}

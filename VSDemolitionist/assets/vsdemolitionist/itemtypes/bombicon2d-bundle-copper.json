@@ -1,0 +1,10 @@
+{
+  "code": "bombicon2d-bundle-copper",
+  "maxstacksize": 128,
+  "textures": {
+    "default": {
+      "base": "item/bombicon-bundle-copper"
+    }
+  },
+  "creativeinventory": {}
+}

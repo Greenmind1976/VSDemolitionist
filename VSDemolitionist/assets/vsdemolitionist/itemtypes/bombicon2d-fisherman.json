@@ -1,0 +1,10 @@
+{
+  "code": "bombicon2d-fisherman",
+  "maxstacksize": 128,
+  "textures": {
+    "default": {
+      "base": "item/bombicon-fisherman"
+    }
+  },
+  "creativeinventory": {}
+}

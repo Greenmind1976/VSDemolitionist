@@ -1,0 +1,10 @@
+{
+  "code": "bombicon2d-blasting-charge",
+  "maxstacksize": 128,
+  "textures": {
+    "default": {
+      "base": "item/bombicon-blasting-charge"
+    }
+  },
+  "creativeinventory": {}
+}

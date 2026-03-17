@@ -127,6 +127,21 @@ public class ItemBomb : Item
         return new AssetLocation("vsdemolitionist", code);
     }
 
+    private static string GetGuiIconCode(string iconCode)
+    {
+        if (VSDemolitionistModSystem.Use3DIcons())
+        {
+            return iconCode;
+        }
+
+        if (iconCode.StartsWith("bombicon-", StringComparison.Ordinal))
+        {
+            return iconCode.Replace("bombicon-", "bombicon2d-", StringComparison.Ordinal);
+        }
+
+        return iconCode;
+    }
+
     public override void OnBeforeRender(ICoreClientAPI capi, ItemStack itemstack, EnumItemRenderTarget target, ref ItemRenderInfo renderinfo)
     {
         base.OnBeforeRender(capi, itemstack, target, ref renderinfo);
@@ -136,13 +151,13 @@ public class ItemBomb : Item
             return;
         }
 
-        if (GetBombBool(itemstack, "useShapeIcon", false))
+        if (VSDemolitionistModSystem.Use3DIcons() && GetBombBool(itemstack, "useShapeIcon", false))
         {
             return;
         }
 
         string iconCode = GetBombString(itemstack, "iconItemCode", "bombicon");
-        Item? iconItem = capi.World.GetItem(new AssetLocation("vsdemolitionist", iconCode));
+        Item? iconItem = capi.World.GetItem(new AssetLocation("vsdemolitionist", GetGuiIconCode(iconCode)));
         if (iconItem == null)
         {
             return;

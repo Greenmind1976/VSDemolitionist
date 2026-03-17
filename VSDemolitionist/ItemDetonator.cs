@@ -4,6 +4,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using System;
 using System.Text;
+using Vintagestory.API.Client;
 
 namespace VSDemolitionist;
 
@@ -15,6 +16,7 @@ public class ItemDetonator : Item
     private const string AttrLit = "vsd_lit";
     private const string AttrBombTier = "vsd_bombTier";
     private const string BlastingChargeTier = "blasting-charge";
+    private ItemSlot? guiIconSlot;
 
     private float GetDetonatorFloat(ItemStack? stack, string key, float defaultValue)
     {
@@ -36,6 +38,26 @@ public class ItemDetonator : Item
         float radius = GetDetonatorFloat(stack, "radius", DefaultDetonationRadius);
         dsc.AppendLine();
         dsc.AppendLine($"Triggers nearby blasting charges within {Math.Round(radius):0} blocks.");
+    }
+
+    public override void OnBeforeRender(ICoreClientAPI capi, ItemStack itemstack, EnumItemRenderTarget target, ref ItemRenderInfo renderinfo)
+    {
+        base.OnBeforeRender(capi, itemstack, target, ref renderinfo);
+
+        if (target != EnumItemRenderTarget.Gui || VSDemolitionistModSystem.Use3DIcons())
+        {
+            return;
+        }
+
+        Item? iconItem = capi.World.GetItem(new AssetLocation("vsdemolitionist", "detonatoricon-2d"));
+        if (iconItem == null)
+        {
+            return;
+        }
+
+        guiIconSlot ??= new DummySlot();
+        guiIconSlot.Itemstack = new ItemStack(iconItem, 1);
+        renderinfo = capi.Render.GetItemStackRenderInfo(guiIconSlot, target, 0);
     }
 
     public override void OnHeldInteractStart(

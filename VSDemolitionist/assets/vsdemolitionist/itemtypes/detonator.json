@@ -13,7 +13,54 @@
       "activationTime": 0.0
     }
   },
-  "texture": {
-    "base": "item/detonator-icon"
+  "shape": {
+    "base": "vsdemolitionist:item/detonator"
+  },
+  "textures": {
+    "body": {
+      "base": "block/detonator-gui"
+    },
+    "dot": {
+      "base": "block/detonator-light-gui"
+    },
+    "default": {
+      "base": "item/detonator-icon"
+    }
+  },
+  "guiTransform": {
+    "translation": {
+      "x": 0.9,
+      "y": -0.05,
+      "z": 0
+    },
+    "rotation": {
+      "x": 12,
+      "y": -6,
+      "z": -149
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.27,
+      "z": 0.5
+    },
+    "scale": 2.45
+  },
+  "groundTransform": {
+    "translation": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "rotation": {
+      "x": 90,
+      "y": 0,
+      "z": 155
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.2,
+      "z": 0.5
+    },
+    "scale": 3.6
   }
 }

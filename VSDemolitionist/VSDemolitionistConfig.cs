@@ -5,6 +5,7 @@ namespace VSDemolitionist;
 public class VSDemolitionistConfig
 {
     public int SchemaVersion { get; set; } = 3;
+    public bool Use3DIcons { get; set; } = true;
     public bool CustomBlastSoundsEnabled { get; set; } = true;
     public float CustomBlastSoundsVolume { get; set; } = 1.0f;
     public float BundleRockRubbleChance { get; set; } = 0.15f;

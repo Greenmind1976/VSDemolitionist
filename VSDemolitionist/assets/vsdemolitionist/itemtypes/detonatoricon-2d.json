@@ -1,0 +1,10 @@
+{
+  "code": "detonatoricon-2d",
+  "maxstacksize": 1,
+  "textures": {
+    "default": {
+      "base": "item/detonator-icon"
+    }
+  },
+  "creativeinventory": {}
+}

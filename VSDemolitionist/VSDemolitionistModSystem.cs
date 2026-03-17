@@ -124,6 +124,11 @@ public class VSDemolitionistModSystem : ModSystem
         return Math.Max(0f, CurrentConfig.DetonatorRadius);
     }
 
+    public static bool Use3DIcons()
+    {
+        return CurrentConfig.Use3DIcons;
+    }
+
     private void TrySubscribeToConfigLib(ICoreAPI api)
     {
         if (configLibSubscribed) return;

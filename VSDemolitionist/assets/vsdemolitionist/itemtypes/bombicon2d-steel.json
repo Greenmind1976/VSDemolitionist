@@ -1,0 +1,10 @@
+{
+  "code": "bombicon2d-steel",
+  "maxstacksize": 128,
+  "textures": {
+    "default": {
+      "base": "item/bombicon-steel"
+    }
+  },
+  "creativeinventory": {}
+}

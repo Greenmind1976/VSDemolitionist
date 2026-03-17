@@ -1,0 +1,10 @@
+{
+  "code": "bombicon2d-titanium",
+  "maxstacksize": 128,
+  "textures": {
+    "default": {
+      "base": "item/bombicon-titanium"
+    }
+  },
+  "creativeinventory": {}
+}

@@ -1,8 +1,37 @@
 {
   "code": "bombicon-blasting-charge",
   "maxstacksize": 128,
-  "texture": {
-    "base": "item/bombicon-blasting-charge"
+  "shape": {
+    "base": "vsdemolitionist:item/blasting-charge-gui"
+  },
+  "textures": {
+    "stick": {
+      "base": "block/bomb-blasting-charge-gui"
+    },
+    "dot": {
+      "base": "block/bomb-blasting-charge-dot-gui"
+    },
+    "default": {
+      "base": "item/bombicon-blasting-charge"
+    }
+  },
+  "guiTransform": {
+    "translation": {
+      "x": 0.9,
+      "y": -0.05,
+      "z": 0
+    },
+    "rotation": {
+      "x": -70,
+      "y": -6,
+      "z": -19
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.27,
+      "z": 0.5
+    },
+    "scale": 1.49
   },
   "creativeinventory": {}
 }
