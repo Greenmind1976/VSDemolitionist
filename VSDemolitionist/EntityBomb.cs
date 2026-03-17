@@ -473,6 +473,19 @@ public void Release(EntityAgent holder)
         SnapToAttachedFace();
     }
 
+    private bool TryDropAttachedChargeAsItem()
+    {
+        if (World.Side != EnumAppSide.Server) return false;
+        if (WatchedAttributes.GetString(AttrBombTier, "") != "blasting-charge") return false;
+
+        Item? chargeItem = World.GetItem(new AssetLocation("vsdemolitionist", "blasting-charge"));
+        if (chargeItem == null) return false;
+
+        World.SpawnItemEntity(new ItemStack(chargeItem, 1), Pos.XYZ);
+        Die(EnumDespawnReason.Removed);
+        return true;
+    }
+
     private void TeleportToHolder(EntityAgent holder)
     {
         Vec3f dir = holder.SidedPos.GetViewVector().Normalize();
@@ -525,7 +538,14 @@ public void Release(EntityAgent holder)
 
                     if (!keepAnchoredForDetonation)
                     {
-                        attachedToBlock = false;
+                        if (!TryDropAttachedChargeAsItem())
+                        {
+                            attachedToBlock = false;
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                 }
             }

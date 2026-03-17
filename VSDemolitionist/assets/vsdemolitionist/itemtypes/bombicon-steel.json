@@ -36,5 +36,23 @@
     },
     "scale": 1.28
   },
+  "groundTransform": {
+    "translation": {
+      "x": 0,
+      "y": 0.05,
+      "z": 0
+    },
+    "rotation": {
+      "x": -78,
+      "y": -6,
+      "z": 92
+    },
+    "origin": {
+      "x": 0.5,
+      "y": 0.27,
+      "z": 0.5
+    },
+    "scale": 1.28
+  },
   "creativeinventory": {}
 }

@@ -145,12 +145,17 @@ public class ItemBomb : Item
     {
         base.OnBeforeRender(capi, itemstack, target, ref renderinfo);
 
-        if (target != EnumItemRenderTarget.Gui)
+        if (target != EnumItemRenderTarget.Gui && target != EnumItemRenderTarget.Ground)
         {
             return;
         }
 
-        if (VSDemolitionistModSystem.Use3DIcons() && GetBombBool(itemstack, "useShapeIcon", false))
+        if (target == EnumItemRenderTarget.Ground && !VSDemolitionistModSystem.Use3DIcons())
+        {
+            return;
+        }
+
+        if (target == EnumItemRenderTarget.Gui && VSDemolitionistModSystem.Use3DIcons() && GetBombBool(itemstack, "useShapeIcon", false))
         {
             return;
         }
