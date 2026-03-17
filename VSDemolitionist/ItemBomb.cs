@@ -13,7 +13,6 @@ public class ItemBomb : Item
 {
     private const float LightTime = 1.0f;
     private const float DefaultFuseSeconds = 4.0f;
-    private const float DefaultHeldFuseVolume = 2.0f;
     private const string BombAttrRoot = "bomb";
     private const string AttrFuseLitMs = "vsd_fuseLitMs";
     private static readonly AssetLocation ThrowSound = new("vsdemolitionist", "sounds/bomb-toss");
@@ -259,11 +258,9 @@ public class ItemBomb : Item
             return false;
         }
 
-        float fuseSeconds = GetBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
+        float fuseSeconds = GetEffectiveBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
         float lightTime = GetBombFloat(slot.Itemstack, "lightTime", LightTime);
         float maxHoldSeconds = lightTime + fuseSeconds;
-        float heldFuseVolume = GetBombFloat(slot.Itemstack, "heldFuseVolume", DefaultHeldFuseVolume);
-
         if (secondsUsed >= lightTime)
         {
             if (byEntity.World.Side == EnumAppSide.Server)
@@ -278,7 +275,7 @@ public class ItemBomb : Item
 
             if (byEntity.World.Side == EnumAppSide.Client)
             {
-                StartHeldFuseSound(byEntity.World.Api as ICoreClientAPI, heldFuseVolume);
+                StartHeldFuseSound(byEntity.World.Api as ICoreClientAPI);
             }
         }
 
@@ -315,7 +312,7 @@ public class ItemBomb : Item
         }
 
         if (slot?.Itemstack == null) return;
-        float fuseSeconds = GetBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
+        float fuseSeconds = GetEffectiveBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
         float lightTime = GetBombFloat(slot.Itemstack, "lightTime", LightTime);
         bool timedOut = secondsUsed >= (lightTime + fuseSeconds);
 
@@ -363,13 +360,15 @@ public class ItemBomb : Item
         return true;
     }
 
-    private void StartHeldFuseSound(ICoreClientAPI? capi, float volume)
+    private void StartHeldFuseSound(ICoreClientAPI? capi)
     {
         if (capi == null) return;
 
+        float effectiveVolume = VSDemolitionistModSystem.GetFuseVolume();
+
         if (heldFusePlaying)
         {
-            heldFuseSound?.SetVolume(volume);
+            heldFuseSound?.SetVolume(effectiveVolume);
             return;
         }
 
@@ -381,7 +380,7 @@ public class ItemBomb : Item
             RelativePosition = true,
             Position = new Vec3f(0, 0, 0),
             Range = 8f,
-            Volume = volume
+            Volume = effectiveVolume
         });
 
         heldFuseSound?.Start();
@@ -448,7 +447,7 @@ public class ItemBomb : Item
         slot.Itemstack.Attributes.RemoveAttribute(AttrFuseLitMs);
         if (litMs == 0) return;
 
-        float fuseSeconds = GetBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
+        float fuseSeconds = GetEffectiveBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
         double elapsed = Math.Max(0, (byEntity.World.ElapsedMilliseconds - litMs) / 1000.0);
         float remainingFuse = (float)Math.Max(0, fuseSeconds - elapsed);
 

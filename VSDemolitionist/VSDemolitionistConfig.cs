@@ -4,10 +4,11 @@ namespace VSDemolitionist;
 
 public class VSDemolitionistConfig
 {
-    public int SchemaVersion { get; set; } = 3;
+    public int SchemaVersion { get; set; } = 4;
     public bool Use3DIcons { get; set; } = true;
     public bool CustomBlastSoundsEnabled { get; set; } = true;
     public float CustomBlastSoundsVolume { get; set; } = 1.0f;
+    public float FuseVolume { get; set; } = 0.7f;
     public float BundleRockRubbleChance { get; set; } = 0.15f;
 
     public float CopperStickFuseSeconds { get; set; } = 4.0f;
@@ -103,6 +104,12 @@ public class VSDemolitionistConfig
             SchemaVersion = 3;
         }
 
+        if (SchemaVersion < 4)
+        {
+            MigrateFuseVolumeDefault();
+            SchemaVersion = 4;
+        }
+
         ApplyFlatOverridesToBombOverrides();
     }
 
@@ -112,6 +119,15 @@ public class VSDemolitionistConfig
         if (DetonatorRadius == 24.0f)
         {
             DetonatorRadius = 12.0f;
+        }
+    }
+
+    private void MigrateFuseVolumeDefault()
+    {
+        // Old configs were seeded with 1.0. Update untouched installs to the new intended default of 0.7.
+        if (FuseVolume == 1.0f)
+        {
+            FuseVolume = 0.7f;
         }
     }
 

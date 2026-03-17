@@ -124,6 +124,11 @@ public class VSDemolitionistModSystem : ModSystem
         return Math.Max(0f, CurrentConfig.DetonatorRadius);
     }
 
+    public static float GetFuseVolume()
+    {
+        return GameMath.Clamp(CurrentConfig.FuseVolume, 0f, 1f);
+    }
+
     public static bool Use3DIcons()
     {
         return CurrentConfig.Use3DIcons;

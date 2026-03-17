@@ -37,6 +37,18 @@
       }
     },
     {
+      "code": "FuseVolume",
+      "ingui": "Fuse sound volume",
+      "type": "float",
+      "weight": 97.5,
+      "comment": "Global fuse sound volume for held and thrown explosives.",
+      "default": 0.7,
+      "range": {
+        "min": 0.0,
+        "max": 1.0
+      }
+    },
+    {
       "code": "BundleRockRubbleChance",
       "ingui": "Bundle rock rubble chance",
       "type": "float",

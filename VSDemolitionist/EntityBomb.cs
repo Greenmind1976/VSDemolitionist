@@ -69,7 +69,6 @@ public class EntityBomb : Entity
     private const float DefaultFuseSeconds = 4f;
     private const float DefaultThrowForwardStrength = 0.40f;
     private const float DefaultThrowUpwardBoost = 0.10f;
-    private const float DefaultThrownFuseVolume = 1.8f;
     private const float DefaultBlastRadius = 4f;
     private const float DefaultBlastDropoff = 1f;
     private const float DefaultBlastPowerLoss = 0f;
@@ -84,7 +83,6 @@ public class EntityBomb : Entity
     private const string AttrFuseSeconds = "vsd_fuseSeconds";
     private const string AttrThrowForwardStrength = "vsd_throwForwardStrength";
     private const string AttrThrowUpwardBoost = "vsd_throwUpwardBoost";
-    private const string AttrThrownFuseVolume = "vsd_thrownFuseVolume";
     private const string AttrAttachOffset = "vsd_attachOffset";
     private const string AttrRockBlastRadius = "vsd_rockBlastRadius";
     private const string AttrOreBlastRadius = "vsd_oreBlastRadius";
@@ -139,6 +137,11 @@ public class EntityBomb : Entity
     private float GetConfigFloat(string key, float defaultValue)
     {
         return WatchedAttributes.GetFloat(key, defaultValue);
+    }
+
+    private float GetFuseLoopVolume()
+    {
+        return VSDemolitionistModSystem.GetFuseVolume();
     }
 
     private bool GetConfigBool(string key, bool defaultValue)
@@ -295,6 +298,7 @@ public class EntityBomb : Entity
         {
             float? overrideValue = key switch
             {
+                "fuseSeconds" => cfg.FuseSeconds,
                 "blastRadius" => cfg.BlastRadius,
                 "rockBlastRadius" => cfg.RockBlastRadius,
                 "oreBlastRadius" => cfg.OreBlastRadius,
@@ -370,7 +374,6 @@ public class EntityBomb : Entity
         WatchedAttributes.SetFloat(AttrFuseSeconds, GetConfiguredBombFloat(stack, "fuseSeconds", DefaultFuseSeconds));
         WatchedAttributes.SetFloat(AttrThrowForwardStrength, GetBombFloat(stack, "throwForwardStrength", DefaultThrowForwardStrength));
         WatchedAttributes.SetFloat(AttrThrowUpwardBoost, GetBombFloat(stack, "throwUpwardBoost", DefaultThrowUpwardBoost));
-        WatchedAttributes.SetFloat(AttrThrownFuseVolume, GetBombFloat(stack, "thrownFuseVolume", DefaultThrownFuseVolume));
         WatchedAttributes.SetFloat(AttrAttachOffset, GetBombFloat(stack, "attachOffset", 0.60f));
         WatchedAttributes.SetFloat(AttrRockBlastRadius, GetConfiguredBombFloat(stack, "rockBlastRadius", blastRadius));
         WatchedAttributes.SetFloat(AttrOreBlastRadius, GetConfiguredBombFloat(stack, "oreBlastRadius", blastRadius));
@@ -616,7 +619,7 @@ public void Release(EntityAgent holder)
                         DisposeOnFinish = false,
                         RelativePosition = false,
                         Range = 32f,
-                        Volume = GetConfigFloat(AttrThrownFuseVolume, DefaultThrownFuseVolume),
+                        Volume = GetFuseLoopVolume(),
                         Position = Pos.XYZ.ToVec3f()
                     });
 
@@ -627,7 +630,7 @@ public void Release(EntityAgent holder)
             if (isLit && holderId == -1 && fuseSound != null)
             {
                 fuseSound.SetPosition(Pos.XYZ.ToVec3f());
-                fuseSound.SetVolume(GetConfigFloat(AttrThrownFuseVolume, DefaultThrownFuseVolume));
+                fuseSound.SetVolume(GetFuseLoopVolume());
             }
             else if (fuseSound != null)
             {
