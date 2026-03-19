@@ -1,0 +1,8 @@
+{
+  "code": "bombicon2d-landmine",
+  "maxstacksize": 32,
+  "textures": {
+    "default": { "base": "item/landmine-icon" }
+  },
+  "creativeinventory": {}
+}

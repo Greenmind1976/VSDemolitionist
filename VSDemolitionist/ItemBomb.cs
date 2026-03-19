@@ -104,6 +104,11 @@ public class ItemBomb : Item
             return $"This placed charge creates a directional blast about {Math.Round(inwardWidth):0} blocks wide, {Math.Round(inwardDepth):0} blocks inward, and {Math.Round(outwardDepth):0} block outward. Best used for controlled excavation and unbroken block extraction. Linked charges can bridge gaps up to {Math.Round(linkRange):0} blocks.";
         }
 
+        if (bombCode == "landmine")
+        {
+            return "This mine is placed inert, then armed with an ignition source. Once armed, it detonates when a creature or player steps over it.";
+        }
+
         if (bombCode.Contains("bundle"))
         {
             return defaultShape switch
@@ -188,7 +193,7 @@ public class ItemBomb : Item
         dsc.AppendLine();
         dsc.AppendLine(BuildBombDescription(stack));
 
-        if (bombCode != "blasting-charge")
+        if (bombCode != "blasting-charge" && bombCode != "landmine")
         {
             dsc.AppendLine($"{Lang.Get("Ore destruction chance")}: {FormatPercent(oreDestroyChance)}");
             dsc.AppendLine($"{Lang.Get("Crystal destruction chance")}: {FormatPercent(crystalDestroyChance)}");
@@ -506,6 +511,17 @@ public class ItemBomb : Item
     private void SpawnPlacedBomb(ItemSlot slot, EntityAgent byEntity, BlockSelection targetBlockSel)
     {
         if (slot?.Itemstack == null || targetBlockSel?.Position == null) return;
+
+        if (GetBombString(slot.Itemstack, "tier", "") == "landmine")
+        {
+            Vec3d targetCenter = targetBlockSel.Position.ToVec3d().Add(0.5, 0.5, 0.5);
+            if (!IsWithinInteractionRange(byEntity, targetCenter, VSDemolitionistModSystem.GetLandmineInteractRange()))
+            {
+                SendChargePlacementMessage(byEntity, "Too far away to place landmine.");
+                return;
+            }
+        }
+
         ICoreServerAPI sapi = (ICoreServerAPI)byEntity.World.Api;
         string entityCode = GetBombString(slot.Itemstack, "placedEntityCode", GetBombString(slot.Itemstack, "entityCode", "bomb"));
         EntityProperties type = sapi.World.GetEntityType(ResolveModAsset(entityCode));
@@ -522,7 +538,11 @@ public class ItemBomb : Item
 
         if (!TryResolveChargeAttachPos(byEntity, targetBlockSel.Position, face, out BlockPos attachPos))
         {
-            SendChargePlacementMessage(byEntity, "Charge must be placed on a solid ore, stone, soil, or crystal block.");
+            string tier = GetBombString(slot.Itemstack, "tier", "");
+            string message = tier == "landmine"
+                ? "Landmine must be placed on the top of a solid ore, stone, soil, or crystal block."
+                : "Charge must be placed on a solid ore, stone, soil, or crystal block.";
+            SendChargePlacementMessage(byEntity, message);
             return;
         }
 
@@ -673,6 +693,13 @@ public class ItemBomb : Item
         if (value >= 0 && value <= 1) return value;
         double frac = value - Math.Floor(value);
         return frac < 0 ? frac + 1 : frac;
+    }
+
+    private static bool IsWithinInteractionRange(EntityAgent byEntity, Vec3d targetPos, double maxDistance)
+    {
+        double dx = byEntity.ServerPos.X - targetPos.X;
+        double dz = byEntity.ServerPos.Z - targetPos.Z;
+        return (dx * dx + dz * dz) <= maxDistance * maxDistance;
     }
 
     private static bool TryResolveFaceFromRay(BlockPos blockPos, EntityAgent byEntity, out BlockFacing face)

@@ -1,0 +1,23 @@
+{
+  "code": "bombstuck-landmine",
+  "class": "EntityBomb",
+  "tags": ["inanimate", "projectile"],
+  "attributes": {
+    "isProjectile": false
+  },
+  "hitboxSize": { "x": 0.55, "y": 0.12 },
+  "deadHitboxSize": { "x": 0.55, "y": 0.12 },
+  "client": {
+    "renderer": "Shape",
+    "shape": { "base": "vsdemolitionist:item/landmine-placed" },
+    "size": 0.5,
+    "behaviors": [
+      { "code": "interpolateposition" }
+    ]
+  },
+  "server": {
+    "behaviors": [
+      { "code": "despawn", "minSeconds": 1800 }
+    ]
+  }
+}

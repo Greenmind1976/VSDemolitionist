@@ -134,6 +134,31 @@ public class VSDemolitionistModSystem : ModSystem
         return CurrentConfig.Use3DIcons;
     }
 
+    public static bool PlayerTriggersLandmines()
+    {
+        return CurrentConfig.PlayerTriggersLandmines;
+    }
+
+    public static bool OwnerTriggersLandmines()
+    {
+        return CurrentConfig.OwnerTriggersLandmines;
+    }
+
+    public static float GetLandmineEntityDamage()
+    {
+        return Math.Max(0f, CurrentConfig.LandmineEntityDamage);
+    }
+
+    public static float GetLandmineInteractRange()
+    {
+        return Math.Max(0f, CurrentConfig.LandmineInteractRange);
+    }
+
+    public static float GetLandmineOwnerGraceSeconds()
+    {
+        return Math.Max(0f, CurrentConfig.LandmineOwnerGraceSeconds);
+    }
+
     private void TrySubscribeToConfigLib(ICoreAPI api)
     {
         if (configLibSubscribed) return;

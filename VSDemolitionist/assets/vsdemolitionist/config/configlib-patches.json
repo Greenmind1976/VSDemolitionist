@@ -61,6 +61,58 @@
       }
     },
     {
+      "code": "PlayerTriggersLandmines",
+      "ingui": "Players trigger landmines",
+      "type": "boolean",
+      "weight": 96.5,
+      "comment": "If off, player characters will never press or trigger landmines.",
+      "default": true
+    },
+    {
+      "code": "OwnerTriggersLandmines",
+      "ingui": "Owner triggers landmines",
+      "type": "boolean",
+      "weight": 96.4,
+      "comment": "If off, the player who armed/placed the landmine will not trigger it after the grace period ends.",
+      "default": true
+    },
+    {
+      "code": "LandmineEntityDamage",
+      "ingui": "Landmine entity damage",
+      "type": "float",
+      "weight": 96.3,
+      "comment": "Damage dealt by landmines to any entity they hit.",
+      "default": 6.0,
+      "range": {
+        "min": 0.0,
+        "max": 40.0
+      }
+    },
+    {
+      "code": "LandmineInteractRange",
+      "ingui": "Landmine place/arm range",
+      "type": "float",
+      "weight": 96.2,
+      "comment": "Maximum horizontal distance to place or arm a landmine.",
+      "default": 3.0,
+      "range": {
+        "min": 0.5,
+        "max": 8.0
+      }
+    },
+    {
+      "code": "LandmineOwnerGraceSeconds",
+      "ingui": "Landmine owner grace seconds",
+      "type": "float",
+      "weight": 96.1,
+      "comment": "Delay after arming before the owner can trigger their own landmine.",
+      "default": 1.5,
+      "range": {
+        "min": 0.0,
+        "max": 10.0
+      }
+    },
+    {
       "type": "separator",
       "title": "Copper Stick Dynamite",
       "weight": 90

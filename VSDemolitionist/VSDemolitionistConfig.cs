@@ -4,12 +4,17 @@ namespace VSDemolitionist;
 
 public class VSDemolitionistConfig
 {
-    public int SchemaVersion { get; set; } = 4;
+    public int SchemaVersion { get; set; } = 5;
     public bool Use3DIcons { get; set; } = true;
     public bool CustomBlastSoundsEnabled { get; set; } = true;
     public float CustomBlastSoundsVolume { get; set; } = 1.0f;
     public float FuseVolume { get; set; } = 0.7f;
     public float BundleRockRubbleChance { get; set; } = 0.15f;
+    public bool PlayerTriggersLandmines { get; set; } = true;
+    public bool OwnerTriggersLandmines { get; set; } = true;
+    public float LandmineEntityDamage { get; set; } = 6.0f;
+    public float LandmineInteractRange { get; set; } = 3.0f;
+    public float LandmineOwnerGraceSeconds { get; set; } = 1.5f;
 
     public float CopperStickFuseSeconds { get; set; } = 4.0f;
     public float CopperStickRockBlastRadius { get; set; } = 4.0f;
@@ -110,6 +115,12 @@ public class VSDemolitionistConfig
             SchemaVersion = 4;
         }
 
+        if (SchemaVersion < 5)
+        {
+            MigrateLandmineDamageDefault();
+            SchemaVersion = 5;
+        }
+
         ApplyFlatOverridesToBombOverrides();
     }
 
@@ -128,6 +139,15 @@ public class VSDemolitionistConfig
         if (FuseVolume == 1.0f)
         {
             FuseVolume = 0.7f;
+        }
+    }
+
+    private void MigrateLandmineDamageDefault()
+    {
+        // Old configs were seeded with 8. Update untouched installs to the new intended default of 6.
+        if (LandmineEntityDamage == 8.0f)
+        {
+            LandmineEntityDamage = 6.0f;
         }
     }
 

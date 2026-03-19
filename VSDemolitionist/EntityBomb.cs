@@ -102,6 +102,22 @@ public class EntityBomb : Entity
     private const string AttrFisherSurfaceDestroyChance = "vsd_fisherSurfaceDestroyChance";
     private const string AttrExploded = "vsd_exploded";
     private const string AttrThrowerPlayerUid = "vsd_throwerPlayerUid";
+    private const string AttrAttached = "vsd_attached";
+    private const string AttrAttachedBlockX = "vsd_attachedBlockX";
+    private const string AttrAttachedBlockY = "vsd_attachedBlockY";
+    private const string AttrAttachedBlockZ = "vsd_attachedBlockZ";
+    private const string AttrAttachedFace = "vsd_attachedFace";
+    private const string AttrMineArmable = "vsd_mineArmable";
+    private const string AttrMineArmed = "vsd_mineArmed";
+    private const string AttrMineTriggerRadius = "vsd_mineTriggerRadius";
+    private const string AttrMineTriggerHeight = "vsd_mineTriggerHeight";
+    private const string AttrMineOwnerGraceSeconds = "vsd_mineOwnerGraceSeconds";
+    private const string AttrMineOwnerGraceRemainingSeconds = "vsd_mineOwnerGraceRemainingSeconds";
+    private const string AttrMineArmingRemainingSeconds = "vsd_mineArmingRemainingSeconds";
+    private const string AttrMinePressed = "vsd_minePressed";
+    private static readonly AssetLocation MineArmedSound = new("vsdemolitionist", "sounds/mine-armed");
+    private static readonly AssetLocation MineDetonateSound = new("vsdemolitionist", "sounds/mine-detonate");
+    private static readonly AssetLocation MineExplosionSound = new("vsdemolitionist", "sounds/mine-explosion");
     private const int DefaultBlastingChargeInwardWidth = 3;
     private const int DefaultBlastingChargeInwardDepth = 7;
     private const int DefaultBlastingChargeOutwardDepth = 0;
@@ -392,8 +408,20 @@ public class EntityBomb : Entity
         WatchedAttributes.SetBool(AttrDualBlast, stack.Collectible?.Attributes?[BombAttrRoot]?["dualBlast"].AsBool(false) ?? false);
         WatchedAttributes.SetBool(AttrManualBlockRecovery, stack.Collectible?.Attributes?[BombAttrRoot]?["manualBlockRecovery"].AsBool(false) ?? false);
         WatchedAttributes.SetBool(AttrAnimalsOnlyDamage, stack.Collectible?.Attributes?[BombAttrRoot]?["animalsOnlyDamage"].AsBool(false) ?? false);
-        WatchedAttributes.SetFloat(AttrEntityDamage, GetConfiguredBombFloat(stack, "entityDamage", 8f));
+        bool isLandmineStack = GetBombString(stack, "tier", stack.Collectible?.Code?.Path ?? "unknown") == "landmine";
+        float entityDamage = isLandmineStack
+            ? VSDemolitionistModSystem.GetLandmineEntityDamage()
+            : GetConfiguredBombFloat(stack, "entityDamage", 8f);
+        WatchedAttributes.SetFloat(AttrEntityDamage, entityDamage);
         WatchedAttributes.SetFloat(AttrFisherSurfaceDestroyChance, Clamp01(GetConfiguredBombFloat(stack, "fisherSurfaceDestroyChance", 0f)));
+        WatchedAttributes.SetBool(AttrMineArmable, stack.Collectible?.Attributes?[BombAttrRoot]?["mineArmable"].AsBool(false) ?? false);
+        WatchedAttributes.SetBool(AttrMineArmed, false);
+        WatchedAttributes.SetFloat(AttrMineTriggerRadius, GetBombFloat(stack, "mineTriggerRadius", 0.7f));
+        WatchedAttributes.SetFloat(AttrMineTriggerHeight, GetBombFloat(stack, "mineTriggerHeight", 0.7f));
+        WatchedAttributes.SetFloat(AttrMineOwnerGraceSeconds, VSDemolitionistModSystem.GetLandmineOwnerGraceSeconds());
+        WatchedAttributes.SetFloat(AttrMineOwnerGraceRemainingSeconds, 0f);
+        WatchedAttributes.SetFloat(AttrMineArmingRemainingSeconds, 0f);
+        WatchedAttributes.SetBool(AttrMinePressed, false);
         WatchedAttributes.SetString(AttrBombTier, GetBombString(stack, "tier", stack.Collectible?.Code?.Path ?? "unknown"));
         WatchedAttributes.SetBool(AttrExploded, false);
     }
@@ -434,7 +462,7 @@ public class EntityBomb : Entity
 public void Release(EntityAgent holder)
 {
     holderId = -1;
-    attachedToBlock = false;
+    ClearAttachedState();
 
     Vec3f dir = holder.SidedPos.GetViewVector().Normalize();
 
@@ -465,6 +493,7 @@ public void Release(EntityAgent holder)
         attachedToBlock = true;
         attachedBlockPos.Set(pos);
         attachedFace = face ?? BlockFacing.UP;
+        PersistAttachedState();
         ServerPos.Motion.Set(0, 0, 0);
         Pos.Motion.Set(0, 0, 0);
         lastMotionX = 0;
@@ -473,17 +502,257 @@ public void Release(EntityAgent holder)
         SnapToAttachedFace();
     }
 
-    private bool TryDropAttachedChargeAsItem()
+    private bool TryDropAttachedExplosiveAsItem()
     {
         if (World.Side != EnumAppSide.Server) return false;
-        if (WatchedAttributes.GetString(AttrBombTier, "") != "blasting-charge") return false;
+        string? itemCode = WatchedAttributes.GetString(AttrBombTier, "") switch
+        {
+            "blasting-charge" => "blasting-charge",
+            "landmine" => "landmine",
+            _ => null
+        };
 
-        Item? chargeItem = World.GetItem(new AssetLocation("vsdemolitionist", "blasting-charge"));
-        if (chargeItem == null) return false;
+        if (itemCode == null) return false;
 
-        World.SpawnItemEntity(new ItemStack(chargeItem, 1), Pos.XYZ);
+        Item? explosiveItem = World.GetItem(new AssetLocation("vsdemolitionist", itemCode));
+        if (explosiveItem == null) return false;
+
+        World.SpawnItemEntity(new ItemStack(explosiveItem, 1), Pos.XYZ);
         Die(EnumDespawnReason.Removed);
         return true;
+    }
+
+    private bool IsLandmine()
+    {
+        return WatchedAttributes.GetString(AttrBombTier, "") == "landmine";
+    }
+
+    private bool IsWithinLandmineVerticalProfile(int dx, int dy, int dz, float horizontalRadius, float upwardRadius, float downwardRadius)
+    {
+        double invHSq = 1.0 / Math.Max(0.0001, horizontalRadius * horizontalRadius);
+        double verticalRadius = dy < 0 ? downwardRadius : upwardRadius;
+        double invVSq = 1.0 / Math.Max(0.0001, verticalRadius * verticalRadius);
+        double norm = (dx * dx + dz * dz) * invHSq + (dy * dy) * invVSq;
+        return norm <= 1.0;
+    }
+
+    private bool IsLandmineArmed()
+    {
+        return IsLandmine() && WatchedAttributes.GetBool(AttrMineArmed, false);
+    }
+
+    private bool IsLandmineArming()
+    {
+        return IsLandmine() && !IsLandmineArmed() && WatchedAttributes.GetFloat(AttrMineArmingRemainingSeconds, 0f) > 0f;
+    }
+
+    private void ClearAttachedState()
+    {
+        attachedToBlock = false;
+        WatchedAttributes.SetBool(AttrAttached, false);
+        WatchedAttributes.RemoveAttribute(AttrAttachedBlockX);
+        WatchedAttributes.RemoveAttribute(AttrAttachedBlockY);
+        WatchedAttributes.RemoveAttribute(AttrAttachedBlockZ);
+        WatchedAttributes.RemoveAttribute(AttrAttachedFace);
+    }
+
+    private void PersistAttachedState()
+    {
+        WatchedAttributes.SetBool(AttrAttached, attachedToBlock);
+        if (!attachedToBlock) return;
+
+        WatchedAttributes.SetInt(AttrAttachedBlockX, attachedBlockPos.X);
+        WatchedAttributes.SetInt(AttrAttachedBlockY, attachedBlockPos.Y);
+        WatchedAttributes.SetInt(AttrAttachedBlockZ, attachedBlockPos.Z);
+        WatchedAttributes.SetString(AttrAttachedFace, attachedFace.Code);
+    }
+
+    private void RestoreAttachedStateFromAttributes()
+    {
+        if (attachedToBlock) return;
+        if (!WatchedAttributes.GetBool(AttrAttached, false)) return;
+
+        attachedBlockPos.Set(
+            WatchedAttributes.GetInt(AttrAttachedBlockX, 0),
+            WatchedAttributes.GetInt(AttrAttachedBlockY, 0),
+            WatchedAttributes.GetInt(AttrAttachedBlockZ, 0)
+        );
+
+        attachedFace = BlockFacing.FromCode(
+            WatchedAttributes.GetString(AttrAttachedFace, BlockFacing.UP.Code)
+        ) ?? BlockFacing.UP;
+
+        attachedToBlock = true;
+    }
+
+    private void BeginArmingLandmine(EntityAgent byEntity)
+    {
+        if (World.Side != EnumAppSide.Server || !IsLandmine()) return;
+
+        SetThrower(byEntity);
+        WatchedAttributes.SetFloat(AttrMineArmingRemainingSeconds, 1f);
+
+        if (byEntity is EntityPlayer entityPlayer && entityPlayer.Player is IServerPlayer serverPlayer)
+        {
+            serverPlayer.SendMessage(
+                GlobalConstants.GeneralChatGroup,
+                "Arming landmine...",
+                EnumChatType.Notification
+            );
+        }
+    }
+
+    private void CompleteLandmineArming()
+    {
+        if (World.Side != EnumAppSide.Server || !IsLandmine()) return;
+
+        WatchedAttributes.SetBool(AttrMineArmed, true);
+        WatchedAttributes.SetFloat(AttrMineArmingRemainingSeconds, 0f);
+        WatchedAttributes.SetBool(AttrMinePressed, false);
+        float graceSeconds = VSDemolitionistModSystem.GetLandmineOwnerGraceSeconds();
+        WatchedAttributes.SetFloat(AttrMineOwnerGraceRemainingSeconds, graceSeconds);
+        World.PlaySoundAt(
+            MineArmedSound,
+            Pos.X,
+            Pos.Y,
+            Pos.Z,
+            null,
+            false,
+            24f,
+            1f
+        );
+
+        string placerUid = WatchedAttributes.GetString(AttrThrowerPlayerUid);
+        if (!string.IsNullOrWhiteSpace(placerUid) && World.PlayerByUid(placerUid) is IServerPlayer serverPlayer)
+        {
+            serverPlayer.SendMessage(
+                GlobalConstants.GeneralChatGroup,
+                "Landmine armed. Step back.",
+                EnumChatType.Notification
+            );
+        }
+    }
+
+    private bool ShouldTriggerLandmine(Entity entity)
+    {
+        if (!IsLandmineArmed()) return false;
+        if (entity == null || entity.EntityId == EntityId) return false;
+        if (entity is not EntityAgent) return false;
+
+        string placerUid = WatchedAttributes.GetString(AttrThrowerPlayerUid);
+        if (entity is EntityPlayer player)
+        {
+            if (!VSDemolitionistModSystem.PlayerTriggersLandmines())
+            {
+                return false;
+            }
+
+            if (player.PlayerUID == placerUid)
+            {
+                if (!VSDemolitionistModSystem.OwnerTriggersLandmines())
+                {
+                    return false;
+                }
+
+                if (WatchedAttributes.GetFloat(AttrMineOwnerGraceRemainingSeconds, 0f) > 0f)
+                {
+                    return false;
+                }
+            }
+        }
+
+        float radius = Math.Max(0.1f, WatchedAttributes.GetFloat(AttrMineTriggerRadius, 0.7f));
+        float height = Math.Max(0.1f, WatchedAttributes.GetFloat(AttrMineTriggerHeight, 0.7f));
+        double dx = entity.Pos.X - Pos.X;
+        double dz = entity.Pos.Z - Pos.Z;
+        if ((dx * dx + dz * dz) > radius * radius) return false;
+
+        double dy = entity.Pos.Y - Pos.Y;
+        return dy >= -0.2 && dy <= height;
+    }
+
+    private bool TryTriggerLandmine()
+    {
+        if (!IsLandmineArmed() || Api is not ICoreServerAPI sapi) return false;
+
+        bool hasTriggerEntity = false;
+        foreach (Entity entity in sapi.World.LoadedEntities.Values)
+        {
+            if (!ShouldTriggerLandmine(entity)) continue;
+            hasTriggerEntity = true;
+            break;
+        }
+
+        bool pressed = WatchedAttributes.GetBool(AttrMinePressed, false);
+        if (hasTriggerEntity)
+        {
+            if (!pressed)
+            {
+                WatchedAttributes.SetBool(AttrMinePressed, true);
+                World.PlaySoundAt(
+                    MineArmedSound,
+                    Pos.X,
+                    Pos.Y,
+                    Pos.Z,
+                    null,
+                    false,
+                    20f,
+                    0.56f
+                );
+            }
+
+            return false;
+        }
+
+        if (pressed)
+        {
+            World.PlaySoundAt(
+                MineDetonateSound,
+                Pos.X,
+                Pos.Y,
+                Pos.Z,
+                null,
+                false,
+                20f,
+                1f
+            );
+            Explode();
+            return true;
+        }
+
+        return false;
+    }
+
+    public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode)
+    {
+        if (World.Side != EnumAppSide.Server || mode != EnumInteractMode.Interact || !IsLandmine())
+        {
+            base.OnInteract(byEntity, itemslot, hitPosition, mode);
+            return;
+        }
+
+        double dx = byEntity.ServerPos.X - Pos.X;
+        double dz = byEntity.ServerPos.Z - Pos.Z;
+        double maxDistance = VSDemolitionistModSystem.GetLandmineInteractRange();
+        if ((dx * dx + dz * dz) > maxDistance * maxDistance)
+        {
+            if (byEntity is EntityPlayer entityPlayer && entityPlayer.Player is IServerPlayer serverPlayer)
+            {
+                serverPlayer.SendMessage(
+                    GlobalConstants.GeneralChatGroup,
+                    "Too far away to arm landmine.",
+                    EnumChatType.Notification
+                );
+            }
+
+            return;
+        }
+
+        if (IsLandmineArmed()) return;
+        if (!WatchedAttributes.GetBool(AttrMineArmable, false)) return;
+        if (IsLandmineArming()) return;
+
+        BeginArmingLandmine(byEntity);
     }
 
     private void TeleportToHolder(EntityAgent holder)
@@ -505,6 +774,8 @@ public void Release(EntityAgent holder)
 
     public override void OnGameTick(float dt)
     {
+        RestoreAttachedStateFromAttributes();
+
         // If already attached, zero out velocity before physics update to reduce micro-bounce/pulsing.
         if (attachedToBlock)
         {
@@ -526,6 +797,29 @@ public void Release(EntityAgent holder)
 
         if (World.Side == EnumAppSide.Server)
         {
+            float mineArmingRemaining = WatchedAttributes.GetFloat(AttrMineArmingRemainingSeconds, 0f);
+            if (!IsLandmineArmed() && mineArmingRemaining > 0f)
+            {
+                mineArmingRemaining = Math.Max(0f, mineArmingRemaining - dt);
+                WatchedAttributes.SetFloat(AttrMineArmingRemainingSeconds, mineArmingRemaining);
+                if (mineArmingRemaining <= 0f)
+                {
+                    CompleteLandmineArming();
+                }
+            }
+
+            float mineGraceRemaining = WatchedAttributes.GetFloat(AttrMineOwnerGraceRemainingSeconds, 0f);
+            if (mineGraceRemaining > 0f)
+            {
+                mineGraceRemaining = Math.Max(0f, mineGraceRemaining - dt);
+                WatchedAttributes.SetFloat(AttrMineOwnerGraceRemainingSeconds, mineGraceRemaining);
+            }
+
+            if (TryTriggerLandmine())
+            {
+                return;
+            }
+
             if (attachedToBlock)
             {
                 if (!UpdateAttachedToBlock())
@@ -538,9 +832,16 @@ public void Release(EntityAgent holder)
 
                     if (!keepAnchoredForDetonation)
                     {
-                        if (!TryDropAttachedChargeAsItem())
+                        if (IsLandmineArmed())
                         {
-                            attachedToBlock = false;
+                            ClearAttachedState();
+                            Explode();
+                            return;
+                        }
+
+                        if (!TryDropAttachedExplosiveAsItem())
+                        {
+                            ClearAttachedState();
                         }
                         else
                         {
@@ -706,6 +1007,7 @@ public void Release(EntityAgent holder)
     private void Explode()
     {
         if (World.Side != EnumAppSide.Server) return;
+        if (WatchedAttributes.GetBool(AttrExploded, false)) return;
         WatchedAttributes.SetBool(AttrExploded, true);
 
         ICoreServerAPI sapi = (ICoreServerAPI)World.Api;
@@ -767,6 +1069,28 @@ public void Release(EntityAgent holder)
 
         string blastModeLabel = blockBlastType.ToString();
         ResourceDestructionStats? stats = null;
+        bool isLandmine = WatchedAttributes.GetString(AttrBombTier, "") == "landmine";
+        bool useManualLandmineEntityDamage = isLandmine;
+        int manualEntityHits = 0;
+
+        if (isLandmine && IsCustomBlastSoundsEnabled())
+        {
+            World.PlaySoundAt(
+                MineExplosionSound,
+                Pos.X,
+                Pos.Y,
+                Pos.Z,
+                null,
+                false,
+                40f,
+                customBlastSoundVolume
+            );
+        }
+
+        if (isLandmine)
+        {
+            TriggerNearbyLandmines(Math.Max(rockRadius, entityRadius));
+        }
 
         if (animalsOnlyDamage)
         {
@@ -812,10 +1136,15 @@ public void Release(EntityAgent holder)
                 Pos.AsBlockPos,
                 EnumBlastType.EntityBlast,
                 0f,
-                entityRadius,
+                useManualLandmineEntityDamage ? 0f : entityRadius,
                 powerLoss,
                 string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
             );
+
+            if (useManualLandmineEntityDamage)
+            {
+                manualEntityHits = ApplyExplosionDamageAllEntities(entityRadius, entityDamage);
+            }
 
             if (trackedResources != null && trackedResources.Count > 0)
             {
@@ -852,10 +1181,14 @@ public void Release(EntityAgent holder)
                 Pos.AsBlockPos,
                 EnumBlastType.EntityBlast,
                 0,
-                entityRadius,
+                useManualLandmineEntityDamage ? 0f : entityRadius,
                 powerLoss,
                 string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
             );
+            if (useManualLandmineEntityDamage)
+            {
+                manualEntityHits = ApplyExplosionDamageAllEntities(entityRadius, entityDamage);
+            }
             blastModeLabel = "Disc";
         }
         else if (dualBlast && rockRadius > 0f)
@@ -865,10 +1198,15 @@ public void Release(EntityAgent holder)
                 Pos.AsBlockPos,
                 EnumBlastType.RockBlast,
                 rockRadius,
-                entityRadius,
+                useManualLandmineEntityDamage ? 0f : entityRadius,
                 powerLoss,
                 string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
             );
+
+            if (useManualLandmineEntityDamage)
+            {
+                manualEntityHits = ApplyExplosionDamageAllEntities(entityRadius, entityDamage);
+            }
 
             if (oreRadius > 0f)
             {
@@ -891,10 +1229,14 @@ public void Release(EntityAgent holder)
                 Pos.AsBlockPos,
                 blockBlastType,
                 rockRadius,
-                entityRadius,
+                useManualLandmineEntityDamage ? 0f : entityRadius,
                 powerLoss,
                 string.IsNullOrWhiteSpace(ignitedByPlayerUid) ? null : ignitedByPlayerUid
             );
+            if (useManualLandmineEntityDamage)
+            {
+                manualEntityHits = ApplyExplosionDamageAllEntities(entityRadius, entityDamage);
+            }
             blastModeLabel = blockBlastType.ToString();
         }
 
@@ -911,6 +1253,10 @@ public void Release(EntityAgent holder)
         if (throwerPlayer != null && debugEnabled)
         {
             int destroyedBlocks = preSnapshot == null ? -1 : CountDestroyedBlocks(preSnapshot);
+            if (useManualLandmineEntityDamage && manualEntityHits > 0)
+            {
+                destroyedBlocks = Math.Max(destroyedBlocks, manualEntityHits);
+            }
             SendBlastReport(throwerPlayer, blastModeLabel, rockRadius, oreRadius, entityRadius, stats, destroyedBlocks);
             LogBlastReport(throwerPlayer, blastModeLabel, rockRadius, oreRadius, entityRadius, stats, destroyedBlocks);
         }
@@ -1033,8 +1379,15 @@ public void Release(EntityAgent holder)
             {
                 for (int dz = -hr; dz <= hr; dz++)
                 {
-                    double norm = (dx * dx + dz * dz) * invHSq + (dy * dy) * invVSq;
-                    if (norm > 1.0) continue;
+                    if (IsLandmine())
+                    {
+                        if (!IsWithinLandmineVerticalProfile(dx, dy, dz, horizontalRadius, verticalRadius, 1f)) continue;
+                    }
+                    else
+                    {
+                        double norm = (dx * dx + dz * dz) * invHSq + (dy * dy) * invVSq;
+                        if (norm > 1.0) continue;
+                    }
 
                     tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
                     Block block = blockAccessor.GetBlock(tmp);
@@ -1074,8 +1427,15 @@ public void Release(EntityAgent holder)
                 {
                     if (cleared >= MaxManualBlockChanges) return;
 
-                    double norm = (dx * dx + dz * dz) * invHSq + (dy * dy) * invVSq;
-                    if (norm > 1.0) continue;
+                    if (IsLandmine())
+                    {
+                        if (!IsWithinLandmineVerticalProfile(dx, dy, dz, horizontalRadius, verticalRadius, 1f)) continue;
+                    }
+                    else
+                    {
+                        double norm = (dx * dx + dz * dz) * invHSq + (dy * dy) * invVSq;
+                        if (norm > 1.0) continue;
+                    }
 
                     tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
                     Block block = blockAccessor.GetBlock(tmp);
@@ -1325,8 +1685,15 @@ public void Release(EntityAgent holder)
                 {
                     if (tracked.Count >= MaxManualBlockChanges) return tracked;
 
-                    double norm = (dx * dx + dz * dz) * invHSq + (dy * dy) * invVSq;
-                    if (norm > 1.0) continue;
+                    if (IsLandmine())
+                    {
+                        if (!IsWithinLandmineVerticalProfile(dx, dy, dz, horizontalRadius, verticalRadius, 1f)) continue;
+                    }
+                    else
+                    {
+                        double norm = (dx * dx + dz * dz) * invHSq + (dy * dy) * invVSq;
+                        if (norm > 1.0) continue;
+                    }
 
                     tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
                     Block block = blockAccessor.GetBlock(tmp);
@@ -1699,6 +2066,14 @@ public void Release(EntityAgent holder)
                     PlayClientOneShot(capi, "vsdemolitionist:sounds/charge-rubble", explosionPos, GetLandRubbleVolume(capi), 40f);
                 }, 120);
             }
+            else if (bombTier == "landmine")
+            {
+                Vec3f explosionPos = Pos.XYZ.ToVec3f();
+                capi.Event.RegisterCallback(_ =>
+                {
+                    PlayClientOneShot(capi, "vsdemolitionist:sounds/stick-bundle-rubble", explosionPos, GetLandRubbleVolume(capi), 40f);
+                }, 120);
+            }
             else if (bombTier.Contains("bundle", StringComparison.OrdinalIgnoreCase))
             {
                 Vec3f explosionPos = Pos.XYZ.ToVec3f();
@@ -1935,6 +2310,71 @@ public void Release(EntityAgent holder)
         }
 
         return hitCount;
+    }
+
+    private int ApplyExplosionDamageAllEntities(float radius, float damage)
+    {
+        if (Api is not ICoreServerAPI sapi) return 0;
+        int hitCount = 0;
+        Vec3d center = Pos.XYZ;
+        double radiusSq = radius * radius;
+
+        foreach (Entity entity in sapi.World.LoadedEntities.Values)
+        {
+            if (entity == null || entity.EntityId == EntityId) continue;
+
+            double dx = entity.Pos.X - center.X;
+            double dy = entity.Pos.Y - center.Y;
+            double dz = entity.Pos.Z - center.Z;
+            double distSq = dx * dx + dy * dy + dz * dz;
+            if (distSq > radiusSq) continue;
+
+            float falloff = 1f - GameMath.Clamp((float)(Math.Sqrt(distSq) / Math.Max(0.1f, radius)), 0f, 1f);
+            float dmg = Math.Max(0f, damage * falloff);
+            if (dmg <= 0.05f) continue;
+
+            DamageSource src = new()
+            {
+                Source = EnumDamageSource.Block,
+                Type = EnumDamageType.BluntAttack,
+                CauseEntity = this
+            };
+
+            entity.ReceiveDamage(src, dmg);
+            hitCount++;
+        }
+
+        return hitCount;
+    }
+
+    private void TriggerNearbyLandmines(float radius)
+    {
+        if (Api is not ICoreServerAPI sapi) return;
+
+        double radiusSq = radius * radius;
+        Entity[] entities = sapi.World.LoadedEntities.Values.ToArray();
+        foreach (Entity entity in entities)
+        {
+            if (entity is not EntityBomb other) continue;
+            if (other.EntityId == EntityId) continue;
+            if (!other.IsLandmine()) continue;
+            if (other.WatchedAttributes.GetBool(AttrExploded, false)) continue;
+
+            double dx = other.Pos.X - Pos.X;
+            double dy = other.Pos.Y - Pos.Y;
+            double dz = other.Pos.Z - Pos.Z;
+            double distSq = dx * dx + dy * dy + dz * dz;
+            if (distSq > radiusSq) continue;
+
+            if (other.IsLandmineArmed())
+            {
+                other.Explode();
+            }
+            else
+            {
+                other.Die(EnumDespawnReason.Removed);
+            }
+        }
     }
 
     private int ApplyFisherWaterAndBottomDisruption(float destroyChance)

@@ -1,0 +1,3082 @@
+[
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-copper",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-copper-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-copper",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-copper-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-tinbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-tinbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-blackbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-blackbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-blackbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-blackbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-bismuthbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-bismuthbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-bismuthbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-bismuthbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-iron-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-iron-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-meteoriciron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-meteoriciron-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-meteoriciron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-meteoriciron-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-steel-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:ore-quartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-quartz-steel-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-copper",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-copper-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-copper",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-copper-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-tinbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-tinbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-blackbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-blackbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-blackbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-blackbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-bismuthbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-bismuthbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-bismuthbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-bismuthbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-iron-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-iron-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-meteoriciron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-meteoriciron-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-meteoriciron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-meteoriciron-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-steel-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:clearquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-clearquartz-steel-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-copper",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-copper-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-copper",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-copper-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-tinbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-tinbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-blackbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-blackbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-blackbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-blackbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-bismuthbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-bismuthbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-bismuthbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-bismuthbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-iron-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-iron-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-meteoriciron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-meteoriciron-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-meteoriciron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-meteoriciron-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-steel-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:rosequartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-rosequartz-steel-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-copper",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-copper-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-copper",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-copper-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-tinbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-tinbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-blackbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-blackbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-blackbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-blackbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-bismuthbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-bismuthbronze-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-bismuthbronze",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-bismuthbronze-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-iron-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-iron-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-meteoriciron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-meteoriciron-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-meteoriciron",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-meteoriciron-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-steel-iron",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  },
+  {
+    "ingredientPattern": "SFQ,TBI,OP ",
+    "ingredients": {
+      "S": {
+        "type": "item",
+        "code": "game:solderingiron",
+        "isTool": true,
+        "toolDurabilityCost": 1
+      },
+      "F": {
+        "type": "item",
+        "code": "game:flint",
+        "quantity": 6
+      },
+      "Q": {
+        "type": "item",
+        "code": "game:smokyquartz",
+        "quantity": 6
+      },
+      "T": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "B": {
+        "type": "item",
+        "code": "game:blastingpowder",
+        "quantity": 12
+      },
+      "I": {
+        "type": "item",
+        "code": "game:metalplate-steel",
+        "quantity": 1
+      },
+      "O": {
+        "type": "item",
+        "code": "game:solderbar-*",
+        "quantity": 1
+      },
+      "P": {
+        "type": "block",
+        "code": "game:metal-parts",
+        "quantity": 2
+      }
+    },
+    "name": "landmine-smokyquartz-steel-steel",
+    "width": 3,
+    "height": 3,
+    "shapeless": false,
+    "output": {
+      "type": "item",
+      "code": "vsdemolitionist:landmine",
+      "quantity": 6
+    }
+  }
+]

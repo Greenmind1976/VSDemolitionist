@@ -1,0 +1,61 @@
+{
+  "code": "landmine",
+  "class": "ItemBomb",
+  "creativeinventory": {
+    "general": ["*"]
+  },
+  "maxstacksize": 32,
+  "attributes": {
+    "bomb": {
+      "tier": "landmine",
+      "entityCode": "bomb-copper",
+      "placedEntityCode": "bombstuck-landmine",
+      "iconItemCode": "bombicon-landmine",
+      "fuseSeconds": 0.1,
+      "placeOnly": true,
+      "placeTopOnly": true,
+      "placeOnFace": true,
+      "attachOffset": 0.45,
+      "mineArmable": true,
+      "mineTriggerRadius": 0.7,
+      "mineTriggerHeight": 0.7,
+      "mineOwnerGraceSeconds": 1.5,
+      "manualBlockRecovery": false,
+      "blastType": "rock",
+      "blastRadius": 4.2,
+      "rockBlastRadius": 4.2,
+      "oreBlastRadius": 4.2,
+      "entityBlastRadius": 4.2,
+      "oreDestroyChance": 0.3,
+      "crystalDestroyChance": 0.5,
+      "blastDropoff": 1.0,
+      "blastPowerLoss": 0.05
+    }
+  },
+  "shape": {
+    "base": "vsdemolitionist:item/landmine"
+  },
+  "textures": {
+    "body": { "base": "block/landmine" },
+    "dot": { "base": "block/landmine-dot" },
+    "default": { "base": "item/landmine-icon" }
+  },
+  "guiTransform": {
+    "translation": { "x": 0.9, "y": -0.05, "z": 0 },
+    "rotation": { "x": -70, "y": -6, "z": -19 },
+    "origin": { "x": 0.5, "y": 0.27, "z": 0.5 },
+    "scale": 1.5
+  },
+  "fpHandTransform": {
+    "translation": { "x": 0.08, "y": -0.03, "z": 0.04 },
+    "rotation": { "x": 94, "y": 90, "z": -34 },
+    "origin": { "x": 0.5, "y": 0.5, "z": 0.5 },
+    "scale": 0.88
+  },
+  "tpHandTransform": {
+    "translation": { "x": -1.45, "y": 0.15, "z": -1.05 },
+    "rotation": { "x": 2, "y": -16, "z": 16 },
+    "origin": { "x": 0.5, "y": 0, "z": 0.5 },
+    "scale": 0.36
+  }
+}

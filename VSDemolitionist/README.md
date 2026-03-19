@@ -8,6 +8,7 @@ Explosives-focused Vintage Story mod with thrown dynamite, bundles, charges, and
 - Large linked charge blasts can overwhelm a world/session if the drops are not collected or cleared.
 - Test large charge patterns carefully, especially in worlds where many old dropped items may already exist.
 - This mod does not change stack sizes for recovered unbroken blocks. If you want larger stack sizes, use a dedicated stack-size mod.
+- Landmines arm after a short delay and include an owner grace period, so the player who armed the mine has a brief window to step clear before it can trigger on them.
 
 ## Debug Commands
 
