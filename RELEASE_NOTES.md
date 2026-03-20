@@ -1,4 +1,4 @@
-# VSDemolitionist 1.0.0
+# VSDemolitionist 1.1.0
 
 ## Highlights
 - Added tiered dynamite sticks with configurable blast radius, entity radius, and ore/crystal destruction rates.
@@ -25,6 +25,7 @@
 ## Systems and cleanup
 - Removed sticky dynamite from the active mod and archived its assets/code path.
 - Added charge placement validation so charges only attach to valid solid terrain.
+- Fixed standard dynamite sticks underperforming on loose terrain like sand by cleaning up exposed loose blocks around rock-blast craters.
 - Added documentation for debug and sound commands.
 - Cleaned unused repo assets and archived them.
 

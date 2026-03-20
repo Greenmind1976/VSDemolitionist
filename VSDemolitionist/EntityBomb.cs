@@ -245,6 +245,18 @@ public class EntityBomb : Entity
         return path.Contains("mantle");
     }
 
+    private static bool IsLooseTerrainBlock(Block? block)
+    {
+        string path = block?.Code?.Path ?? "";
+        if (path.Length == 0) return false;
+
+        // Keep this narrow: standard dynamite should help with loose terrain like sand,
+        // without turning into a broad "delete any soft block" pass.
+        return path.Contains("sand", StringComparison.Ordinal)
+            || path.Contains("gravel", StringComparison.Ordinal)
+            || path.StartsWith("soil-", StringComparison.Ordinal);
+    }
+
     private ItemStack? GetSpecialDepositFallbackDrop(Block originalBlock)
     {
         string path = originalBlock?.Code?.Path ?? "";
@@ -1412,6 +1424,12 @@ public void Release(EntityAgent holder)
                     ignitedByPlayerUid
                 );
             }
+
+            if (isStandardDynamite && !isDiscBlast && blockBlastType == EnumBlastType.RockBlast)
+            {
+                ClearLooseTerrainBlocksSphere(Math.Max(1.5f, rockRadius * 0.75f));
+            }
+
             blastModeLabel = blockBlastType.ToString();
         }
 
@@ -1858,6 +1876,59 @@ public void Release(EntityAgent holder)
         }
 
         return tracked;
+    }
+
+    private bool HasAdjacentAir(IBlockAccessor blockAccessor, BlockPos pos)
+    {
+        foreach (BlockFacing facing in BlockFacing.ALLFACES)
+        {
+            Block neighbor = blockAccessor.GetBlock(pos.AddCopy(facing));
+            if (neighbor == null || neighbor.BlockId == 0 || neighbor.Replaceable >= 6000)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private int ClearLooseTerrainBlocksSphere(float radius)
+    {
+        IBlockAccessor blockAccessor = World.BlockAccessor;
+        BlockPos center = Pos.AsBlockPos;
+        int r = (int)Math.Ceiling(radius);
+        double radiusSq = radius * radius;
+        int cleared = 0;
+        BlockPos tmp = center.Copy();
+
+        for (int dx = -r; dx <= r; dx++)
+        {
+            for (int dy = -r; dy <= r; dy++)
+            {
+                for (int dz = -r; dz <= r; dz++)
+                {
+                    if (cleared >= MaxManualBlockChanges) return cleared;
+
+                    double distSq = dx * dx + dy * dy + dz * dz;
+                    if (distSq > radiusSq) continue;
+
+                    tmp.Set(center.X + dx, center.Y + dy, center.Z + dz);
+                    Block block = blockAccessor.GetBlock(tmp);
+                    if (block == null || block.BlockId == 0) continue;
+                    if (block.Replaceable >= 6000) continue;
+                    if (block.EntityClass != null) continue;
+                    if (IsProtectedBlock(block)) continue;
+                    if (IsOreBlock(block) || IsCrystalBlock(block) || IsSpecialDepositBlock(block)) continue;
+                    if (!IsLooseTerrainBlock(block)) continue;
+                    if (!HasAdjacentAir(blockAccessor, tmp)) continue;
+
+                    blockAccessor.SetBlock(0, tmp);
+                    cleared++;
+                }
+            }
+        }
+
+        return cleared;
     }
 
     private List<TrackedSolidBlock> CaptureSolidBlocksEllipsoid(float horizontalRadius, float verticalRadius)
