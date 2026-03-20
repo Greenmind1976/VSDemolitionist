@@ -4,9 +4,11 @@
 - Added tiered dynamite sticks with configurable blast radius, entity radius, and ore/crystal destruction rates.
 - Added tiered dynamite bundles with wide, shallow excavation blasts and configurable rubble output.
 - Added block-blasting charges and a detonator for controlled excavation and intact block recovery.
+- Added landmines as place-and-arm proximity explosives.
+- Added claymore mines as directional proximity explosives with forward trigger coverage.
 - Added fisherman's dynamite for underwater use with splash effects and separate water blast handling.
 - Added dynamic tooltips for explosives and the detonator, including config-driven destruction rates and charge blast descriptions.
-- Added ConfigLib integration for the main balancing settings and custom explosion sound controls.
+- Added broader ConfigLib integration for explosive balance, proximity mine behavior, and custom explosion sound controls.
 
 ## Crafting and processing
 - Added a full fuse production chain:
@@ -25,6 +27,7 @@
 ## Systems and cleanup
 - Removed sticky dynamite from the active mod and archived its assets/code path.
 - Added charge placement validation so charges only attach to valid solid terrain.
+- Added separate configuration options for standard dynamite, landmine, and claymore damage behavior.
 - Fixed standard dynamite sticks underperforming on loose terrain like sand by cleaning up exposed loose blocks around rock-blast craters.
 - Added documentation for debug and sound commands.
 - Cleaned unused repo assets and archived them.

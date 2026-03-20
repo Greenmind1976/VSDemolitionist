@@ -2,15 +2,15 @@
 
 This repo uses:
 - Vintage Story API via local game install (`VINTAGE_STORY` env var)
-- Shared external image tooling in `~/Documents/VSMods/.codex-tools`
+- Shared external image tooling in `~/Documents/VSMods/.image-tools`
 
 ## 1) One-time tooling setup
 
 From repo root:
 
 ```bash
-chmod +x setup-codex-image-tools.sh activate-tools.sh
-./setup-codex-image-tools.sh
+chmod +x ./setup-*-image-tools.sh ./activate-tools.sh
+./setup-*-image-tools.sh
 ```
 
 ## 2) Activate tools in a shell
