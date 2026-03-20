@@ -1,0 +1,6 @@
+{
+  "code": "bombicon2d-claymore",
+  "textures": {
+    "default": { "base": "item/claymore-icon" }
+  }
+}

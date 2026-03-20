@@ -61,40 +61,66 @@
       }
     },
     {
-      "code": "PlayerTriggersLandmines",
-      "ingui": "Players trigger landmines",
-      "type": "boolean",
-      "weight": 96.5,
-      "comment": "If off, player characters will never press or trigger landmines.",
-      "default": true
+      "type": "separator",
+      "title": "Dynamite Shared",
+      "weight": 96.7
     },
     {
-      "code": "OwnerTriggersLandmines",
-      "ingui": "Owner triggers landmines",
-      "type": "boolean",
-      "weight": 96.4,
-      "comment": "If off, the player who armed/placed the landmine will not trigger it after the grace period ends.",
-      "default": true
-    },
-    {
-      "code": "LandmineEntityDamage",
-      "ingui": "Landmine entity damage",
+      "code": "DynamiteEntityDamage",
+      "ingui": "Dynamite entity damage (includes players)",
       "type": "float",
-      "weight": 96.3,
-      "comment": "Damage dealt by landmines to any entity they hit.",
-      "default": 6.0,
+      "weight": 96.35,
+      "comment": "Dynamite-only setting. Shared entity damage for sticks, bundles, and blasting charges. Fisherman's dynamite is excluded.",
+      "default": 8.0,
       "range": {
         "min": 0.0,
         "max": 40.0
       }
     },
     {
+      "code": "DynamiteDamagesPlayers",
+      "ingui": "Dynamite damages players",
+      "type": "boolean",
+      "weight": 96.34,
+      "comment": "Dynamite-only setting. If off, normal dynamite will not damage players. Fisherman's dynamite is excluded.",
+      "default": true
+    },
+    {
+      "code": "DynamiteDamagesOwner",
+      "ingui": "Dynamite damages owner",
+      "type": "boolean",
+      "weight": 96.33,
+      "comment": "Dynamite-only setting. If off, the player who lit or placed the dynamite will not be damaged by it. Fisherman's dynamite is excluded.",
+      "default": true
+    },
+    {
+      "type": "separator",
+      "title": "Proximity Mines",
+      "weight": 96.5
+    },
+    {
+      "code": "PlayerTriggersLandmines",
+      "ingui": "Players trigger landmines/claymores",
+      "type": "boolean",
+      "weight": 96.5,
+      "comment": "Shared proximity-mine setting. If off, player characters will never trigger landmines or claymores.",
+      "default": true
+    },
+    {
+      "code": "OwnerTriggersLandmines",
+      "ingui": "Owner triggers landmines/claymores",
+      "type": "boolean",
+      "weight": 96.4,
+      "comment": "Shared proximity-mine setting. If off, the player who armed or placed the landmine or claymore will not trigger it after the grace period ends.",
+      "default": true
+    },
+    {
       "code": "LandmineInteractRange",
-      "ingui": "Landmine place/arm range",
+      "ingui": "Landmine/Claymore place/arm range",
       "type": "float",
       "weight": 96.2,
-      "comment": "Maximum horizontal distance to place or arm a landmine.",
-      "default": 3.0,
+      "comment": "Shared proximity-mine setting. Maximum horizontal distance to place or arm a landmine or claymore, within normal game interaction reach.",
+      "default": 4.0,
       "range": {
         "min": 0.5,
         "max": 8.0
@@ -105,11 +131,124 @@
       "ingui": "Landmine owner grace seconds",
       "type": "float",
       "weight": 96.1,
-      "comment": "Delay after arming before the owner can trigger their own landmine.",
+      "comment": "Landmine-only setting. Delay after arming before the owner can trigger their own landmine.",
       "default": 1.5,
       "range": {
         "min": 0.0,
         "max": 10.0
+      }
+    },
+    {
+      "code": "ClaymoreOwnerGraceSeconds",
+      "ingui": "Claymore owner grace seconds",
+      "type": "float",
+      "weight": 96.05,
+      "comment": "Claymore-only setting. Delay after arming before the owner can trigger their own claymore.",
+      "default": 3.0,
+      "range": {
+        "min": 0.0,
+        "max": 10.0
+      }
+    },
+    {
+      "code": "LandmineEntityDamage",
+      "ingui": "Landmine entity damage (includes players)",
+      "type": "float",
+      "weight": 96.3,
+      "comment": "Landmine-only setting. Damage dealt by landmines to any entity they hit, including players.",
+      "default": 6.0,
+      "range": {
+        "min": 0.0,
+        "max": 40.0
+      }
+    },
+    {
+      "code": "ClaymoreEntityDamage",
+      "ingui": "Claymore entity damage (includes players)",
+      "type": "float",
+      "weight": 96.25,
+      "comment": "Claymore-only setting. Damage dealt by claymores to any entity they hit, including players.",
+      "default": 10.0,
+      "range": {
+        "min": 0.0,
+        "max": 40.0
+      }
+    },
+    {
+      "code": "ClaymoreTriggerDistance",
+      "ingui": "Claymore trigger/blast distance",
+      "type": "float",
+      "weight": 96.0,
+      "comment": "Claymore-only setting. How far in front of an armed claymore entities can be before it detonates. This same value is also used for the claymore's entity damage radius.",
+      "default": 4.0,
+      "range": {
+        "min": 0.5,
+        "max": 12.0
+      }
+    },
+    {
+      "type": "separator",
+      "title": "Charges / Detonator",
+      "weight": 95.5
+    },
+    {
+      "code": "ChargeFuseSeconds",
+      "ingui": "Charge detonation delay",
+      "type": "float",
+      "weight": 9.9,
+      "comment": "Delay between arming a charge and detonation.",
+      "default": 1.0,
+      "range": {
+        "min": 0.1,
+        "max": 20.0
+      }
+    },
+    {
+      "code": "ChargeInwardDepth",
+      "ingui": "Charge inward depth",
+      "type": "integer",
+      "weight": 9.8,
+      "comment": "Depth a charge cuts into the block face.",
+      "default": 5,
+      "range": {
+        "min": 1,
+        "max": 32
+      }
+    },
+    {
+      "code": "ChargeOutwardDepth",
+      "ingui": "Charge outward depth",
+      "type": "integer",
+      "weight": 9.7,
+      "comment": "Blocks removed outward from the charge face.",
+      "default": 1,
+      "range": {
+        "min": 0,
+        "max": 8
+      }
+    },
+    {
+      "code": "ChargeLinkRange",
+      "ingui": "Charge link range",
+      "type": "integer",
+      "weight": 9.6,
+      "comment": "Maximum distance at which placed charges can link together.",
+      "default": 7,
+      "range": {
+        "min": 1,
+        "max": 16
+      }
+    },
+    {
+      "code": "DetonatorRadius",
+      "ingui": "Detonator radius",
+      "type": "float",
+      "weight": 9.5,
+      "comment": "Maximum range at which the detonator can trigger nearby blasting charges.",
+      "default": 24.0,
+      "range": {
+        "min": 1.0,
+        "max": 64.0
       }
     },
     {
@@ -880,71 +1019,6 @@
       "range": {
         "min": 0.0,
         "max": 1.0
-      }
-    },
-    {
-      "type": "separator",
-      "title": "Block-Blasting Charge",
-      "weight": 10
-    },
-    {
-      "code": "ChargeFuseSeconds",
-      "ingui": "Charge detonation delay",
-      "type": "float",
-      "weight": 9.9,
-      "comment": "Delay between arming a charge and detonation.",
-      "default": 1.0,
-      "range": {
-        "min": 0.1,
-        "max": 20.0
-      }
-    },
-    {
-      "code": "ChargeInwardDepth",
-      "ingui": "Charge inward depth",
-      "type": "integer",
-      "weight": 9.8,
-      "comment": "Depth a charge cuts into the block face.",
-      "default": 5,
-      "range": {
-        "min": 1,
-        "max": 32
-      }
-    },
-    {
-      "code": "ChargeOutwardDepth",
-      "ingui": "Charge outward depth",
-      "type": "integer",
-      "weight": 9.7,
-      "comment": "Blocks removed outward from the charge face.",
-      "default": 1,
-      "range": {
-        "min": 0,
-        "max": 8
-      }
-    },
-    {
-      "code": "ChargeLinkRange",
-      "ingui": "Charge link range",
-      "type": "integer",
-      "weight": 9.6,
-      "comment": "Maximum distance at which placed charges can link together.",
-      "default": 7,
-      "range": {
-        "min": 1,
-        "max": 16
-      }
-    },
-    {
-      "code": "DetonatorRadius",
-      "ingui": "Detonator radius",
-      "type": "float",
-      "weight": 9.5,
-      "comment": "Maximum range at which the detonator can trigger nearby blasting charges.",
-      "default": 24.0,
-      "range": {
-        "min": 1.0,
-        "max": 64.0
       }
     }
   ]

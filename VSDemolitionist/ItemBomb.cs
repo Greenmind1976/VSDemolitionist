@@ -109,6 +109,11 @@ public class ItemBomb : Item
             return "This mine is placed inert, then armed with an ignition source. Once armed, it detonates when a creature or player steps over it.";
         }
 
+        if (bombCode == "claymore")
+        {
+            return $"This directional mine is mounted on a solid face, then armed in place. Once armed, it detonates when a creature or player moves within about {Math.Round(VSDemolitionistModSystem.GetClaymoreTriggerDistance(), 1):0.#} blocks in front of it.";
+        }
+
         if (bombCode.Contains("bundle"))
         {
             return defaultShape switch
@@ -193,7 +198,7 @@ public class ItemBomb : Item
         dsc.AppendLine();
         dsc.AppendLine(BuildBombDescription(stack));
 
-        if (bombCode != "blasting-charge" && bombCode != "landmine")
+        if (bombCode != "blasting-charge" && bombCode != "landmine" && bombCode != "claymore")
         {
             dsc.AppendLine($"{Lang.Get("Ore destruction chance")}: {FormatPercent(oreDestroyChance)}");
             dsc.AppendLine($"{Lang.Get("Crystal destruction chance")}: {FormatPercent(crystalDestroyChance)}");
@@ -488,7 +493,7 @@ public class ItemBomb : Item
             bomb.StartFuseWithRemainingSeconds(remainingFuse);
             if (placeOnFace)
             {
-                bomb.AttachToBlock(targetBlockSel!.Position, targetBlockSel.Face);
+                bomb.AttachToBlock(targetBlockSel!.Position, targetBlockSel.Face, byEntity.SidedPos.Yaw);
             }
             else if (allowThrow && remainingFuse > 0.001f)
             {
@@ -512,12 +517,13 @@ public class ItemBomb : Item
     {
         if (slot?.Itemstack == null || targetBlockSel?.Position == null) return;
 
-        if (GetBombString(slot.Itemstack, "tier", "") == "landmine")
+        string tierCode = GetBombString(slot.Itemstack, "tier", "");
+        if (tierCode == "landmine" || tierCode == "claymore")
         {
             Vec3d targetCenter = targetBlockSel.Position.ToVec3d().Add(0.5, 0.5, 0.5);
             if (!IsWithinInteractionRange(byEntity, targetCenter, VSDemolitionistModSystem.GetLandmineInteractRange()))
             {
-                SendChargePlacementMessage(byEntity, "Too far away to place landmine.");
+                SendChargePlacementMessage(byEntity, tierCode == "claymore" ? "Too far away to place claymore." : "Too far away to place landmine.");
                 return;
             }
         }
@@ -536,12 +542,25 @@ public class ItemBomb : Item
             return;
         }
 
-        if (!TryResolveChargeAttachPos(byEntity, targetBlockSel.Position, face, out BlockPos attachPos))
+        if (tierCode == "claymore" && face == BlockFacing.UP)
+        {
+            SendChargePlacementMessage(byEntity, "Claymore must be placed on a wall face, not on top of a block.");
+            return;
+        }
+
+        bool resolvedAttach = tierCode == "claymore"
+            ? TryResolveClaymoreAttachPos(byEntity, targetBlockSel.Position, face, out BlockPos attachPos)
+            : TryResolveChargeAttachPos(byEntity, targetBlockSel.Position, face, out attachPos);
+
+        if (!resolvedAttach)
         {
             string tier = GetBombString(slot.Itemstack, "tier", "");
-            string message = tier == "landmine"
-                ? "Landmine must be placed on the top of a solid ore, stone, soil, or crystal block."
-                : "Charge must be placed on a solid ore, stone, soil, or crystal block.";
+            string message = tier switch
+            {
+                "landmine" => "Landmine must be placed on the top of a solid ore, stone, soil, or crystal block.",
+                "claymore" => "Claymore must be placed on a solid wall face, including wood or tree blocks.",
+                _ => "Charge must be placed on a solid ore, stone, soil, or crystal block."
+            };
             SendChargePlacementMessage(byEntity, message);
             return;
         }
@@ -564,7 +583,7 @@ public class ItemBomb : Item
         {
             bomb.ApplyConfigFromItemstack(slot.Itemstack);
             bomb.SetThrower(byEntity);
-            bomb.AttachToBlock(attachPos, face);
+            bomb.AttachToBlock(attachPos, face, byEntity.SidedPos.Yaw);
         }
 
         slot.TakeOut(1);
@@ -585,6 +604,21 @@ public class ItemBomb : Item
         }
 
         return IsValidChargeSupportBlock(blockAccessor, attachPos, targetBlock, face);
+    }
+
+    private static bool TryResolveClaymoreAttachPos(EntityAgent byEntity, BlockPos selectionPos, BlockFacing face, out BlockPos attachPos)
+    {
+        attachPos = selectionPos.Copy();
+        IBlockAccessor blockAccessor = byEntity.World.BlockAccessor;
+        Block targetBlock = blockAccessor.GetBlock(attachPos);
+
+        if (!IsValidClaymoreSupportBlock(blockAccessor, attachPos, targetBlock, face))
+        {
+            attachPos = attachPos.AddCopy(face.Opposite);
+            targetBlock = blockAccessor.GetBlock(attachPos);
+        }
+
+        return IsValidClaymoreSupportBlock(blockAccessor, attachPos, targetBlock, face);
     }
 
     private static bool IsValidChargeSupportBlock(IBlockAccessor blockAccessor, BlockPos pos, Block? block, BlockFacing face)
@@ -613,6 +647,33 @@ public class ItemBomb : Item
         if (path.Contains("log", StringComparison.OrdinalIgnoreCase)) return false;
         if (path.Contains("trunk", StringComparison.OrdinalIgnoreCase)) return false;
         if (path.Contains("branch", StringComparison.OrdinalIgnoreCase)) return false;
+
+        return true;
+    }
+
+
+    private static bool IsValidClaymoreSupportBlock(IBlockAccessor blockAccessor, BlockPos pos, Block? block, BlockFacing face)
+    {
+        if (block == null || block.BlockId == 0) return false;
+        if (block.Replaceable >= 6000) return false;
+        if (!block.SideSolid.OnSide(face)) return false;
+        if (!IsFullBlockCollision(block, blockAccessor, pos)) return false;
+
+        string path = block.Code?.Path ?? string.Empty;
+        if (path.Length == 0) return false;
+
+        // Keep claymores off vegetation and foliage, but allow solid wood/tree supports.
+        if (path.Contains("grass", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("flower", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("crop", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("plant", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("reed", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("vine", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("mushroom", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("sapling", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("leaves", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("bush", StringComparison.OrdinalIgnoreCase)) return false;
+        if (path.Contains("berry", StringComparison.OrdinalIgnoreCase)) return false;
 
         return true;
     }

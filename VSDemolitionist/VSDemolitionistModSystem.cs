@@ -149,6 +149,26 @@ public class VSDemolitionistModSystem : ModSystem
         return Math.Max(0f, CurrentConfig.LandmineEntityDamage);
     }
 
+    public static float GetDynamiteEntityDamage()
+    {
+        return Math.Max(0f, CurrentConfig.DynamiteEntityDamage);
+    }
+
+    public static bool DynamiteDamagesPlayers()
+    {
+        return CurrentConfig.DynamiteDamagesPlayers;
+    }
+
+    public static bool DynamiteDamagesOwner()
+    {
+        return CurrentConfig.DynamiteDamagesOwner;
+    }
+
+    public static float GetClaymoreEntityDamage()
+    {
+        return Math.Max(0f, CurrentConfig.ClaymoreEntityDamage);
+    }
+
     public static float GetLandmineInteractRange()
     {
         return Math.Max(0f, CurrentConfig.LandmineInteractRange);
@@ -157,6 +177,16 @@ public class VSDemolitionistModSystem : ModSystem
     public static float GetLandmineOwnerGraceSeconds()
     {
         return Math.Max(0f, CurrentConfig.LandmineOwnerGraceSeconds);
+    }
+
+    public static float GetClaymoreOwnerGraceSeconds()
+    {
+        return Math.Max(0f, CurrentConfig.ClaymoreOwnerGraceSeconds);
+    }
+
+    public static float GetClaymoreTriggerDistance()
+    {
+        return Math.Max(0.5f, CurrentConfig.ClaymoreTriggerDistance);
     }
 
     private void TrySubscribeToConfigLib(ICoreAPI api)

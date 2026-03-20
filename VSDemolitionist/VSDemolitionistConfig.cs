@@ -4,7 +4,7 @@ namespace VSDemolitionist;
 
 public class VSDemolitionistConfig
 {
-    public int SchemaVersion { get; set; } = 5;
+    public int SchemaVersion { get; set; } = 6;
     public bool Use3DIcons { get; set; } = true;
     public bool CustomBlastSoundsEnabled { get; set; } = true;
     public float CustomBlastSoundsVolume { get; set; } = 1.0f;
@@ -12,9 +12,15 @@ public class VSDemolitionistConfig
     public float BundleRockRubbleChance { get; set; } = 0.15f;
     public bool PlayerTriggersLandmines { get; set; } = true;
     public bool OwnerTriggersLandmines { get; set; } = true;
+    public float DynamiteEntityDamage { get; set; } = 8.0f;
+    public bool DynamiteDamagesPlayers { get; set; } = true;
+    public bool DynamiteDamagesOwner { get; set; } = true;
     public float LandmineEntityDamage { get; set; } = 6.0f;
-    public float LandmineInteractRange { get; set; } = 3.0f;
+    public float ClaymoreEntityDamage { get; set; } = 10.0f;
+    public float LandmineInteractRange { get; set; } = 4.0f;
     public float LandmineOwnerGraceSeconds { get; set; } = 1.5f;
+    public float ClaymoreOwnerGraceSeconds { get; set; } = 3.0f;
+    public float ClaymoreTriggerDistance { get; set; } = 4.0f;
 
     public float CopperStickFuseSeconds { get; set; } = 4.0f;
     public float CopperStickRockBlastRadius { get; set; } = 4.0f;
@@ -119,6 +125,11 @@ public class VSDemolitionistConfig
         {
             MigrateLandmineDamageDefault();
             SchemaVersion = 5;
+        }
+
+        if (SchemaVersion < 6)
+        {
+            SchemaVersion = 6;
         }
 
         ApplyFlatOverridesToBombOverrides();

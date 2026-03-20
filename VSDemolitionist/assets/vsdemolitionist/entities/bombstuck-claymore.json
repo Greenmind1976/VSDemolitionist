@@ -1,0 +1,23 @@
+{
+  "code": "bombstuck-claymore",
+  "class": "EntityBomb",
+  "tags": ["inanimate", "projectile"],
+  "attributes": {
+    "isProjectile": false
+  },
+  "hitboxSize": { "x": 0.5, "y": 0.35 },
+  "deadHitboxSize": { "x": 0.5, "y": 0.35 },
+  "client": {
+    "renderer": "Shape",
+    "shape": { "base": "vsdemolitionist:item/claymore-placed" },
+    "size": 0.5,
+    "behaviors": [
+      { "code": "interpolateposition" }
+    ]
+  },
+  "server": {
+    "behaviors": [
+      { "code": "despawn", "minSeconds": 1800 }
+    ]
+  }
+}

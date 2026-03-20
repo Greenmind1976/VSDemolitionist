@@ -1,0 +1,67 @@
+{
+  "textureWidth": 64,
+  "textureHeight": 64,
+  "textureSizes": {
+    "body": [64, 64],
+    "front": [64, 64]
+  },
+  "textures": {
+    "body": "block/claymore-body",
+    "front": "block/claymore-front"
+  },
+  "elements": [
+    {
+      "name": "base",
+      "from": [3, 4, 7],
+      "to": [13, 10, 9],
+      "faces": {
+        "north": { "texture": "#front", "uv": [6, 10, 26, 22] },
+        "east":  { "texture": "#body",  "uv": [28, 10, 32, 22] },
+        "south": { "texture": "#front", "uv": [6, 10, 26, 22] },
+        "west":  { "texture": "#body",  "uv": [32, 10, 36, 22] },
+        "up":    { "texture": "#body",  "uv": [6, 24, 26, 28] },
+        "down":  { "texture": "#body",  "uv": [6, 30, 26, 34] }
+      }
+    },
+    {
+      "name": "top_lip",
+      "from": [4, 10, 7.2],
+      "to": [12, 11, 8.8],
+      "faces": {
+        "north": { "texture": "#front", "uv": [8, 8, 24, 10] },
+        "east":  { "texture": "#body",  "uv": [36, 8, 38, 10] },
+        "south": { "texture": "#front", "uv": [8, 8, 24, 10] },
+        "west":  { "texture": "#body",  "uv": [38, 8, 40, 10] },
+        "up":    { "texture": "#body",  "uv": [8, 28, 24, 32] },
+        "down":  { "texture": "#body",  "uv": [8, 28, 24, 32] }
+      }
+    },
+    {
+      "name": "left_foot",
+      "from": [4, 3, 7.1],
+      "to": [5, 4, 8.9],
+      "faces": {
+        "north": { "texture": "#body", "uv": [40, 10, 42, 12] },
+        "east":  { "texture": "#body", "uv": [42, 10, 44, 12] },
+        "south": { "texture": "#body", "uv": [40, 10, 42, 12] },
+        "west":  { "texture": "#body", "uv": [44, 10, 46, 12] },
+        "up":    { "texture": "#body", "uv": [40, 12, 42, 14] },
+        "down":  { "texture": "#body", "uv": [42, 12, 44, 14] }
+      }
+    },
+    {
+      "name": "right_foot",
+      "from": [11, 3, 7.1],
+      "to": [12, 4, 8.9],
+      "faces": {
+        "north": { "texture": "#body", "uv": [40, 10, 42, 12] },
+        "east":  { "texture": "#body", "uv": [42, 10, 44, 12] },
+        "south": { "texture": "#body", "uv": [40, 10, 42, 12] },
+        "west":  { "texture": "#body", "uv": [44, 10, 46, 12] },
+        "up":    { "texture": "#body", "uv": [40, 12, 42, 14] },
+        "down":  { "texture": "#body", "uv": [42, 12, 44, 14] }
+      }
+    }
+  ],
+  "animations": []
+}
