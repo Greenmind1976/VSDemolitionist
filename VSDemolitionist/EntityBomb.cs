@@ -537,25 +537,19 @@ public void Release(EntityAgent holder)
     holderId = -1;
     ClearAttachedState();
 
-    Vec3f dir = holder.SidedPos.GetViewVector().Normalize();
+    EntityPos holderPos = holder.Pos;
+    Vec3f dir = holderPos.GetViewVector().Normalize();
 
     double forwardStrength = GetConfigFloat(AttrThrowForwardStrength, DefaultThrowForwardStrength);
     double upwardBoost = GetConfigFloat(AttrThrowUpwardBoost, DefaultThrowUpwardBoost);
 
     // Apply rotation so model faces forward consistently
-    ServerPos.Yaw = holder.SidedPos.Yaw;
-    Pos.Yaw = ServerPos.Yaw;
+    Pos.Yaw = holderPos.Yaw;
 
-    ServerPos.Motion.Set(
+    Pos.Motion.Set(
         dir.X * forwardStrength,
         dir.Y * forwardStrength + upwardBoost,
         dir.Z * forwardStrength
-    );
-
-    Pos.Motion.Set(
-        ServerPos.Motion.X,
-        ServerPos.Motion.Y,
-        ServerPos.Motion.Z
     );
 }
 
@@ -568,7 +562,6 @@ public void Release(EntityAgent holder)
         attachedFace = face ?? BlockFacing.UP;
         attachedYaw = facingYaw;
         PersistAttachedState();
-        ServerPos.Motion.Set(0, 0, 0);
         Pos.Motion.Set(0, 0, 0);
         lastMotionX = 0;
         lastMotionY = 0;
@@ -879,8 +872,8 @@ public void Release(EntityAgent holder)
             return;
         }
 
-        double dx = byEntity.ServerPos.X - Pos.X;
-        double dz = byEntity.ServerPos.Z - Pos.Z;
+        double dx = byEntity.Pos.X - Pos.X;
+        double dz = byEntity.Pos.Z - Pos.Z;
         double maxDistance = VSDemolitionistModSystem.GetLandmineInteractRange();
         if ((dx * dx + dz * dz) > maxDistance * maxDistance)
         {
@@ -916,16 +909,14 @@ public void Release(EntityAgent holder)
 
     private void TeleportToHolder(EntityAgent holder)
     {
-        Vec3f dir = holder.SidedPos.GetViewVector().Normalize();
+        EntityPos holderPos = holder.Pos;
+        Vec3f dir = holderPos.GetViewVector().Normalize();
         double forwardOffset = 0.25;
         double verticalOffset = holder.LocalEyePos.Y - 0.45;
 
-        double x = holder.ServerPos.X + dir.X * forwardOffset;
-        double y = holder.ServerPos.Y + verticalOffset;
-        double z = holder.ServerPos.Z + dir.Z * forwardOffset;
-
-        ServerPos.SetPos(x, y, z);
-        ServerPos.Motion.Set(0, 0, 0);
+        double x = holderPos.X + dir.X * forwardOffset;
+        double y = holderPos.Y + verticalOffset;
+        double z = holderPos.Z + dir.Z * forwardOffset;
 
         Pos.SetPos(x, y, z);
         Pos.Motion.Set(0, 0, 0);
@@ -938,7 +929,6 @@ public void Release(EntityAgent holder)
         // If already attached, zero out velocity before physics update to reduce micro-bounce/pulsing.
         if (attachedToBlock)
         {
-            ServerPos.Motion.Set(0, 0, 0);
             Pos.Motion.Set(0, 0, 0);
         }
         
@@ -1010,9 +1000,9 @@ public void Release(EntityAgent holder)
                 }
             }
 
-            lastMotionX = ServerPos.Motion.X;
-            lastMotionY = ServerPos.Motion.Y;
-            lastMotionZ = ServerPos.Motion.Z;
+            lastMotionX = Pos.Motion.X;
+            lastMotionY = Pos.Motion.Y;
+            lastMotionZ = Pos.Motion.Z;
         }
 
         // Final lock pass after tick to prevent interpolation drift while attached.
@@ -1026,7 +1016,7 @@ public void Release(EntityAgent holder)
         {
             if (!impactPlayedServer && holderId == -1)
             {
-                double speedSqServer = ServerPos.Motion.X * ServerPos.Motion.X + ServerPos.Motion.Y * ServerPos.Motion.Y + ServerPos.Motion.Z * ServerPos.Motion.Z;
+                double speedSqServer = Pos.Motion.X * Pos.Motion.X + Pos.Motion.Y * Pos.Motion.Y + Pos.Motion.Z * Pos.Motion.Z;
 
                 if (!airborneServer && speedSqServer > 0.02 * 0.02)
                 {
@@ -1037,7 +1027,7 @@ public void Release(EntityAgent holder)
                     impactPlayedServer = true;
                     World.PlaySoundAt(
                         new AssetLocation("survival:arrow-impact"),
-                        ServerPos.X, ServerPos.Y, ServerPos.Z,
+                        Pos.X, Pos.Y, Pos.Z,
                         null,
                         false,
                         24f,
@@ -1155,10 +1145,9 @@ public void Release(EntityAgent holder)
 
         if (holderId == -1 && WatchedAttributes.GetBool(AttrLit))
         {
-            if (IsPositionInWater(ServerPos.X, ServerPos.Y, ServerPos.Z))
+            if (IsPositionInWater(Pos.X, Pos.Y, Pos.Z))
             {
-                ServerPos.Motion.Set(ServerPos.Motion.X * 0.45, ServerPos.Motion.Y * 0.65, ServerPos.Motion.Z * 0.45);
-                Pos.Motion.Set(ServerPos.Motion.X, ServerPos.Motion.Y, ServerPos.Motion.Z);
+                Pos.Motion.Set(Pos.Motion.X * 0.45, Pos.Motion.Y * 0.65, Pos.Motion.Z * 0.45);
             }
         }
     }
@@ -1504,13 +1493,11 @@ public void Release(EntityAgent holder)
         double y = attachedBlockPos.Y + 0.5 + n.Y * offset;
         double z = attachedBlockPos.Z + 0.5 + n.Z * offset;
 
-        ServerPos.SetPos(x, y, z);
         Pos.SetPos(x, y, z);
-        ServerPos.Motion.Set(0, 0, 0);
         Pos.Motion.Set(0, 0, 0);
 
         // Keep the stick orientation stable while attached so the base doesn't face out randomly.
-        float yaw = ServerPos.Yaw;
+        float yaw = Pos.Yaw;
         if (attachedFace == BlockFacing.NORTH) yaw = 0f;
         else if (attachedFace == BlockFacing.SOUTH) yaw = GameMath.PI;
         else if (attachedFace == BlockFacing.WEST) yaw = GameMath.PIHALF;
@@ -1531,9 +1518,7 @@ public void Release(EntityAgent holder)
             }
         }
 
-        ServerPos.Yaw = yaw;
         Pos.Yaw = yaw;
-        ServerPos.Pitch = pitch;
         Pos.Pitch = pitch;
     }
 

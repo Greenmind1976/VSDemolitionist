@@ -223,7 +223,13 @@ public class ItemBomb : Item
         bool placeOnly = GetBombBool(slot?.Itemstack, "placeOnly", false);
         if (placeOnly)
         {
-            if (blockSel?.Position == null)
+            BlockSelection? effectiveBlockSel = blockSel;
+            if (effectiveBlockSel?.Position == null && byEntity is EntityPlayer entityPlayer)
+            {
+                effectiveBlockSel = entityPlayer.Player?.CurrentBlockSelection;
+            }
+
+            if (effectiveBlockSel?.Position == null)
             {
                 handling = EnumHandHandling.NotHandled;
                 return;
@@ -232,7 +238,7 @@ public class ItemBomb : Item
             handling = EnumHandHandling.PreventDefault;
             if (byEntity.World.Side == EnumAppSide.Server)
             {
-                SpawnPlacedBomb(slot!, byEntity, blockSel);
+                SpawnPlacedBomb(slot!, byEntity, effectiveBlockSel);
             }
             return;
         }
@@ -451,36 +457,38 @@ public class ItemBomb : Item
 
     private void SpawnBombFromLitState(ItemSlot slot, EntityAgent byEntity, bool allowThrow, BlockSelection? targetBlockSel)
     {
-        bool placeOnFace = GetBombBool(slot.Itemstack, "placeOnFace", false);
+        ItemStack? itemstack = slot.Itemstack;
+        if (itemstack == null) return;
+
+        bool placeOnFace = GetBombBool(itemstack, "placeOnFace", false);
         if (placeOnFace && targetBlockSel?.Position == null)
         {
             // Placement-only charges require a valid target face.
             return;
         }
 
-        long litMs = slot.Itemstack.Attributes.GetLong(AttrFuseLitMs, 0);
-        slot.Itemstack.Attributes.RemoveAttribute(AttrFuseLitMs);
+        long litMs = itemstack.Attributes.GetLong(AttrFuseLitMs, 0);
+        itemstack.Attributes.RemoveAttribute(AttrFuseLitMs);
         if (litMs == 0) return;
 
-        float fuseSeconds = GetEffectiveBombFloat(slot.Itemstack, "fuseSeconds", DefaultFuseSeconds);
+        float fuseSeconds = GetEffectiveBombFloat(itemstack, "fuseSeconds", DefaultFuseSeconds);
         double elapsed = Math.Max(0, (byEntity.World.ElapsedMilliseconds - litMs) / 1000.0);
         float remainingFuse = (float)Math.Max(0, fuseSeconds - elapsed);
 
         ICoreServerAPI sapi = (ICoreServerAPI)byEntity.World.Api;
-        string entityCode = GetBombString(slot.Itemstack, "entityCode", "bomb");
-        EntityProperties type = sapi.World.GetEntityType(ResolveModAsset(entityCode));
+        string entityCode = GetBombString(itemstack, "entityCode", "bomb");
+        EntityProperties? type = sapi.World.GetEntityType(ResolveModAsset(entityCode));
         if (type == null) return;
 
-        Entity entity = sapi.World.ClassRegistry.CreateEntity(type);
+        Entity? entity = sapi.World.ClassRegistry.CreateEntity(type);
         if (entity == null) return;
 
-        Vec3f dir = byEntity.SidedPos.GetViewVector().Normalize();
-        double spawnX = byEntity.ServerPos.X + dir.X * 0.25;
-        double spawnY = byEntity.ServerPos.Y + byEntity.LocalEyePos.Y - 0.35;
-        double spawnZ = byEntity.ServerPos.Z + dir.Z * 0.25;
+        EntityPos throwerPos = byEntity.Pos;
+        Vec3f dir = throwerPos.GetViewVector().Normalize();
+        double spawnX = throwerPos.X + dir.X * 0.25;
+        double spawnY = throwerPos.Y + byEntity.LocalEyePos.Y - 0.35;
+        double spawnZ = throwerPos.Z + dir.Z * 0.25;
 
-        entity.ServerPos.SetPos(spawnX, spawnY, spawnZ);
-        entity.ServerPos.Motion.Set(0, 0, 0);
         entity.Pos.SetPos(spawnX, spawnY, spawnZ);
         entity.Pos.Motion.Set(0, 0, 0);
 
@@ -488,12 +496,14 @@ public class ItemBomb : Item
 
         if (entity is EntityBomb bomb)
         {
-            bomb.ApplyConfigFromItemstack(slot.Itemstack);
+            bomb.ApplyConfigFromItemstack(itemstack);
             bomb.SetThrower(byEntity);
             bomb.StartFuseWithRemainingSeconds(remainingFuse);
             if (placeOnFace)
             {
-                bomb.AttachToBlock(targetBlockSel!.Position, targetBlockSel.Face, byEntity.SidedPos.Yaw);
+                BlockPos? targetPos = targetBlockSel?.Position;
+                if (targetPos == null) return;
+                bomb.AttachToBlock(targetPos, targetBlockSel!.Face, throwerPos.Yaw);
             }
             else if (allowThrow && remainingFuse > 0.001f)
             {
@@ -515,9 +525,12 @@ public class ItemBomb : Item
 
     private void SpawnPlacedBomb(ItemSlot slot, EntityAgent byEntity, BlockSelection targetBlockSel)
     {
-        if (slot?.Itemstack == null || targetBlockSel?.Position == null) return;
+        if (slot == null || targetBlockSel?.Position == null) return;
 
-        string tierCode = GetBombString(slot.Itemstack, "tier", "");
+        ItemStack? itemstack = slot.Itemstack;
+        if (itemstack == null) return;
+
+        string tierCode = GetBombString(itemstack, "tier", "");
         if (tierCode == "landmine" || tierCode == "claymore")
         {
             Vec3d targetCenter = targetBlockSel.Position.ToVec3d().Add(0.5, 0.5, 0.5);
@@ -529,13 +542,12 @@ public class ItemBomb : Item
         }
 
         ICoreServerAPI sapi = (ICoreServerAPI)byEntity.World.Api;
-        string entityCode = GetBombString(slot.Itemstack, "placedEntityCode", GetBombString(slot.Itemstack, "entityCode", "bomb"));
-        EntityProperties type = sapi.World.GetEntityType(ResolveModAsset(entityCode));
+        string entityCode = GetBombString(itemstack, "placedEntityCode", GetBombString(itemstack, "entityCode", "bomb"));
+        EntityProperties? type = sapi.World.GetEntityType(ResolveModAsset(entityCode));
         if (type == null) return;
 
-        bool placeTopOnly = GetBombBool(slot.Itemstack, "placeTopOnly", false);
+        bool placeTopOnly = GetBombBool(itemstack, "placeTopOnly", false);
         BlockFacing face = placeTopOnly ? BlockFacing.UP : ResolveAttachFace(targetBlockSel, byEntity);
-        face ??= BlockFacing.UP;
         if (face == BlockFacing.DOWN)
         {
             SendChargePlacementMessage(byEntity, "Cannot place charge on underside.");
@@ -554,7 +566,7 @@ public class ItemBomb : Item
 
         if (!resolvedAttach)
         {
-            string tier = GetBombString(slot.Itemstack, "tier", "");
+            string tier = GetBombString(itemstack, "tier", "");
             string message = tier switch
             {
                 "landmine" => "Landmine must be placed on the top of a solid ore, stone, soil, or crystal block.",
@@ -565,25 +577,23 @@ public class ItemBomb : Item
             return;
         }
 
-        Entity entity = sapi.World.ClassRegistry.CreateEntity(type);
+        Entity? entity = sapi.World.ClassRegistry.CreateEntity(type);
         if (entity == null) return;
 
-        entity.ServerPos.SetPos(
+        entity.Pos.SetPos(
             targetBlockSel.Position.X + 0.5,
             targetBlockSel.Position.Y + 0.5,
             targetBlockSel.Position.Z + 0.5
         );
-        entity.ServerPos.Motion.Set(0, 0, 0);
-        entity.Pos.SetPos(entity.ServerPos.X, entity.ServerPos.Y, entity.ServerPos.Z);
         entity.Pos.Motion.Set(0, 0, 0);
 
         sapi.World.SpawnEntity(entity);
 
         if (entity is EntityBomb bomb)
         {
-            bomb.ApplyConfigFromItemstack(slot.Itemstack);
+            bomb.ApplyConfigFromItemstack(itemstack);
             bomb.SetThrower(byEntity);
-            bomb.AttachToBlock(attachPos, face, byEntity.SidedPos.Yaw);
+            bomb.AttachToBlock(attachPos, face, byEntity.Pos.Yaw);
         }
 
         slot.TakeOut(1);
@@ -707,12 +717,12 @@ public class ItemBomb : Item
 
     private static BlockFacing ResolveAttachFace(BlockSelection blockSel, EntityAgent byEntity)
     {
+        if (blockSel?.Face != null) return blockSel.Face;
+
         if (blockSel?.Position != null && TryResolveFaceFromRay(blockSel.Position, byEntity, out BlockFacing rayFace))
         {
             return rayFace;
         }
-
-        if (blockSel?.Face != null) return blockSel.Face;
 
         if (blockSel?.HitPosition != null)
         {
@@ -739,7 +749,7 @@ public class ItemBomb : Item
             return face;
         }
 
-        Vec3f dir = byEntity.SidedPos.GetViewVector().Normalize();
+        Vec3f dir = byEntity.Pos.GetViewVector().Normalize();
         float ax = Math.Abs(dir.X);
         float ay = Math.Abs(dir.Y);
         float az = Math.Abs(dir.Z);
@@ -758,8 +768,8 @@ public class ItemBomb : Item
 
     private static bool IsWithinInteractionRange(EntityAgent byEntity, Vec3d targetPos, double maxDistance)
     {
-        double dx = byEntity.ServerPos.X - targetPos.X;
-        double dz = byEntity.ServerPos.Z - targetPos.Z;
+        double dx = byEntity.Pos.X - targetPos.X;
+        double dz = byEntity.Pos.Z - targetPos.Z;
         return (dx * dx + dz * dz) <= maxDistance * maxDistance;
     }
 
@@ -767,8 +777,8 @@ public class ItemBomb : Item
     {
         face = BlockFacing.UP;
 
-        Vec3d origin = byEntity.ServerPos.XYZ.AddCopy(byEntity.LocalEyePos);
-        Vec3f dirf = byEntity.SidedPos.GetViewVector().Normalize();
+        Vec3d origin = byEntity.Pos.XYZ.AddCopy(byEntity.LocalEyePos);
+        Vec3f dirf = byEntity.Pos.GetViewVector().Normalize();
         Vec3d dir = new Vec3d(dirf.X, dirf.Y, dirf.Z);
 
         const double eps = 1e-7;
