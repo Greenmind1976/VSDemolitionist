@@ -5,6 +5,34 @@ set -euo pipefail
 # Build + Install VSDemolitionist into Vintage Story 1.22.0-rc.8
 ###############################################################################
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_BRANCH="$(git -C "$ROOT_DIR" branch --show-current 2>/dev/null || true)"
+TARGET_BRANCH="support/1.22"
+
+find_worktree_for_branch() {
+  local branch_name="$1"
+
+  git -C "$ROOT_DIR" worktree list --porcelain | awk -v target="refs/heads/$branch_name" '
+    $1 == "worktree" { wt = $2 }
+    $1 == "branch" && $2 == target { print wt; exit }
+  '
+}
+
+if [[ "$CURRENT_BRANCH" != "$TARGET_BRANCH" ]]; then
+  TARGET_WORKTREE="$(find_worktree_for_branch "$TARGET_BRANCH")"
+
+  if [[ -z "$TARGET_WORKTREE" ]]; then
+    echo "ERROR: Could not find worktree for $TARGET_BRANCH" >&2
+    exit 1
+  fi
+
+  echo "Switching to $TARGET_BRANCH worktree:"
+  echo "  $TARGET_WORKTREE"
+  exec "$TARGET_WORKTREE/build-122-install.sh" "$@"
+fi
+
+cd "$ROOT_DIR"
+
 MOD_ID="vsdemolitionist"
 PROJECT_DIR="VSDemolitionist"
 MOD_BUILD_DIR="$PROJECT_DIR/bin/Debug/Mods/mod"
@@ -22,7 +50,7 @@ if [[ -e "$VS_MODS_DIR/$MOD_ID" ]]; then
   exit 1
 fi
 
-VINTAGE_STORY="$VS_APP_DIR" dotnet build "$PROJECT_DIR/VSDemolitionist.csproj"
+VINTAGE_STORY="$VS_APP_DIR" dotnet build "$PROJECT_DIR/VSDemolitionist.csproj" -p:NuGetAudit=false
 
 if [[ ! -d "$MOD_BUILD_DIR" ]]; then
   echo "ERROR: Expected build output folder not found: $MOD_BUILD_DIR" >&2

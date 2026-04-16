@@ -6,6 +6,7 @@ PROJECT_PATH="$ROOT_DIR/VSDemolitionist/VSDemolitionist.csproj"
 MOD_OUTPUT_DIR="$ROOT_DIR/VSDemolitionist/bin/Release/Mods/mod"
 VERSION_FILE="$ROOT_DIR/VERSION"
 DIST_DIR="$ROOT_DIR/dist"
+VS_APP_DIR="/Applications/Vintage Story 1.22.0-rc.8.app"
 
 if ! command -v dotnet >/dev/null 2>&1; then
   echo "dotnet is not installed or not on PATH." >&2
@@ -22,6 +23,11 @@ if [[ ! -f "$VERSION_FILE" ]]; then
   exit 1
 fi
 
+if [[ ! -d "$VS_APP_DIR" ]]; then
+  echo "Vintage Story app not found at $VS_APP_DIR" >&2
+  exit 1
+fi
+
 VERSION="$(tr -d '[:space:]' < "$VERSION_FILE")"
 if [[ -z "$VERSION" ]]; then
   echo "Could not determine mod version from VERSION file" >&2
@@ -29,7 +35,7 @@ if [[ -z "$VERSION" ]]; then
 fi
 
 echo "Building VSDemolitionist $VERSION"
-dotnet build "$PROJECT_PATH" -c Release -p:NuGetAudit=false
+VINTAGE_STORY="$VS_APP_DIR" dotnet build "$PROJECT_PATH" -c Release -p:NuGetAudit=false
 
 if [[ ! -f "$MOD_OUTPUT_DIR/vsdemolitionist.dll" ]]; then
   echo "Expected built DLL not found in $MOD_OUTPUT_DIR" >&2
@@ -52,7 +58,7 @@ rm -f "$ZIP_PATH"
 
 (
   cd "$MOD_OUTPUT_DIR"
-  zip -r "$ZIP_PATH" .
+  zip -r "$ZIP_PATH" . -x '*.pdb'
 )
 
 echo "Created release package:"

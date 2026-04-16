@@ -457,6 +457,8 @@ public class ItemBomb : Item
 
     private void SpawnBombFromLitState(ItemSlot slot, EntityAgent byEntity, bool allowThrow, BlockSelection? targetBlockSel)
     {
+        if (slot == null) return;
+
         ItemStack? itemstack = slot.Itemstack;
         if (itemstack == null) return;
 
@@ -475,7 +477,7 @@ public class ItemBomb : Item
         double elapsed = Math.Max(0, (byEntity.World.ElapsedMilliseconds - litMs) / 1000.0);
         float remainingFuse = (float)Math.Max(0, fuseSeconds - elapsed);
 
-        ICoreServerAPI sapi = (ICoreServerAPI)byEntity.World.Api;
+        if (byEntity.World.Api is not ICoreServerAPI sapi) return;
         string entityCode = GetBombString(itemstack, "entityCode", "bomb");
         EntityProperties? type = sapi.World.GetEntityType(ResolveModAsset(entityCode));
         if (type == null) return;
@@ -541,7 +543,7 @@ public class ItemBomb : Item
             }
         }
 
-        ICoreServerAPI sapi = (ICoreServerAPI)byEntity.World.Api;
+        if (byEntity.World.Api is not ICoreServerAPI sapi) return;
         string entityCode = GetBombString(itemstack, "placedEntityCode", GetBombString(itemstack, "entityCode", "bomb"));
         EntityProperties? type = sapi.World.GetEntityType(ResolveModAsset(entityCode));
         if (type == null) return;

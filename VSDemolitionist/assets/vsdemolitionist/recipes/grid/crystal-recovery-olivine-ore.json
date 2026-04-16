@@ -37,7 +37,7 @@
     "ingredientPattern": "HC",
     "ingredients": {
       "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
-      "C": { "type": "block", "code": "game:ore-*-olivine-*" }
+      "C": { "type": "block", "code": "game:ore-olivine-*" }
     },
     "width": 2,
     "height": 1,
@@ -48,7 +48,7 @@
     "ingredientPattern": "H,C",
     "ingredients": {
       "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
-      "C": { "type": "block", "code": "game:ore-*-olivine-*" }
+      "C": { "type": "block", "code": "game:ore-olivine-*" }
     },
     "width": 1,
     "height": 2,
@@ -59,7 +59,7 @@
     "ingredientPattern": "HC",
     "ingredients": {
       "H": { "type": "item", "code": "game:hammer-*", "isTool": true, "toolDurabilityCost": 2 },
-      "C": { "type": "block", "code": "game:ore-*-olivine-*" }
+      "C": { "type": "block", "code": "game:ore-olivine-*" }
     },
     "width": 2,
     "height": 1,

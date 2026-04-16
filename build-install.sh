@@ -5,6 +5,34 @@ set -euo pipefail
 # Build + Install VSDemolitionist into /Applications/Vintage Story/Mods (macOS)
 ###############################################################################
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_BRANCH="$(git -C "$ROOT_DIR" branch --show-current 2>/dev/null || true)"
+TARGET_BRANCH="support/1.21"
+
+find_worktree_for_branch() {
+  local branch_name="$1"
+
+  git -C "$ROOT_DIR" worktree list --porcelain | awk -v target="refs/heads/$branch_name" '
+    $1 == "worktree" { wt = $2 }
+    $1 == "branch" && $2 == target { print wt; exit }
+  '
+}
+
+if [[ "$CURRENT_BRANCH" != "$TARGET_BRANCH" ]]; then
+  TARGET_WORKTREE="$(find_worktree_for_branch "$TARGET_BRANCH")"
+
+  if [[ -z "$TARGET_WORKTREE" ]]; then
+    echo "ERROR: Could not find worktree for $TARGET_BRANCH" >&2
+    exit 1
+  fi
+
+  echo "Switching to $TARGET_BRANCH worktree:"
+  echo "  $TARGET_WORKTREE"
+  exec "$TARGET_WORKTREE/build-install.sh" "$@"
+fi
+
+cd "$ROOT_DIR"
+
 #########################
 # Configure
 #########################
@@ -29,7 +57,7 @@ fi
 #########################
 # Build solution
 #########################
-dotnet build
+VINTAGE_STORY="/Applications/Vintage Story.app" dotnet build -p:NuGetAudit=false
 
 #########################
 # Install mod
@@ -57,6 +85,4 @@ echo "  $VS_MODS_DIR/$MOD_ID"
 #########################
 # Launch Vintage Story (optional)
 #########################
-if [[ -n "${VINTAGE_STORY:-}" ]]; then
-  open "$VINTAGE_STORY"
-fi
+open "/Applications/Vintage Story.app"
