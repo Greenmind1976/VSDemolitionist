@@ -1,5 +1,5 @@
 {
-  "ingredientPattern": "A\tL",
+  "ingredientPattern": "A,L",
   "ingredients": {
     "A": { "type": "item", "code": "game:axe-*", "isTool": true },
     "L": {

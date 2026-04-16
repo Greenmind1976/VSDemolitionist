@@ -5,7 +5,7 @@
   "authors": ["Greenmind"],
   "description": "Explosives-focused mod with dynamite, bundles, charges, and supporting crafting.",
   "iconpath": "modicon.png",
-  "version": "1.1.0",
+  "version": "1.21.1",
   "dependencies": {
     "game": "1.21.0"
   }
