@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ###############################################################################
-# Build + Install VSDemolitionist into Vintage Story 1.22.0-rc.8
+# Build + Install VSDemolitionist into Vintage Story 1.22
 ###############################################################################
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -36,9 +36,9 @@ cd "$ROOT_DIR"
 MOD_ID="vsdemolitionist"
 PROJECT_DIR="VSDemolitionist"
 MOD_BUILD_DIR="$PROJECT_DIR/bin/Debug/Mods/mod"
-VS_APP_DIR="/Applications/Vintage Story 1.22.0-rc.8.app"
+VS_APP_DIR="/Applications/Vintage Story 1.22.app"
 VS_MODS_DIR="$VS_APP_DIR/Mods"
-VS_LAUNCHER="$HOME/bin/vs-1.22.0-rc.8"
+VS_LAUNCHER="$HOME/bin/vs-1.22"
 
 rm -rf "$PROJECT_DIR/bin" "$PROJECT_DIR/obj"
 
@@ -78,12 +78,12 @@ echo "  $VS_MODS_DIR/$MOD_ID"
 
 if [[ ! -x "$VS_LAUNCHER" ]]; then
   echo
-  echo "RC launcher not found at: $VS_LAUNCHER"
-  echo "Use ~/bin/vs-1.22.0-rc.8 to start it with the local x64 .NET runtime once it exists."
+  echo "1.22 launcher not found at: $VS_LAUNCHER"
+  echo "Use ~/bin/vs-1.22 to start it with the configured launcher once it exists."
   exit 0
 fi
 
 echo
-echo "Launching Vintage Story 1.22.0-rc.8 via:"
+echo "Launching Vintage Story 1.22 via:"
 echo "  $VS_LAUNCHER"
 "$VS_LAUNCHER" >/dev/null 2>&1 &

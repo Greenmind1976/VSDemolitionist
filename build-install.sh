@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ###############################################################################
-# Build + Install VSDemolitionist into /Applications/Vintage Story/Mods (macOS)
+# Build + Install VSDemolitionist into Vintage Story 1.21.7
 ###############################################################################
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -38,7 +38,10 @@ cd "$ROOT_DIR"
 #########################
 MOD_ID="vsdemolitionist"
 MOD_BUILD_DIR="VSDemolitionist/bin/Debug/Mods/mod"
-VS_MODS_DIR="/Applications/Vintage Story.app/Mods"
+VS_APP_DIR="/Applications/Vintage Story 1.21.7.app"
+VS_MODS_DIR="$VS_APP_DIR/Mods"
+VS_EXECUTABLE="$VS_APP_DIR/Vintagestory"
+VS_DATA_PATH="$HOME/Library/Application Support/VintagestoryData-1.21.7"
 
 #########################
 # Clean up old builds
@@ -57,7 +60,7 @@ fi
 #########################
 # Build solution
 #########################
-VINTAGE_STORY="/Applications/Vintage Story.app" dotnet build -p:NuGetAudit=false
+VINTAGE_STORY="$VS_APP_DIR" dotnet build -p:NuGetAudit=false
 
 #########################
 # Install mod
@@ -85,4 +88,17 @@ echo "  $VS_MODS_DIR/$MOD_ID"
 #########################
 # Launch Vintage Story (optional)
 #########################
-open "/Applications/Vintage Story.app"
+if [[ ! -x "$VS_EXECUTABLE" ]]; then
+  echo
+  echo "Vintage Story 1.21.7 executable not found at: $VS_EXECUTABLE"
+  echo "Check that the app bundle contains the Vintagestory executable."
+  exit 0
+fi
+
+echo
+echo "Launching Vintage Story 1.21.7 via:"
+echo "  $VS_EXECUTABLE"
+echo "Using data path:"
+echo "  $VS_DATA_PATH"
+mkdir -p "$VS_DATA_PATH"
+"$VS_EXECUTABLE" --dataPath "$VS_DATA_PATH" >/dev/null 2>&1 &
