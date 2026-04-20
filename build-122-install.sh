@@ -2,12 +2,12 @@
 set -euo pipefail
 
 ###############################################################################
-# Build + Install VSDemolitionist into Vintage Story 1.21.7
+# Build + Install VSDemolitionist into Vintage Story 1.22
 ###############################################################################
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CURRENT_BRANCH="$(git -C "$ROOT_DIR" branch --show-current 2>/dev/null || true)"
-TARGET_BRANCH="support/1.21"
+TARGET_BRANCH="support/1.22"
 
 find_worktree_for_branch() {
   local branch_name="$1"
@@ -28,51 +28,42 @@ if [[ "$CURRENT_BRANCH" != "$TARGET_BRANCH" ]]; then
 
   echo "Switching to $TARGET_BRANCH worktree:"
   echo "  $TARGET_WORKTREE"
-  exec "$TARGET_WORKTREE/build-install.sh" "$@"
+  exec "$TARGET_WORKTREE/build-122-install.sh" "$@"
 fi
 
 cd "$ROOT_DIR"
 
-#########################
-# Configure
-#########################
 MOD_ID="vsdemolitionist"
-MOD_BUILD_DIR="VSDemolitionist/bin/Debug/Mods/mod"
-VS_APP_DIR="/Applications/Vintage Story 1.21.7.app"
+PROJECT_DIR="VSDemolitionist"
+MOD_BUILD_DIR="$PROJECT_DIR/bin/Debug/Mods/mod"
+VS_APP_DIR="/Applications/Vintage Story 1.22.app"
 VS_MODS_DIR="$VS_APP_DIR/Mods"
-VS_EXECUTABLE="$VS_APP_DIR/Vintagestory"
-VS_DATA_PATH="$HOME/Library/Application Support/VintagestoryData-1.21.7"
+VS_LAUNCHER="$HOME/bin/vs-1.22"
 
-#########################
-# Clean up old builds
-#########################
-rm -rf "VSDemolitionist/bin" "VSDemolitionist/obj"
+rm -rf "$PROJECT_DIR/bin" "$PROJECT_DIR/obj"
 
 echo "Deleting installed mod dir: $VS_MODS_DIR/$MOD_ID"
 rm -rf "$VS_MODS_DIR/$MOD_ID"
 
-# Sanity check
 if [[ -e "$VS_MODS_DIR/$MOD_ID" ]]; then
-  echo "ERROR: Mod dir still exists: $VS_MODS_DIR/$MOD_ID"
+  echo "ERROR: Mod dir still exists: $VS_MODS_DIR/$MOD_ID" >&2
   exit 1
 fi
 
-#########################
-# Build solution
-#########################
-VINTAGE_STORY="$VS_APP_DIR" dotnet build -p:NuGetAudit=false
+VINTAGE_STORY="$VS_APP_DIR" dotnet build "$PROJECT_DIR/VSDemolitionist.csproj" -p:NuGetAudit=false
 
-#########################
-# Install mod
-#########################
 if [[ ! -d "$MOD_BUILD_DIR" ]]; then
   echo "ERROR: Expected build output folder not found: $MOD_BUILD_DIR" >&2
   exit 1
 fi
 
-# /Applications is often write-protected; use sudo when needed.
+if [[ ! -d "$VS_APP_DIR" ]]; then
+  echo "ERROR: Vintage Story app not found: $VS_APP_DIR" >&2
+  exit 1
+fi
+
 if [[ ! -w "$VS_MODS_DIR" ]]; then
-  echo "🔐 Mods folder not writable, using sudo..."
+  echo "Mods folder not writable, using sudo..."
   sudo mkdir -p "$VS_MODS_DIR"
   sudo rm -rf "$VS_MODS_DIR/$MOD_ID"
   sudo cp -R "$MOD_BUILD_DIR" "$VS_MODS_DIR/$MOD_ID"
@@ -82,23 +73,17 @@ else
   cp -R "$MOD_BUILD_DIR" "$VS_MODS_DIR/$MOD_ID"
 fi
 
-echo "✅ Installed '$MOD_ID' to:"
+echo "Installed '$MOD_ID' to:"
 echo "  $VS_MODS_DIR/$MOD_ID"
 
-#########################
-# Launch Vintage Story (optional)
-#########################
-if [[ ! -x "$VS_EXECUTABLE" ]]; then
+if [[ ! -x "$VS_LAUNCHER" ]]; then
   echo
-  echo "Vintage Story 1.21.7 executable not found at: $VS_EXECUTABLE"
-  echo "Check that the app bundle contains the Vintagestory executable."
+  echo "1.22 launcher not found at: $VS_LAUNCHER"
+  echo "Use ~/bin/vs-1.22 to start it with the configured launcher once it exists."
   exit 0
 fi
 
 echo
-echo "Launching Vintage Story 1.21.7 via:"
-echo "  $VS_EXECUTABLE"
-echo "Using data path:"
-echo "  $VS_DATA_PATH"
-mkdir -p "$VS_DATA_PATH"
-"$VS_EXECUTABLE" --dataPath "$VS_DATA_PATH" >/dev/null 2>&1 &
+echo "Launching Vintage Story 1.22 via:"
+echo "  $VS_LAUNCHER"
+"$VS_LAUNCHER" >/dev/null 2>&1 &
