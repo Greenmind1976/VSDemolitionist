@@ -10,6 +10,6 @@
   "iconpath": "modicon.png",
   "version": "1.22.2",
   "dependencies": {
-    "game": "1.22.0-rc.8"
+    "game": "1.22.0"
   }
 }
